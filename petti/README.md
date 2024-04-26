@@ -1,4 +1,4 @@
-# MYCHELIN - Project
+# PETTI
 
 > Petti : ‘Pet + I’ 를 나타내고, ‘애완동물과 나’의 의미를 가집니다.  
 > 현재 애완동물을 키우는 사람이 늘어 났고, 애완 동물전용의 인스타그램이나 유튜브같은 영상이나 사진을 등록하고 보여주는 서비스를 제공하면 흥미로울 것 같아 시작하게 되었습니다.
@@ -18,4 +18,4 @@
 
 ### 확인 주소
 
-[기획서 pdf](https://github.com/riccio-ryu/portfolio/tree/master/personal_work/petti/portfolio/petti_port.pdf)
+[기획서 pdf](https://github.com/riccio-ryu/toy_project/blob/master/petti/portfolio/petti_port.pdf)
