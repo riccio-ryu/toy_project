@@ -3,6 +3,7 @@ text 2
 
 --- v0.0.1
 
+<<<<<<< HEAD
 text 3 (b)
 
 --- v0.0.2 rebase & revert(master)
@@ -16,3 +17,6 @@ txt2 made
 
 
 2025.04.02 : hello~
+=======
+text 3 (b)
+>>>>>>> 9c13fa1 (conflict)
