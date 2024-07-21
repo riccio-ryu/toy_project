@@ -4,6 +4,7 @@ text 2
 --- v0.0.1
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 text 3 (b)
 
 --- v0.0.2 rebase & revert(master)
@@ -20,3 +21,8 @@ txt2 made
 =======
 text 3 (b)
 >>>>>>> 9c13fa1 (conflict)
+=======
+text 3 (b)
+
+--- v0.0.2 rebase
+>>>>>>> 76308a7 (confl)
