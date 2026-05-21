@@ -24,3 +24,13 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+@keyframes cloudDrift {
+  from { transform: translateX(-50vw); }
+  to   { transform: translateX(110vw); }
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 1;    }
+  50%       { opacity: 0.45; }
+}

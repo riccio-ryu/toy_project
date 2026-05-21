@@ -1,7 +1,9 @@
+import TimeBackground from '@/components/TimeBackground'
+
 export default function UserLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-black">
+    <TimeBackground>
       {children}
-    </div>
-  );
+    </TimeBackground>
+  )
 }
