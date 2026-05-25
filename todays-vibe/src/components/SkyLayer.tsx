@@ -37,7 +37,7 @@ function CloudShape({ variant }: { variant: number }) {
 
   // v1 — 소형 두 봉우리
   if (variant === 1) return (
-    <svg viewBox="0 0 175 72" width="100%" height="auto">
+    <svg viewBox="0 0 175 72" width="100%" height="100%">
       <ellipse cx="88"  cy="63" rx="78"  ry="10" fill="url(#cBase)"/>
       <ellipse cx="58"  cy="44" rx="52"  ry="32" fill="url(#cPuff)" opacity="0.80"/>
       <ellipse cx="120" cy="42" rx="54"  ry="34" fill="url(#cPuff)" opacity="0.86"/>
@@ -49,7 +49,7 @@ function CloudShape({ variant }: { variant: number }) {
 
   // v2 — 넓은 층운형 (stratus), 봉우리 4개
   if (variant === 2) return (
-    <svg viewBox="0 0 380 62" width="100%" height="auto">
+    <svg viewBox="0 0 380 62" width="100%" height="100%">
       <ellipse cx="190" cy="54" rx="172" ry="10" fill="url(#cBase)"/>
       <ellipse cx="72"  cy="38" rx="68"  ry="28" fill="url(#cPuff)" opacity="0.60"/>
       <ellipse cx="158" cy="34" rx="74"  ry="31" fill="url(#cPuff)" opacity="0.65"/>
@@ -64,7 +64,7 @@ function CloudShape({ variant }: { variant: number }) {
 
   // v3 — 적란운형, 세로로 키 큰 극적인 형태
   if (variant === 3) return (
-    <svg viewBox="0 0 210 100" width="100%" height="auto">
+    <svg viewBox="0 0 210 100" width="100%" height="100%">
       <ellipse cx="105" cy="90" rx="92"  ry="12" fill="url(#cBase)"/>
       <ellipse cx="105" cy="65" rx="76"  ry="40" fill="url(#cPuff)" opacity="0.86"/>
       <ellipse cx="48"  cy="58" rx="42"  ry="28" fill="url(#cPuff)" opacity="0.60"/>
@@ -78,7 +78,7 @@ function CloudShape({ variant }: { variant: number }) {
 
   // v4 — 두 봉우리가 뚜렷하게 분리된 넓은 구름
   if (variant === 4) return (
-    <svg viewBox="0 0 295 78" width="100%" height="auto">
+    <svg viewBox="0 0 295 78" width="100%" height="100%">
       <ellipse cx="148" cy="68" rx="132" ry="12" fill="url(#cBase)"/>
       <ellipse cx="88"  cy="48" rx="72"  ry="40" fill="url(#cPuff)" opacity="0.84"/>
       <ellipse cx="208" cy="46" rx="76"  ry="42" fill="url(#cPuff)" opacity="0.88"/>
@@ -92,7 +92,7 @@ function CloudShape({ variant }: { variant: number }) {
 
   // v5 — 얇고 흐린 권운형 (cirrus)
   if (variant === 5) return (
-    <svg viewBox="0 0 330 52" width="100%" height="auto">
+    <svg viewBox="0 0 330 52" width="100%" height="100%">
       <ellipse cx="165" cy="46" rx="152" ry="8"  fill="url(#cBase)"/>
       <ellipse cx="62"  cy="33" rx="56"  ry="22" fill="url(#cPuff)" opacity="0.50"/>
       <ellipse cx="135" cy="29" rx="64"  ry="24" fill="url(#cPuff)" opacity="0.54"/>
@@ -107,7 +107,7 @@ function CloudShape({ variant }: { variant: number }) {
 
   // v6 — 넓은 4봉우리 적운
   if (variant === 6) return (
-    <svg viewBox="0 0 320 82" width="100%" height="auto">
+    <svg viewBox="0 0 320 82" width="100%" height="100%">
       <ellipse cx="160" cy="72" rx="145" ry="12" fill="url(#cBase)"/>
       <ellipse cx="60"  cy="50" rx="58"  ry="35" fill="url(#cPuff)" opacity="0.80"/>
       <ellipse cx="130" cy="46" rx="62"  ry="38" fill="url(#cPuff)" opacity="0.85"/>
@@ -122,7 +122,7 @@ function CloudShape({ variant }: { variant: number }) {
 
   // v7 — 왼쪽이 더 크고 높은 비대칭 구름
   if (variant === 7) return (
-    <svg viewBox="0 0 260 82" width="100%" height="auto">
+    <svg viewBox="0 0 260 82" width="100%" height="100%">
       <ellipse cx="130" cy="72" rx="118" ry="11" fill="url(#cBase)"/>
       <ellipse cx="76"  cy="46" rx="74"  ry="42" fill="url(#cPuff)" opacity="0.90"/>
       <ellipse cx="168" cy="52" rx="62"  ry="35" fill="url(#cPuff)" opacity="0.78"/>
@@ -136,7 +136,7 @@ function CloudShape({ variant }: { variant: number }) {
 
   // v8 — 단일 큰 봉우리, 수직으로 웅장
   if (variant === 8) return (
-    <svg viewBox="0 0 165 90" width="100%" height="auto">
+    <svg viewBox="0 0 165 90" width="100%" height="100%">
       <ellipse cx="82"  cy="79" rx="74"  ry="13" fill="url(#cBase)"/>
       <ellipse cx="82"  cy="54" rx="70"  ry="44" fill="url(#cPuff)" opacity="0.90"/>
       <ellipse cx="82"  cy="32" rx="52"  ry="32" fill="url(#cPuff)" opacity="0.78"/>
@@ -150,7 +150,7 @@ function CloudShape({ variant }: { variant: number }) {
 
   // v9 — 2단 레이어 구름, 상하 겹침
   if (variant === 9) return (
-    <svg viewBox="0 0 280 95" width="100%" height="auto">
+    <svg viewBox="0 0 280 95" width="100%" height="100%">
       <ellipse cx="140" cy="85" rx="128" ry="12" fill="url(#cBase)"/>
       <ellipse cx="70"  cy="65" rx="60"  ry="32" fill="url(#cPuff)" opacity="0.78"/>
       <ellipse cx="145" cy="63" rx="65"  ry="34" fill="url(#cPuff)" opacity="0.82"/>
@@ -165,7 +165,7 @@ function CloudShape({ variant }: { variant: number }) {
 
   // v10 — 왼쪽 큰 봉우리에서 오른쪽으로 흘러내리는 흘림 구름
   if (variant === 10) return (
-    <svg viewBox="0 0 345 72" width="100%" height="auto">
+    <svg viewBox="0 0 345 72" width="100%" height="100%">
       <ellipse cx="172" cy="63" rx="158" ry="10" fill="url(#cBase)"/>
       <ellipse cx="70"  cy="44" rx="66"  ry="38" fill="url(#cPuff)" opacity="0.88"/>
       <ellipse cx="70"  cy="24" rx="46"  ry="28" fill="url(#cPuff)" opacity="0.72"/>
@@ -179,7 +179,7 @@ function CloudShape({ variant }: { variant: number }) {
 
   // v11 — 빽빽하고 꽉 찬 봉우리 여러 개
   if (variant === 11) return (
-    <svg viewBox="0 0 225 78" width="100%" height="auto">
+    <svg viewBox="0 0 225 78" width="100%" height="100%">
       <ellipse cx="112" cy="68" rx="102" ry="11" fill="url(#cBase)"/>
       <ellipse cx="55"  cy="47" rx="52"  ry="30" fill="url(#cPuff)" opacity="0.85"/>
       <ellipse cx="110" cy="44" rx="54"  ry="32" fill="url(#cPuff)" opacity="0.90"/>
@@ -194,7 +194,7 @@ function CloudShape({ variant }: { variant: number }) {
 
   // v12 — 가로로 긴 중형 3봉우리
   if (variant === 12) return (
-    <svg viewBox="0 0 305 70" width="100%" height="auto">
+    <svg viewBox="0 0 305 70" width="100%" height="100%">
       <ellipse cx="152" cy="61" rx="138" ry="11" fill="url(#cBase)"/>
       <ellipse cx="68"  cy="43" rx="62"  ry="34" fill="url(#cPuff)" opacity="0.80"/>
       <ellipse cx="150" cy="40" rx="68"  ry="37" fill="url(#cPuff)" opacity="0.86"/>
@@ -208,7 +208,7 @@ function CloudShape({ variant }: { variant: number }) {
 
   // v13 — 오른쪽이 더 크고 높은 비대칭
   if (variant === 13) return (
-    <svg viewBox="0 0 265 80" width="100%" height="auto">
+    <svg viewBox="0 0 265 80" width="100%" height="100%">
       <ellipse cx="132" cy="70" rx="120" ry="11" fill="url(#cBase)"/>
       <ellipse cx="90"  cy="52" rx="60"  ry="34" fill="url(#cPuff)" opacity="0.76"/>
       <ellipse cx="188" cy="47" rx="76"  ry="43" fill="url(#cPuff)" opacity="0.92"/>
@@ -222,7 +222,7 @@ function CloudShape({ variant }: { variant: number }) {
 
   // v14 — 아주 넓은 파노라마형 5봉우리
   if (variant === 14) return (
-    <svg viewBox="0 0 420 65" width="100%" height="auto">
+    <svg viewBox="0 0 420 65" width="100%" height="100%">
       <ellipse cx="210" cy="56" rx="200" ry="10" fill="url(#cBase)"/>
       <ellipse cx="56"  cy="40" rx="54"  ry="26" fill="url(#cPuff)" opacity="0.56"/>
       <ellipse cx="130" cy="36" rx="66"  ry="29" fill="url(#cPuff)" opacity="0.62"/>
@@ -238,7 +238,7 @@ function CloudShape({ variant }: { variant: number }) {
 
   // v15 — 완만하게 굴곡진 구릉형 (rolling hills)
   if (variant === 15) return (
-    <svg viewBox="0 0 310 72" width="100%" height="auto">
+    <svg viewBox="0 0 310 72" width="100%" height="100%">
       <ellipse cx="155" cy="63" rx="140" ry="11" fill="url(#cBase)"/>
       <ellipse cx="62"  cy="46" rx="58"  ry="30" fill="url(#cPuff)" opacity="0.78"/>
       <ellipse cx="132" cy="42" rx="62"  ry="33" fill="url(#cPuff)" opacity="0.84"/>
@@ -254,7 +254,7 @@ function CloudShape({ variant }: { variant: number }) {
 
   // v16 — 소형 3봉우리 콤팩트
   if (variant === 16) return (
-    <svg viewBox="0 0 185 70" width="100%" height="auto">
+    <svg viewBox="0 0 185 70" width="100%" height="100%">
       <ellipse cx="92"  cy="61" rx="82"  ry="10" fill="url(#cBase)"/>
       <ellipse cx="52"  cy="44" rx="50"  ry="30" fill="url(#cPuff)" opacity="0.82"/>
       <ellipse cx="100" cy="41" rx="54"  ry="33" fill="url(#cPuff)" opacity="0.88"/>
@@ -267,7 +267,7 @@ function CloudShape({ variant }: { variant: number }) {
 
   // v17 — 3단 층 구름, 위로 갈수록 좁아짐
   if (variant === 17) return (
-    <svg viewBox="0 0 230 105" width="100%" height="auto">
+    <svg viewBox="0 0 230 105" width="100%" height="100%">
       <ellipse cx="115" cy="93" rx="105" ry="14" fill="url(#cBase)"/>
       <ellipse cx="62"  cy="72" rx="60"  ry="35" fill="url(#cPuff)" opacity="0.82"/>
       <ellipse cx="145" cy="70" rx="68"  ry="37" fill="url(#cPuff)" opacity="0.85"/>
@@ -283,7 +283,7 @@ function CloudShape({ variant }: { variant: number }) {
 
   // v18 — 퍼프가 간격을 두고 분산된 산개형
   if (variant === 18) return (
-    <svg viewBox="0 0 350 80" width="100%" height="auto">
+    <svg viewBox="0 0 350 80" width="100%" height="100%">
       <ellipse cx="175" cy="70" rx="160" ry="11" fill="url(#cBase)" opacity="0.70"/>
       <ellipse cx="58"  cy="50" rx="52"  ry="32" fill="url(#cPuff)" opacity="0.82"/>
       <ellipse cx="148" cy="46" rx="60"  ry="36" fill="url(#cPuff)" opacity="0.88"/>
@@ -301,7 +301,7 @@ function CloudShape({ variant }: { variant: number }) {
 
   // v19 — 납작한 층적운 (stratocumulus), 낮은 프로파일
   if (variant === 19) return (
-    <svg viewBox="0 0 360 55" width="100%" height="auto">
+    <svg viewBox="0 0 360 55" width="100%" height="100%">
       <ellipse cx="180" cy="48" rx="166" ry="9"  fill="url(#cBase)"/>
       <ellipse cx="60"  cy="36" rx="58"  ry="20" fill="url(#cPuff)" opacity="0.65"/>
       <ellipse cx="132" cy="33" rx="64"  ry="22" fill="url(#cPuff)" opacity="0.70"/>
@@ -318,7 +318,7 @@ function CloudShape({ variant }: { variant: number }) {
 
   // v0 — 기본 3봉우리 적운 (default)
   return (
-    <svg viewBox="0 0 245 82" width="100%" height="auto">
+    <svg viewBox="0 0 245 82" width="100%" height="100%">
       <ellipse cx="122" cy="72" rx="110" ry="12" fill="url(#cBase)"/>
       <ellipse cx="82"  cy="50" rx="64"  ry="38" fill="url(#cPuff)" opacity="0.82"/>
       <ellipse cx="160" cy="47" rx="70"  ry="42" fill="url(#cPuff)" opacity="0.88"/>
@@ -347,7 +347,7 @@ function MoonSVG({ phase }: { phase: number }) {
   const litPath = `M ${top} A ${r},${r},0,0,${outerSweep},${bot} ${term} Z`
 
   return (
-    <svg viewBox={`0 0 ${vb} ${vb}`} width="100%" height="auto">
+    <svg viewBox={`0 0 ${vb} ${vb}`} width="100%" height="100%">
       <defs>
         <filter id={`mgf${id}`} x="-35%" y="-35%" width="170%" height="170%">
           <feGaussianBlur stdDeviation="2.2" result="blur"/>
