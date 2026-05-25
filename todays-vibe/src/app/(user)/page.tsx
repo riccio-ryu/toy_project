@@ -8,14 +8,14 @@ export default function Home() {
     <div className="max-w-4xl mx-auto px-4 py-12">
       {/* Header */}
       <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold text-white mb-3">오늘의 운세</h1>
+        <h1 className="text-4xl font-bold text-white mb-3">오늘 운</h1>
         <p className="text-purple-300 text-lg">AI가 풀어주는 나만의 운세</p>
       </div>
 
       {/* Category sections */}
       {categories.map((category) => {
         const categoryFortunes = fortunes.filter(
-          (f) => f.category === category.id
+          (f) => f.category === category.id,
         );
         return (
           <section key={category.id} className="mb-10">
