@@ -1,7 +1,14 @@
 {
   "permissions": {
     "allow": [
-      "Bash(gh pr *)"
+      "Bash(gh pr *)",
+      "Bash(pkill -f \"next dev\")",
+      "Bash(npm run *)",
+      "Bash(curl -s -o /dev/null -w \"/ %{http_code}\\\\n/login %{http_code}\\\\n\" http://localhost:3000 http://localhost:3000/login)",
+      "Bash(curl -s http://localhost:3000)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git push *)"
     ]
   }
 }
