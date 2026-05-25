@@ -1,0 +1,35 @@
+import { initializeApp, getApps, cert, App } from "firebase-admin/app";
+import { getAuth } from "firebase-admin/auth";
+
+let adminApp: App;
+
+function getAdminApp(): App {
+  if (adminApp) return adminApp;
+
+  if (getApps().length) {
+    adminApp = getApps()[0]!;
+    return adminApp;
+  }
+
+  const projectId = process.env.FIREBASE_ADMIN_PROJECT_ID;
+  const clientEmail = process.env.FIREBASE_ADMIN_CLIENT_EMAIL;
+  const privateKey = process.env.FIREBASE_ADMIN_PRIVATE_KEY?.replace(/\\n/g, "\n");
+
+  if (!projectId || !clientEmail || !privateKey) {
+    throw new Error("Firebase Admin 환경 변수가 설정되지 않았습니다.");
+  }
+
+  adminApp = initializeApp({ credential: cert({ projectId, clientEmail, privateKey }) });
+  return adminApp;
+}
+
+export function getAdminAuth() {
+  return getAuth(getAdminApp());
+}
+
+export async function createCustomToken(
+  uid: string,
+  claims?: Record<string, unknown>
+) {
+  return getAdminAuth().createCustomToken(uid, claims);
+}
