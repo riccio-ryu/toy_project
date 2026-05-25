@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { Suspense, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signInWithToken } from "@/lib/firebase/auth";
 
-export default function AuthCompletePage() {
+function AuthCompleteInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const done = useRef(false);
@@ -19,7 +19,6 @@ export default function AuthCompletePage() {
       return;
     }
 
-    // URL에서 토큰 제거 후 로그인
     window.history.replaceState({}, "", "/auth/complete");
 
     signInWithToken(ct)
@@ -34,5 +33,13 @@ export default function AuthCompletePage() {
         <p className="text-white/60 text-sm">로그인 중...</p>
       </div>
     </div>
+  );
+}
+
+export default function AuthCompletePage() {
+  return (
+    <Suspense>
+      <AuthCompleteInner />
+    </Suspense>
   );
 }
