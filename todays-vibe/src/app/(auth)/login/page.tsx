@@ -125,24 +125,26 @@ export default function LoginPage() {
         <div className="space-y-3">
           {/* Naver */}
           <button
-            onClick={handleNaver}
-            className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg bg-[#03C75A] text-white text-sm font-semibold hover:bg-[#02b350] transition-colors"
+            disabled
+            className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg bg-[#03C75A] text-white text-sm font-semibold opacity-40 cursor-not-allowed relative"
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
               <path d="M16.273 12.845L7.376 0H0v24h7.727V11.155L16.624 24H24V0h-7.727z" />
             </svg>
             네이버로 로그인
+            <span className="ml-auto text-[10px] font-normal opacity-80">준비 중</span>
           </button>
 
           {/* Kakao */}
           <button
-            onClick={handleKakao}
-            className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg bg-[#FEE500] text-[#191919] text-sm font-semibold hover:bg-[#F0D900] transition-colors"
+            disabled
+            className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg bg-[#FEE500] text-[#191919] text-sm font-semibold opacity-40 cursor-not-allowed relative"
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 3C6.477 3 2 6.582 2 11c0 2.836 1.795 5.34 4.5 6.823L5.5 21l4.084-2.685C10.35 18.427 11.168 18.5 12 18.5c5.523 0 10-3.582 10-7.75C22 6.582 17.523 3 12 3z" />
             </svg>
             카카오로 로그인
+            <span className="ml-auto text-[10px] font-normal opacity-80">준비 중</span>
           </button>
 
           {/* Google */}
