@@ -1,5 +1,6 @@
 import { initializeApp, getApps, cert, App } from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
+import { getFirestore } from "firebase-admin/firestore";
 
 let adminApp: App;
 
@@ -25,6 +26,10 @@ function getAdminApp(): App {
 
 export function getAdminAuth() {
   return getAuth(getAdminApp());
+}
+
+export function getAdminFirestore() {
+  return getFirestore(getAdminApp());
 }
 
 export async function createCustomToken(

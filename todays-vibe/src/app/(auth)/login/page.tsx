@@ -7,6 +7,7 @@ import {
   signInWithEmail,
   signInWithGoogle,
   signInWithGithub,
+  createSession,
 } from "@/lib/firebase/auth";
 
 export default function LoginPage() {
@@ -21,8 +22,9 @@ export default function LoginPage() {
     setError("");
     setLoading(true);
     try {
-      await signInWithEmail(email, password);
-      router.push("/");
+      const result = await signInWithEmail(email, password);
+      const isAdmin = await createSession(result.user);
+      router.push(isAdmin ? "/admin" : "/");
     } catch {
       setError("이메일 또는 비밀번호가 올바르지 않습니다.");
     } finally {
@@ -33,8 +35,9 @@ export default function LoginPage() {
   async function handleGoogle() {
     setError("");
     try {
-      await signInWithGoogle();
-      router.push("/");
+      const result = await signInWithGoogle();
+      const isAdmin = await createSession(result.user);
+      router.push(isAdmin ? "/admin" : "/");
     } catch {
       setError("구글 로그인에 실패했습니다.");
     }
@@ -43,8 +46,9 @@ export default function LoginPage() {
   async function handleGithub() {
     setError("");
     try {
-      await signInWithGithub();
-      router.push("/");
+      const result = await signInWithGithub();
+      const isAdmin = await createSession(result.user);
+      router.push(isAdmin ? "/admin" : "/");
     } catch {
       setError("깃허브 로그인에 실패했습니다.");
     }

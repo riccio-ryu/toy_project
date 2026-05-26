@@ -29,6 +29,13 @@ const CARDS = [
     desc: "토큰 소모량 · 사용자별 한도 관리",
     color: "from-amber-500/20 to-orange-500/20 border-amber-400/30",
   },
+  {
+    href: "/admin/batch",
+    icon: "⚡",
+    label: "운세 배치 관리",
+    desc: "주간·월간·연간 운세 수동 생성",
+    color: "from-teal-500/20 to-cyan-500/20 border-teal-400/30",
+  },
 ];
 
 export default function AdminDashboard() {
