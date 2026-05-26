@@ -10,6 +10,7 @@ import {
   GithubAuthProvider,
   signInWithCustomToken,
   updateProfile,
+  User,
 } from "firebase/auth";
 import { getFirebaseApp } from "./config";
 
@@ -46,6 +47,25 @@ export async function signInWithToken(token: string) {
   return signInWithCustomToken(auth(), token);
 }
 
+// ─── 세션 쿠키 관리 ───────────────────────────────────────────────
+
+/** 로그인 후 서버에 세션 쿠키 생성 요청. isAdmin 반환 */
+export async function createSession(user: User): Promise<boolean> {
+  const idToken = await user.getIdToken();
+  const res = await fetch("/api/auth/session", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ idToken }),
+  });
+  if (!res.ok) {
+    throw new Error("세션 생성에 실패했습니다.");
+  }
+  const data = await res.json();
+  return data.isAdmin === true;
+}
+
+/** 로그아웃 시 Firebase Auth + 세션 쿠키 동시 제거 */
 export async function signOut() {
+  await fetch("/api/auth/session", { method: "DELETE" }).catch(() => {});
   return firebaseSignOut(auth());
 }
