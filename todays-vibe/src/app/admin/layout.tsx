@@ -2,6 +2,7 @@ import Link from "next/link";
 
 const NAV = [
   { href: "/admin", label: "대시보드", icon: "📊" },
+  { href: "/admin/batch", label: "운세 배치", icon: "⚡" },
   { href: "/admin/users", label: "회원 관리", icon: "👥" },
   { href: "/admin/menus", label: "메뉴 관리", icon: "📋" },
   { href: "/admin/stats", label: "사용 통계", icon: "📈" },
