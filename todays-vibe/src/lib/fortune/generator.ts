@@ -1,4 +1,4 @@
-import { gemini, DEFAULT_MODEL } from "@/lib/gemini/client";
+import { getGemini, DEFAULT_MODEL } from "@/lib/gemini/client";
 import { getAdminFirestore } from "@/lib/firebase/admin";
 import zodiacData from "@/data/zodiac-signs.json";
 import chineseData from "@/data/chinese-zodiac.json";
@@ -24,7 +24,7 @@ const CHINESE_ANIMALS = chineseData.animals;
 // ─── Gemini 호출 (JSON 응답) ──────────────────────────────────────────────────
 
 async function callGeminiJson<T>(prompt: string): Promise<T> {
-  const response = await gemini.models.generateContent({
+  const response = await getGemini().models.generateContent({
     model: DEFAULT_MODEL,
     contents: prompt,
     config: { responseMimeType: "application/json" },

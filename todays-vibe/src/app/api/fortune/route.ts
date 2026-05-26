@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { gemini, DEFAULT_MODEL } from "@/lib/gemini/client";
+import { getGemini, DEFAULT_MODEL } from "@/lib/gemini/client";
 import { buildPrompt } from "@/lib/claude/prompts";
 import { FortuneRequest } from "@/types/fortune";
 
@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
     // 스트림 시작 전 Gemini 연결 검증
     let stream;
     try {
-      stream = await gemini.models.generateContentStream({
+      stream = await getGemini().models.generateContentStream({
         model: DEFAULT_MODEL,
         contents: prompt,
       });
