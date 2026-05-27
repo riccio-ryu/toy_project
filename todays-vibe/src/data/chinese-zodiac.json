@@ -1,16 +1,16 @@
 {
   "animals": [
-    { "id": "rat",     "name": "쥐",   "nameEn": "Rat",     "emoji": "🐭", "years": [2020, 2008, 1996, 1984, 1972] },
-    { "id": "ox",      "name": "소",   "nameEn": "Ox",      "emoji": "🐂", "years": [2021, 2009, 1997, 1985, 1973] },
-    { "id": "tiger",   "name": "호랑이","nameEn": "Tiger",   "emoji": "🐯", "years": [2022, 2010, 1998, 1986, 1974] },
-    { "id": "rabbit",  "name": "토끼", "nameEn": "Rabbit",  "emoji": "🐰", "years": [2023, 2011, 1999, 1987, 1975] },
-    { "id": "dragon",  "name": "용",   "nameEn": "Dragon",  "emoji": "🐲", "years": [2024, 2012, 2000, 1988, 1976] },
-    { "id": "snake",   "name": "뱀",   "nameEn": "Snake",   "emoji": "🐍", "years": [2025, 2013, 2001, 1989, 1977] },
-    { "id": "horse",   "name": "말",   "nameEn": "Horse",   "emoji": "🐴", "years": [2026, 2014, 2002, 1990, 1978] },
-    { "id": "goat",    "name": "양",   "nameEn": "Goat",    "emoji": "🐑", "years": [2027, 2015, 2003, 1991, 1979] },
-    { "id": "monkey",  "name": "원숭이","nameEn": "Monkey",  "emoji": "🐒", "years": [2028, 2016, 2004, 1992, 1980] },
-    { "id": "rooster", "name": "닭",   "nameEn": "Rooster", "emoji": "🐓", "years": [2029, 2017, 2005, 1993, 1981] },
-    { "id": "dog",     "name": "개",   "nameEn": "Dog",     "emoji": "🐕", "years": [2030, 2018, 2006, 1994, 1982] },
-    { "id": "pig",     "name": "돼지", "nameEn": "Pig",     "emoji": "🐷", "years": [2031, 2019, 2007, 1995, 1983] }
+    { "id": "rat",     "name": "쥐",    "nameEn": "Rat",     "emoji": "🐭", "years": [2020, 2008, 1996, 1984, 1972, 1960, 1948, 1936] },
+    { "id": "ox",      "name": "소",    "nameEn": "Ox",      "emoji": "🐂", "years": [2021, 2009, 1997, 1985, 1973, 1961, 1949, 1937] },
+    { "id": "tiger",   "name": "호랑이","nameEn": "Tiger",   "emoji": "🐯", "years": [2022, 2010, 1998, 1986, 1974, 1962, 1950, 1938] },
+    { "id": "rabbit",  "name": "토끼",  "nameEn": "Rabbit",  "emoji": "🐰", "years": [2023, 2011, 1999, 1987, 1975, 1963, 1951, 1939] },
+    { "id": "dragon",  "name": "용",    "nameEn": "Dragon",  "emoji": "🐲", "years": [2024, 2012, 2000, 1988, 1976, 1964, 1952, 1940] },
+    { "id": "snake",   "name": "뱀",    "nameEn": "Snake",   "emoji": "🐍", "years": [2025, 2013, 2001, 1989, 1977, 1965, 1953, 1941] },
+    { "id": "horse",   "name": "말",    "nameEn": "Horse",   "emoji": "🐴", "years": [2026, 2014, 2002, 1990, 1978, 1966, 1954, 1942] },
+    { "id": "goat",    "name": "양",    "nameEn": "Goat",    "emoji": "🐑", "years": [2027, 2015, 2003, 1991, 1979, 1967, 1955, 1943] },
+    { "id": "monkey",  "name": "원숭이","nameEn": "Monkey",  "emoji": "🐒", "years": [2028, 2016, 2004, 1992, 1980, 1968, 1956, 1944] },
+    { "id": "rooster", "name": "닭",    "nameEn": "Rooster", "emoji": "🐓", "years": [2029, 2017, 2005, 1993, 1981, 1969, 1957, 1945] },
+    { "id": "dog",     "name": "개",    "nameEn": "Dog",     "emoji": "🐕", "years": [2030, 2018, 2006, 1994, 1982, 1970, 1958, 1946] },
+    { "id": "pig",     "name": "돼지",  "nameEn": "Pig",     "emoji": "🐷", "years": [2031, 2019, 2007, 1995, 1983, 1971, 1959, 1947] }
   ]
 }

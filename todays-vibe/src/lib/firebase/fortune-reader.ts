@@ -120,7 +120,3 @@ export async function getYearlyChineseFortune(
   return (snap.data()[sign] as YearlyFortune) ?? null;
 }
 
-// ─── 하위 호환 alias (기존 zodiac 페이지용) ──────────────────────
-export const getWeeklyFortune = getWeeklyZodiacFortune;
-export const getMonthlyFortune = getMonthlyZodiacFortune;
-export const getAnnualFortune = getYearlyZodiacFortune;
