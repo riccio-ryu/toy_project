@@ -1,7 +1,7 @@
 import { GoogleGenAI } from "@google/genai";
 
-// 배치(대량 호출)용: 1,500 RPD 무료
-export const BATCH_MODEL = "gemini-1.5-flash";
+// 배치(대량 호출)용
+export const BATCH_MODEL = "gemini-2.5-flash";
 // 스트리밍(유저 직접 호출)용: 품질 우선
 export const DEFAULT_MODEL = "gemini-2.5-flash";
 export const DEFAULT_MAX_TOKENS = 2000;

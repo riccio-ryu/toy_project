@@ -2,13 +2,19 @@
 
 import { getFirestore, doc, getDoc } from "firebase/firestore";
 import { getFirebaseApp } from "./config";
-import { WeeklyFortune, MonthlyFortune, AnnualFortune } from "@/types/scheduled-fortune";
+import {
+  WeeklyFortune,
+  MonthlyFortune,
+  YearlyFortune,
+} from "@/types/scheduled-fortune";
 
 function db() {
   return getFirestore(getFirebaseApp());
 }
 
 // ─── 날짜 키 헬퍼 ────────────────────────────────────────────────
+
+/** 현재 ISO 주차 키 e.g. "2026-W22" */
 export function getCurrentWeekKey(): string {
   const d = new Date();
   d.setHours(0, 0, 0, 0);
@@ -22,45 +28,99 @@ export function getCurrentWeekKey(): string {
   return `${d.getFullYear()}-W${String(week).padStart(2, "0")}`;
 }
 
+/** "2026-W22" → "2026-w-22" (Firestore 문서 ID용) */
+function toWeekDocKey(weekKey: string): string {
+  return weekKey.replace("-W", "-w-");
+}
+
+/** 현재 월 키 e.g. "2026-06" */
 export function getCurrentMonthKey(): string {
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
 }
 
+/** "2026-06" → "2026-m-06" (Firestore 문서 ID용) */
+function toMonthDocKey(monthKey: string): string {
+  const [year, month] = monthKey.split("-");
+  return `${year}-m-${month}`;
+}
+
+/** 현재 연도 */
 export function getCurrentYear(): number {
   return new Date().getFullYear();
 }
 
-// 요일 → days 키 매핑 (0=일요일)
+/** 요일 → days 키 매핑 (0=일요일) */
 const DAY_KEYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"] as const;
 export function getTodayKey() {
   return DAY_KEYS[new Date().getDay()];
 }
 
-// ─── Firestore 조회 ──────────────────────────────────────────────
-export async function getWeeklyFortune(
+// ─── 별자리 운세 조회 ────────────────────────────────────────────
+
+export async function getWeeklyZodiacFortune(
   sign: string
 ): Promise<WeeklyFortune | null> {
-  const weekKey = getCurrentWeekKey();
-  const ref = doc(db(), "fortune_weekly", `zodiac_${sign}_${weekKey}`);
+  const weekDocKey = toWeekDocKey(getCurrentWeekKey()); // "2026-w-22"
+  const ref = doc(db(), "zodiac_weekly", `zw_${weekDocKey}`);
   const snap = await getDoc(ref);
-  return snap.exists() ? (snap.data() as WeeklyFortune) : null;
+  if (!snap.exists()) return null;
+  return (snap.data()[sign] as WeeklyFortune) ?? null;
 }
 
-export async function getMonthlyFortune(
+export async function getMonthlyZodiacFortune(
   sign: string
 ): Promise<MonthlyFortune | null> {
-  const monthKey = getCurrentMonthKey();
-  const ref = doc(db(), "fortune_monthly", `zodiac_${sign}_${monthKey}`);
+  const monthDocKey = toMonthDocKey(getCurrentMonthKey()); // "2026-m-06"
+  const ref = doc(db(), "zodiac_monthly", `zm_${monthDocKey}`);
   const snap = await getDoc(ref);
-  return snap.exists() ? (snap.data() as MonthlyFortune) : null;
+  if (!snap.exists()) return null;
+  return (snap.data()[sign] as MonthlyFortune) ?? null;
 }
 
-export async function getAnnualFortune(
+export async function getYearlyZodiacFortune(
   sign: string
-): Promise<AnnualFortune | null> {
+): Promise<YearlyFortune | null> {
   const year = getCurrentYear();
-  const ref = doc(db(), "fortune_annual", `zodiac_${sign}_${year}`);
+  const ref = doc(db(), "zodiac_yearly", `zy_${year}`);
   const snap = await getDoc(ref);
-  return snap.exists() ? (snap.data() as AnnualFortune) : null;
+  if (!snap.exists()) return null;
+  return (snap.data()[sign] as YearlyFortune) ?? null;
 }
+
+// ─── 띠별 운세 조회 ──────────────────────────────────────────────
+
+export async function getWeeklyChineseFortune(
+  sign: string
+): Promise<WeeklyFortune | null> {
+  const weekDocKey = toWeekDocKey(getCurrentWeekKey());
+  const ref = doc(db(), "chinese_zodiac_weekly", `czw_${weekDocKey}`);
+  const snap = await getDoc(ref);
+  if (!snap.exists()) return null;
+  return (snap.data()[sign] as WeeklyFortune) ?? null;
+}
+
+export async function getMonthlyChineseFortune(
+  sign: string
+): Promise<MonthlyFortune | null> {
+  const monthDocKey = toMonthDocKey(getCurrentMonthKey());
+  const ref = doc(db(), "chinese_zodiac_monthly", `czm_${monthDocKey}`);
+  const snap = await getDoc(ref);
+  if (!snap.exists()) return null;
+  return (snap.data()[sign] as MonthlyFortune) ?? null;
+}
+
+export async function getYearlyChineseFortune(
+  sign: string
+): Promise<YearlyFortune | null> {
+  const year = getCurrentYear();
+  const ref = doc(db(), "chinese_zodiac_yearly", `czy_${year}`);
+  const snap = await getDoc(ref);
+  if (!snap.exists()) return null;
+  return (snap.data()[sign] as YearlyFortune) ?? null;
+}
+
+// ─── 하위 호환 alias (기존 zodiac 페이지용) ──────────────────────
+export const getWeeklyFortune = getWeeklyZodiacFortune;
+export const getMonthlyFortune = getMonthlyZodiacFortune;
+export const getAnnualFortune = getYearlyZodiacFortune;
