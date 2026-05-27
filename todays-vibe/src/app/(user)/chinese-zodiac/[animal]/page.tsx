@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import chineseData from "@/data/chinese-zodiac.json";
+import SpriteCard from "@/components/common/SpriteCard";
 import {
   getWeeklyChineseFortune,
   getMonthlyChineseFortune,
@@ -122,21 +123,30 @@ export default function ChineseZodiacAnimalPage() {
         </Link>
 
         {/* 띠 헤더 카드 */}
-        <div className={`rounded-2xl bg-white/5 border ${animalBorder} p-6 mb-6 text-center`}>
-          <div className="text-5xl mb-3">{animalInfo.emoji}</div>
-          <h1 className="text-white text-2xl font-bold">{animalInfo.name}띠</h1>
-          <p className="text-white/40 text-sm mt-1">{animalInfo.nameEn}</p>
-
-          {/* 출생연도 태그 */}
-          <div className="flex flex-wrap justify-center gap-1.5 mt-3">
-            {years.map((y) => (
-              <span
-                key={y}
-                className={`text-xs px-2 py-0.5 rounded-full border ${animalBorder} ${animalColor}`}
-              >
-                {y}년생
-              </span>
-            ))}
+        <div className={`rounded-2xl bg-white/5 border ${animalBorder} p-6 mb-6`}>
+          <div className="flex gap-5 items-center">
+            {/* 카드 이미지 */}
+            <SpriteCard
+              type="chinese"
+              id={animal}
+              className="w-24 shrink-0 aspect-[2/3] rounded-xl shadow-lg"
+            />
+            {/* 텍스트 */}
+            <div>
+              <h1 className="text-white text-2xl font-bold">{animalInfo.name}띠</h1>
+              <p className="text-white/40 text-sm mt-1">{animalInfo.nameEn}</p>
+              {/* 출생연도 태그 */}
+              <div className="flex flex-wrap gap-1.5 mt-3">
+                {years.map((y) => (
+                  <span
+                    key={y}
+                    className={`text-xs px-2 py-0.5 rounded-full border ${animalBorder} ${animalColor}`}
+                  >
+                    {y}년생
+                  </span>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
 

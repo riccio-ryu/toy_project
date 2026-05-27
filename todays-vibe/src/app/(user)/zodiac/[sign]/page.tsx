@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import zodiacData from "@/data/zodiac-signs.json";
+import SpriteCard from "@/components/common/SpriteCard";
 import {
   getWeeklyFortune,
   getMonthlyFortune,
@@ -93,16 +94,26 @@ export default function ZodiacSignPage() {
         </Link>
 
         {/* 별자리 헤더 카드 */}
-        <div className={`rounded-2xl bg-white/5 border ${elBorder} p-6 mb-6 text-center`}>
-          <div className="text-5xl mb-3">{signInfo.symbol}</div>
-          <h1 className="text-white text-2xl font-bold">{signInfo.name}</h1>
-          <p className="text-white/40 text-sm mt-1">{signInfo.dateRange}</p>
-          <div className="flex items-center justify-center gap-4 mt-3">
-            <span className={`text-xs font-medium ${elColor}`}>
-              {signInfo.elementKo}의 별자리
-            </span>
-            <span className="text-white/30 text-xs">·</span>
-            <span className="text-white/50 text-xs">지배행성 {signInfo.rulingPlanet}</span>
+        <div className={`rounded-2xl bg-white/5 border ${elBorder} p-6 mb-6`}>
+          <div className="flex gap-5 items-center">
+            {/* 카드 이미지 */}
+            <SpriteCard
+              type="zodiac"
+              id={sign}
+              className="w-24 shrink-0 aspect-[2/3] rounded-xl shadow-lg"
+            />
+            {/* 텍스트 */}
+            <div>
+              <h1 className="text-white text-2xl font-bold">{signInfo.name}</h1>
+              <p className="text-white/40 text-sm mt-1">{signInfo.dateRange}</p>
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-3">
+                <span className={`text-xs font-medium ${elColor}`}>
+                  {signInfo.elementKo}의 별자리
+                </span>
+                <span className="text-white/30 text-xs">·</span>
+                <span className="text-white/50 text-xs">지배행성 {signInfo.rulingPlanet}</span>
+              </div>
+            </div>
           </div>
         </div>
 
