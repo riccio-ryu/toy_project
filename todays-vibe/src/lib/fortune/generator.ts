@@ -53,41 +53,25 @@ async function deleteSilent(
   }
 }
 
-// ─── 주간 운세 생성 (2회 호출) ────────────────────────────────────────────────
+// ─── 주간 운세 ────────────────────────────────────────────────────────────────
 
-export async function generateWeeklyFortunes(now: Date): Promise<BatchResult> {
+export async function generateWeeklyZodiacFortunes(now: Date): Promise<BatchResult> {
   const db = getAdminFirestore();
   const { start: weekStart, end: weekEnd } = getNextWeekRange(now);
   const weekKey = getWeekKey(new Date(weekStart));
-  const weekDocKey = toWeekDocKey(weekKey); // "2026-w-22"
+  const weekDocKey = toWeekDocKey(weekKey);
   const prevWeekDocKey = getPrevWeekDocKey(weekDocKey);
 
-  const result: BatchResult = {
-    period: "weekly",
-    total: 2, // 별자리 1회 + 띠 1회
-    succeeded: 0,
-    failed: 0,
-    errors: [],
-  };
+  const result: BatchResult = { period: "주간 (별자리)", total: 1, succeeded: 0, failed: 0, errors: [] };
 
-  // ── 별자리 전체 1회 호출 ──
   try {
     const prompt = buildWeeklyZodiacPrompt(weekStart, weekEnd);
     const raw = await callGeminiJson<Record<string, object>>(prompt);
 
-    // sign별로 메타 필드 추가
     const doc: Record<string, object> = {};
     for (const id of ZODIAC_IDS) {
       if (raw[id]) {
-        doc[id] = {
-          category: "zodiac",
-          sign: id,
-          weekKey,
-          weekStart,
-          weekEnd,
-          ...raw[id],
-          generatedAt: new Date().toISOString(),
-        };
+        doc[id] = { category: "zodiac", sign: id, weekKey, weekStart, weekEnd, ...raw[id], generatedAt: new Date().toISOString() };
       }
     }
 
@@ -99,7 +83,18 @@ export async function generateWeeklyFortunes(now: Date): Promise<BatchResult> {
     result.errors.push(`zodiac: ${String(err)}`);
   }
 
-  // ── 띠 전체 1회 호출 ──
+  return result;
+}
+
+export async function generateWeeklyChineseFortunes(now: Date): Promise<BatchResult> {
+  const db = getAdminFirestore();
+  const { start: weekStart, end: weekEnd } = getNextWeekRange(now);
+  const weekKey = getWeekKey(new Date(weekStart));
+  const weekDocKey = toWeekDocKey(weekKey);
+  const prevWeekDocKey = getPrevWeekDocKey(weekDocKey);
+
+  const result: BatchResult = { period: "주간 (띠)", total: 1, succeeded: 0, failed: 0, errors: [] };
+
   try {
     const prompt = buildWeeklyChineseZodiacPrompt(weekStart, weekEnd);
     const raw = await callGeminiJson<Record<string, object>>(prompt);
@@ -107,15 +102,7 @@ export async function generateWeeklyFortunes(now: Date): Promise<BatchResult> {
     const doc: Record<string, object> = {};
     for (const id of CHINESE_IDS) {
       if (raw[id]) {
-        doc[id] = {
-          category: "chinese_zodiac",
-          sign: id,
-          weekKey,
-          weekStart,
-          weekEnd,
-          ...raw[id],
-          generatedAt: new Date().toISOString(),
-        };
+        doc[id] = { category: "chinese_zodiac", sign: id, weekKey, weekStart, weekEnd, ...raw[id], generatedAt: new Date().toISOString() };
       }
     }
 
@@ -130,23 +117,28 @@ export async function generateWeeklyFortunes(now: Date): Promise<BatchResult> {
   return result;
 }
 
-// ─── 월간 운세 생성 (2회 호출) ────────────────────────────────────────────────
+export async function generateWeeklyFortunes(now: Date): Promise<BatchResult> {
+  const r1 = await generateWeeklyZodiacFortunes(now);
+  const r2 = await generateWeeklyChineseFortunes(now);
+  return {
+    period: "weekly",
+    total: r1.total + r2.total,
+    succeeded: r1.succeeded + r2.succeeded,
+    failed: r1.failed + r2.failed,
+    errors: [...r1.errors, ...r2.errors],
+  };
+}
 
-export async function generateMonthlyFortunes(now: Date): Promise<BatchResult> {
+// ─── 월간 운세 ────────────────────────────────────────────────────────────────
+
+export async function generateMonthlyZodiacFortunes(now: Date): Promise<BatchResult> {
   const db = getAdminFirestore();
   const monthKey = getNextMonthKey(now);
-  const monthDocKey = toMonthDocKey(monthKey); // "2026-m-06"
+  const monthDocKey = toMonthDocKey(monthKey);
   const prevMonthDocKey = getPrevMonthDocKey(monthDocKey);
 
-  const result: BatchResult = {
-    period: "monthly",
-    total: 2,
-    succeeded: 0,
-    failed: 0,
-    errors: [],
-  };
+  const result: BatchResult = { period: "월간 (별자리)", total: 1, succeeded: 0, failed: 0, errors: [] };
 
-  // ── 별자리 전체 1회 호출 ──
   try {
     const prompt = buildMonthlyZodiacPrompt(monthKey);
     const raw = await callGeminiJson<Record<string, object>>(prompt);
@@ -154,13 +146,7 @@ export async function generateMonthlyFortunes(now: Date): Promise<BatchResult> {
     const doc: Record<string, object> = {};
     for (const id of ZODIAC_IDS) {
       if (raw[id]) {
-        doc[id] = {
-          category: "zodiac",
-          sign: id,
-          monthKey,
-          ...raw[id],
-          generatedAt: new Date().toISOString(),
-        };
+        doc[id] = { category: "zodiac", sign: id, monthKey, ...raw[id], generatedAt: new Date().toISOString() };
       }
     }
 
@@ -172,7 +158,17 @@ export async function generateMonthlyFortunes(now: Date): Promise<BatchResult> {
     result.errors.push(`zodiac: ${String(err)}`);
   }
 
-  // ── 띠 전체 1회 호출 ──
+  return result;
+}
+
+export async function generateMonthlyChineseFortunes(now: Date): Promise<BatchResult> {
+  const db = getAdminFirestore();
+  const monthKey = getNextMonthKey(now);
+  const monthDocKey = toMonthDocKey(monthKey);
+  const prevMonthDocKey = getPrevMonthDocKey(monthDocKey);
+
+  const result: BatchResult = { period: "월간 (띠)", total: 1, succeeded: 0, failed: 0, errors: [] };
+
   try {
     const prompt = buildMonthlyChineseZodiacPrompt(monthKey);
     const raw = await callGeminiJson<Record<string, object>>(prompt);
@@ -180,13 +176,7 @@ export async function generateMonthlyFortunes(now: Date): Promise<BatchResult> {
     const doc: Record<string, object> = {};
     for (const id of CHINESE_IDS) {
       if (raw[id]) {
-        doc[id] = {
-          category: "chinese_zodiac",
-          sign: id,
-          monthKey,
-          ...raw[id],
-          generatedAt: new Date().toISOString(),
-        };
+        doc[id] = { category: "chinese_zodiac", sign: id, monthKey, ...raw[id], generatedAt: new Date().toISOString() };
       }
     }
 
@@ -201,23 +191,28 @@ export async function generateMonthlyFortunes(now: Date): Promise<BatchResult> {
   return result;
 }
 
-// ─── 연간 운세 생성 (2회 호출) ────────────────────────────────────────────────
+export async function generateMonthlyFortunes(now: Date): Promise<BatchResult> {
+  const r1 = await generateMonthlyZodiacFortunes(now);
+  const r2 = await generateMonthlyChineseFortunes(now);
+  return {
+    period: "monthly",
+    total: r1.total + r2.total,
+    succeeded: r1.succeeded + r2.succeeded,
+    failed: r1.failed + r2.failed,
+    errors: [...r1.errors, ...r2.errors],
+  };
+}
 
-export async function generateYearlyFortunes(now: Date): Promise<BatchResult> {
+// ─── 연간 운세 ────────────────────────────────────────────────────────────────
+
+export async function generateYearlyZodiacFortunes(now: Date): Promise<BatchResult> {
   const db = getAdminFirestore();
   const year = getNextYear(now);
   const yearKey = String(year);
   const prevYearKey = getPrevYearKey(yearKey);
 
-  const result: BatchResult = {
-    period: "yearly",
-    total: 2,
-    succeeded: 0,
-    failed: 0,
-    errors: [],
-  };
+  const result: BatchResult = { period: "연간 (별자리)", total: 1, succeeded: 0, failed: 0, errors: [] };
 
-  // ── 별자리 전체 1회 호출 ──
   try {
     const prompt = buildYearlyZodiacPrompt(year);
     const raw = await callGeminiJson<Record<string, object>>(prompt);
@@ -225,13 +220,7 @@ export async function generateYearlyFortunes(now: Date): Promise<BatchResult> {
     const doc: Record<string, object> = {};
     for (const id of ZODIAC_IDS) {
       if (raw[id]) {
-        doc[id] = {
-          category: "zodiac",
-          sign: id,
-          yearKey,
-          ...raw[id],
-          generatedAt: new Date().toISOString(),
-        };
+        doc[id] = { category: "zodiac", sign: id, yearKey, ...raw[id], generatedAt: new Date().toISOString() };
       }
     }
 
@@ -243,7 +232,17 @@ export async function generateYearlyFortunes(now: Date): Promise<BatchResult> {
     result.errors.push(`zodiac: ${String(err)}`);
   }
 
-  // ── 띠 전체 1회 호출 ──
+  return result;
+}
+
+export async function generateYearlyChineseFortunes(now: Date): Promise<BatchResult> {
+  const db = getAdminFirestore();
+  const year = getNextYear(now);
+  const yearKey = String(year);
+  const prevYearKey = getPrevYearKey(yearKey);
+
+  const result: BatchResult = { period: "연간 (띠)", total: 1, succeeded: 0, failed: 0, errors: [] };
+
   try {
     const prompt = buildYearlyChineseZodiacPrompt(year);
     const raw = await callGeminiJson<Record<string, object>>(prompt);
@@ -251,13 +250,7 @@ export async function generateYearlyFortunes(now: Date): Promise<BatchResult> {
     const doc: Record<string, object> = {};
     for (const id of CHINESE_IDS) {
       if (raw[id]) {
-        doc[id] = {
-          category: "chinese_zodiac",
-          sign: id,
-          yearKey,
-          ...raw[id],
-          generatedAt: new Date().toISOString(),
-        };
+        doc[id] = { category: "chinese_zodiac", sign: id, yearKey, ...raw[id], generatedAt: new Date().toISOString() };
       }
     }
 
@@ -272,3 +265,14 @@ export async function generateYearlyFortunes(now: Date): Promise<BatchResult> {
   return result;
 }
 
+export async function generateYearlyFortunes(now: Date): Promise<BatchResult> {
+  const r1 = await generateYearlyZodiacFortunes(now);
+  const r2 = await generateYearlyChineseFortunes(now);
+  return {
+    period: "yearly",
+    total: r1.total + r2.total,
+    succeeded: r1.succeeded + r2.succeeded,
+    failed: r1.failed + r2.failed,
+    errors: [...r1.errors, ...r2.errors],
+  };
+}

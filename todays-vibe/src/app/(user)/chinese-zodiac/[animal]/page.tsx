@@ -72,6 +72,7 @@ export default function ChineseZodiacAnimalPage() {
   const [monthly, setMonthly] = useState<MonthlyFortune | null>(null);
   const [yearly, setYearly] = useState<YearlyFortune | null>(null);
   const [loading, setLoading] = useState(true);
+  const [selectedYear, setSelectedYear] = useState<number | null>(null);
 
   useEffect(() => {
     if (!animalInfo) { router.push("/chinese-zodiac"); return; }
@@ -107,8 +108,16 @@ export default function ChineseZodiacAnimalPage() {
     { id: "yearly",  label: "올해" },
   ];
 
-  // 해당 띠 출생연도 (최근 5개)
-  const years = animalInfo.years.sort((a, b) => b - a);
+  // 해당 띠 출생연도 (현재 연도 이하만, 내림차순)
+  const years = [...animalInfo.years]
+    .filter((y) => y <= getCurrentYear())
+    .sort((a, b) => b - a);
+
+  // 현재 탭에서 선택된 년도의 byBirthYear note
+  const currentFortune = tab === "yearly" ? yearly : tab === "monthly" ? monthly : weekly;
+  const birthYearNote = selectedYear
+    ? currentFortune?.byBirthYear?.[String(selectedYear)]?.note ?? null
+    : null;
 
   return (
     <div className="min-h-screen px-4 py-10">
@@ -125,26 +134,32 @@ export default function ChineseZodiacAnimalPage() {
         {/* 띠 헤더 카드 */}
         <div className={`rounded-2xl bg-white/5 border ${animalBorder} p-6 mb-6`}>
           <div className="flex gap-5 items-center">
-            {/* 카드 이미지 */}
             <SpriteCard
               type="chinese"
               id={animal}
               className="w-24 shrink-0 aspect-[2/3] rounded-xl shadow-lg"
             />
-            {/* 텍스트 */}
             <div>
               <h1 className="text-white text-2xl font-bold">{animalInfo.name}띠</h1>
               <p className="text-white/40 text-sm mt-1">{animalInfo.nameEn}</p>
-              {/* 출생연도 태그 */}
-              <div className="flex flex-wrap gap-1.5 mt-3">
-                {years.map((y) => (
-                  <span
-                    key={y}
-                    className={`text-xs px-2 py-0.5 rounded-full border ${animalBorder} ${animalColor}`}
-                  >
-                    {y}년생
-                  </span>
-                ))}
+              {/* 출생연도 선택 버튼 */}
+              <div className="mt-3">
+                <p className="text-white/30 text-xs mb-1.5">내 출생년도 선택</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {years.map((y) => (
+                    <button
+                      key={y}
+                      onClick={() => setSelectedYear(selectedYear === y ? null : y)}
+                      className={`text-xs px-2.5 py-1 rounded-full border transition-all duration-150 ${
+                        selectedYear === y
+                          ? `${animalColor} border-current bg-white/10 font-semibold`
+                          : `text-white/40 ${animalBorder} hover:text-white/70`
+                      }`}
+                    >
+                      {y}년생
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
@@ -269,6 +284,20 @@ export default function ChineseZodiacAnimalPage() {
                   </div>
                 )}
               </FortuneCard>
+            )}
+
+            {/* 출생년도별 운세 (년도 선택 시 표시) */}
+            {selectedYear && tab !== "today" && (
+              <div className={`mt-4 rounded-2xl border p-5 bg-white/5 ${animalBorder}`}>
+                <p className={`text-xs font-semibold mb-2 ${animalColor}`}>
+                  {selectedYear}년생 특별 운세
+                </p>
+                {birthYearNote ? (
+                  <p className="text-white/80 text-sm leading-relaxed">{birthYearNote}</p>
+                ) : (
+                  <p className="text-white/30 text-sm">아직 준비되지 않았어요</p>
+                )}
+              </div>
             )}
 
             {/* 럭키 아이템 */}
