@@ -23,13 +23,13 @@ export default function Home() {
               <span>{category.icon}</span>
               <span>{category.name}</span>
             </h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 items-stretch">
               {categoryFortunes.map((fortune) => {
                 const isReady = fortune.ready === true;
 
                 const card = (
                   <div
-                    className={`group relative rounded-xl backdrop-blur-sm border p-4 transition-all duration-200
+                    className={`group relative flex flex-col h-full rounded-xl backdrop-blur-sm border p-4 transition-all duration-200
                       ${isReady
                         ? "bg-white/10 border-white/10 cursor-pointer hover:-translate-y-1 hover:bg-white/15 hover:border-white/20 hover:shadow-lg hover:shadow-purple-900/40"
                         : "bg-white/5 border-white/5 cursor-not-allowed opacity-50 grayscale"
@@ -53,7 +53,7 @@ export default function Home() {
                     <h3 className="text-white font-semibold text-sm mb-1 leading-tight">
                       {fortune.nameKo}
                     </h3>
-                    <p className="text-white/50 text-xs leading-snug">
+                    <p className="text-white/50 text-xs leading-snug line-clamp-2">
                       {fortune.description}
                     </p>
                     {fortune.isAI && isReady && (

@@ -5,6 +5,7 @@ import { useEffect, useState, useId } from 'react'
 const MAX = 4_294_967_295
 function rng(s: number): number { return ((s * 1_664_525 + 1_013_904_223) >>> 0) }
 
+
 function getTimeBasedPhase(date: Date): number {
   const hour = date.getHours() + date.getMinutes() / 60
   return (0.5 + hour / 24) % 1
@@ -349,13 +350,26 @@ function MoonSVG({ phase }: { phase: number }) {
   return (
     <svg viewBox={`0 0 ${vb} ${vb}`} width="100%" height="100%">
       <defs>
-        <filter id={`mgf${id}`} x="-35%" y="-35%" width="170%" height="170%">
-          <feGaussianBlur stdDeviation="2.2" result="blur"/>
-          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        {/* 위상 모양 클리핑 마스크 */}
+        <clipPath id={`moonclip${id}`}>
+          <path d={litPath}/>
+        </clipPath>
+        {/* 달무리 헤일로 */}
+        <filter id={`mhalo${id}`} x="-80%" y="-80%" width="260%" height="260%">
+          <feGaussianBlur stdDeviation="6"/>
         </filter>
       </defs>
-      <circle cx={cx} cy={cy} r={r} fill="rgba(20, 10, 42, 0.72)"/>
-      <path d={litPath} fill="rgba(230, 220, 200, 0.88)" filter={`url(#mgf${id})`}/>
+      {/* 달무리 — 빛 부분 바깥으로 번지는 후광 */}
+      <path d={litPath} fill="rgba(255, 235, 160, 0.12)" filter={`url(#mhalo${id})`}/>
+      {/* moon.png를 위상 모양대로 클리핑 */}
+      <image
+        href="/images/moon.png"
+        x="0" y="0" width={vb} height={vb}
+        clipPath={`url(#moonclip${id})`}
+        preserveAspectRatio="xMidYMid meet"
+      />
+      {/* 어두운 오버레이 — 붕 뜨는 느낌 방지 */}
+      <path d={litPath} fill="rgba(10, 5, 25, 0.60)"/>
     </svg>
   )
 }
@@ -373,7 +387,7 @@ export default function SkyLayer() {
   }, [])
 
   const starVis = 0.7 + nightFactor * 0.3
-  const moonVis = 0.25 + nightFactor * 0.65
+  const moonVis = 0.15 + nightFactor * 0.45
 
   return (
     <div className="fixed inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 1 }} aria-hidden="true">
@@ -409,7 +423,7 @@ export default function SkyLayer() {
 
       {/* 달 */}
       {phase !== null && (
-        <div style={{ position: 'absolute', top: '10%', right: '12%', width: 'clamp(70px, 11vw, 150px)', opacity: moonVis }}>
+        <div id="moon" style={{ position: 'absolute', top: '10%', right: '12%', width: 'clamp(70px, 11vw, 150px)', opacity: moonVis }}>
           <MoonSVG phase={phase}/>
         </div>
       )}
