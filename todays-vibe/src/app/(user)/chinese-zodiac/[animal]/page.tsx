@@ -274,10 +274,10 @@ export default function ChineseZodiacAnimalPage() {
                       </div>
                     )}
                     <div className="border-t border-white/10 pt-4 space-y-3">
-                      {(Object.entries(yearly.quarters) as [string, string][]).map(([q, text]) => (
+                      {(["q1", "q2", "q3", "q4"] as const).map((q) => (
                         <div key={q}>
                           <p className={`text-xs font-medium mb-1 ${animalColor}`}>{QUARTER_KO[q]}</p>
-                          <p className="text-white/70 text-sm leading-snug">{text}</p>
+                          <p className="text-white/70 text-sm leading-snug">{yearly.quarters[q]}</p>
                         </div>
                       ))}
                     </div>
@@ -287,7 +287,7 @@ export default function ChineseZodiacAnimalPage() {
             )}
 
             {/* 출생년도별 운세 (년도 선택 시 표시) */}
-            {selectedYear && tab !== "today" && (
+            {selectedYear && (
               <div className={`mt-4 rounded-2xl border p-5 bg-white/5 ${animalBorder}`}>
                 <p className={`text-xs font-semibold mb-2 ${animalColor}`}>
                   {selectedYear}년생 특별 운세

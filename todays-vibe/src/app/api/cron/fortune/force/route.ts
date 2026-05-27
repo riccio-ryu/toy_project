@@ -25,20 +25,23 @@ export async function POST(request: NextRequest) {
   const now = new Date();
   const results: BatchResult[] = [];
 
+  // 강제 실행은 항상 현재 주기 기준으로 생성 (forceCurrentPeriod = true)
+  const CURRENT = true;
+
   try {
-    if (period === "weekly-zodiac")  results.push(await generateWeeklyZodiacFortunes(now));
-    if (period === "weekly-chinese") results.push(await generateWeeklyChineseFortunes(now));
-    if (period === "monthly-zodiac")  results.push(await generateMonthlyZodiacFortunes(now));
-    if (period === "monthly-chinese") results.push(await generateMonthlyChineseFortunes(now));
-    if (period === "yearly-zodiac")  results.push(await generateYearlyZodiacFortunes(now));
-    if (period === "yearly-chinese") results.push(await generateYearlyChineseFortunes(now));
+    if (period === "weekly-zodiac")  results.push(await generateWeeklyZodiacFortunes(now, CURRENT));
+    if (period === "weekly-chinese") results.push(await generateWeeklyChineseFortunes(now, CURRENT));
+    if (period === "monthly-zodiac")  results.push(await generateMonthlyZodiacFortunes(now, CURRENT));
+    if (period === "monthly-chinese") results.push(await generateMonthlyChineseFortunes(now, CURRENT));
+    if (period === "yearly-zodiac")  results.push(await generateYearlyZodiacFortunes(now, CURRENT));
+    if (period === "yearly-chinese") results.push(await generateYearlyChineseFortunes(now, CURRENT));
     if (period === "all") {
-      results.push(await generateWeeklyZodiacFortunes(now));
-      results.push(await generateWeeklyChineseFortunes(now));
-      results.push(await generateMonthlyZodiacFortunes(now));
-      results.push(await generateMonthlyChineseFortunes(now));
-      results.push(await generateYearlyZodiacFortunes(now));
-      results.push(await generateYearlyChineseFortunes(now));
+      results.push(await generateWeeklyZodiacFortunes(now, CURRENT));
+      results.push(await generateWeeklyChineseFortunes(now, CURRENT));
+      results.push(await generateMonthlyZodiacFortunes(now, CURRENT));
+      results.push(await generateMonthlyChineseFortunes(now, CURRENT));
+      results.push(await generateYearlyZodiacFortunes(now, CURRENT));
+      results.push(await generateYearlyChineseFortunes(now, CURRENT));
     }
 
     return Response.json({

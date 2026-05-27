@@ -13,7 +13,9 @@ import {
 import {
   getWeekKey,
   getNextWeekRange,
+  getCurrentWeekRange,
   getNextMonthKey,
+  getCurrentMonthKey,
   getNextYear,
   toWeekDocKey,
   toMonthDocKey,
@@ -55,9 +57,11 @@ async function deleteSilent(
 
 // ─── 주간 운세 ────────────────────────────────────────────────────────────────
 
-export async function generateWeeklyZodiacFortunes(now: Date): Promise<BatchResult> {
+export async function generateWeeklyZodiacFortunes(now: Date, forceCurrentPeriod = false): Promise<BatchResult> {
   const db = getAdminFirestore();
-  const { start: weekStart, end: weekEnd } = getNextWeekRange(now);
+  const { start: weekStart, end: weekEnd } = forceCurrentPeriod
+    ? getCurrentWeekRange(now)
+    : getNextWeekRange(now);
   const weekKey = getWeekKey(new Date(weekStart));
   const weekDocKey = toWeekDocKey(weekKey);
   const prevWeekDocKey = getPrevWeekDocKey(weekDocKey);
@@ -86,9 +90,11 @@ export async function generateWeeklyZodiacFortunes(now: Date): Promise<BatchResu
   return result;
 }
 
-export async function generateWeeklyChineseFortunes(now: Date): Promise<BatchResult> {
+export async function generateWeeklyChineseFortunes(now: Date, forceCurrentPeriod = false): Promise<BatchResult> {
   const db = getAdminFirestore();
-  const { start: weekStart, end: weekEnd } = getNextWeekRange(now);
+  const { start: weekStart, end: weekEnd } = forceCurrentPeriod
+    ? getCurrentWeekRange(now)
+    : getNextWeekRange(now);
   const weekKey = getWeekKey(new Date(weekStart));
   const weekDocKey = toWeekDocKey(weekKey);
   const prevWeekDocKey = getPrevWeekDocKey(weekDocKey);
@@ -117,9 +123,9 @@ export async function generateWeeklyChineseFortunes(now: Date): Promise<BatchRes
   return result;
 }
 
-export async function generateWeeklyFortunes(now: Date): Promise<BatchResult> {
-  const r1 = await generateWeeklyZodiacFortunes(now);
-  const r2 = await generateWeeklyChineseFortunes(now);
+export async function generateWeeklyFortunes(now: Date, forceCurrentPeriod = false): Promise<BatchResult> {
+  const r1 = await generateWeeklyZodiacFortunes(now, forceCurrentPeriod);
+  const r2 = await generateWeeklyChineseFortunes(now, forceCurrentPeriod);
   return {
     period: "weekly",
     total: r1.total + r2.total,
@@ -131,9 +137,9 @@ export async function generateWeeklyFortunes(now: Date): Promise<BatchResult> {
 
 // ─── 월간 운세 ────────────────────────────────────────────────────────────────
 
-export async function generateMonthlyZodiacFortunes(now: Date): Promise<BatchResult> {
+export async function generateMonthlyZodiacFortunes(now: Date, forceCurrentPeriod = false): Promise<BatchResult> {
   const db = getAdminFirestore();
-  const monthKey = getNextMonthKey(now);
+  const monthKey = forceCurrentPeriod ? getCurrentMonthKey(now) : getNextMonthKey(now);
   const monthDocKey = toMonthDocKey(monthKey);
   const prevMonthDocKey = getPrevMonthDocKey(monthDocKey);
 
@@ -161,9 +167,9 @@ export async function generateMonthlyZodiacFortunes(now: Date): Promise<BatchRes
   return result;
 }
 
-export async function generateMonthlyChineseFortunes(now: Date): Promise<BatchResult> {
+export async function generateMonthlyChineseFortunes(now: Date, forceCurrentPeriod = false): Promise<BatchResult> {
   const db = getAdminFirestore();
-  const monthKey = getNextMonthKey(now);
+  const monthKey = forceCurrentPeriod ? getCurrentMonthKey(now) : getNextMonthKey(now);
   const monthDocKey = toMonthDocKey(monthKey);
   const prevMonthDocKey = getPrevMonthDocKey(monthDocKey);
 
@@ -191,9 +197,9 @@ export async function generateMonthlyChineseFortunes(now: Date): Promise<BatchRe
   return result;
 }
 
-export async function generateMonthlyFortunes(now: Date): Promise<BatchResult> {
-  const r1 = await generateMonthlyZodiacFortunes(now);
-  const r2 = await generateMonthlyChineseFortunes(now);
+export async function generateMonthlyFortunes(now: Date, forceCurrentPeriod = false): Promise<BatchResult> {
+  const r1 = await generateMonthlyZodiacFortunes(now, forceCurrentPeriod);
+  const r2 = await generateMonthlyChineseFortunes(now, forceCurrentPeriod);
   return {
     period: "monthly",
     total: r1.total + r2.total,
@@ -205,9 +211,9 @@ export async function generateMonthlyFortunes(now: Date): Promise<BatchResult> {
 
 // ─── 연간 운세 ────────────────────────────────────────────────────────────────
 
-export async function generateYearlyZodiacFortunes(now: Date): Promise<BatchResult> {
+export async function generateYearlyZodiacFortunes(now: Date, forceCurrentPeriod = false): Promise<BatchResult> {
   const db = getAdminFirestore();
-  const year = getNextYear(now);
+  const year = forceCurrentPeriod ? now.getFullYear() : getNextYear(now);
   const yearKey = String(year);
   const prevYearKey = getPrevYearKey(yearKey);
 
@@ -235,9 +241,9 @@ export async function generateYearlyZodiacFortunes(now: Date): Promise<BatchResu
   return result;
 }
 
-export async function generateYearlyChineseFortunes(now: Date): Promise<BatchResult> {
+export async function generateYearlyChineseFortunes(now: Date, forceCurrentPeriod = false): Promise<BatchResult> {
   const db = getAdminFirestore();
-  const year = getNextYear(now);
+  const year = forceCurrentPeriod ? now.getFullYear() : getNextYear(now);
   const yearKey = String(year);
   const prevYearKey = getPrevYearKey(yearKey);
 
@@ -265,9 +271,9 @@ export async function generateYearlyChineseFortunes(now: Date): Promise<BatchRes
   return result;
 }
 
-export async function generateYearlyFortunes(now: Date): Promise<BatchResult> {
-  const r1 = await generateYearlyZodiacFortunes(now);
-  const r2 = await generateYearlyChineseFortunes(now);
+export async function generateYearlyFortunes(now: Date, forceCurrentPeriod = false): Promise<BatchResult> {
+  const r1 = await generateYearlyZodiacFortunes(now, forceCurrentPeriod);
+  const r2 = await generateYearlyChineseFortunes(now, forceCurrentPeriod);
   return {
     period: "yearly",
     total: r1.total + r2.total,
