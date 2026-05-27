@@ -1,12 +1,6 @@
 import Link from "next/link";
 import zodiacData from "@/data/zodiac-signs.json";
-
-const ELEMENT_STYLE: Record<string, string> = {
-  fire:  "from-red-500/20 to-orange-500/20 border-red-400/30",
-  earth: "from-green-500/20 to-emerald-500/20 border-green-400/30",
-  air:   "from-yellow-400/20 to-cyan-400/20 border-yellow-400/30",
-  water: "from-blue-500/20 to-indigo-500/20 border-blue-400/30",
-};
+import SpriteCard from "@/components/common/SpriteCard";
 
 export default function ZodiacPage() {
   const signs = zodiacData.zodiacSigns;
@@ -25,12 +19,18 @@ export default function ZodiacPage() {
         <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
           {signs.map((sign) => (
             <Link key={sign.id} href={`/zodiac/${sign.id}`}>
-              <div
-                className={`rounded-2xl bg-gradient-to-br ${ELEMENT_STYLE[sign.element]} backdrop-blur-sm border p-4 text-center hover:-translate-y-1 hover:shadow-lg transition-all duration-200 cursor-pointer`}
-              >
-                <div className="text-3xl mb-2">{sign.symbol}</div>
-                <p className="text-white font-semibold text-sm">{sign.name}</p>
-                <p className="text-white/40 text-xs mt-1">{sign.dateRange}</p>
+              <div className="group rounded-2xl overflow-hidden border border-white/10 hover:-translate-y-1 hover:shadow-xl hover:shadow-purple-900/40 hover:border-white/20 transition-all duration-200 cursor-pointer">
+                {/* 카드 이미지 */}
+                <SpriteCard
+                  type="zodiac"
+                  id={sign.id}
+                  className="w-full aspect-[2/3]"
+                />
+                {/* 이름 */}
+                <div className="bg-white/5 px-3 py-2 text-center">
+                  <p className="text-white font-semibold text-sm">{sign.name}</p>
+                  <p className="text-white/40 text-xs mt-0.5">{sign.dateRange}</p>
+                </div>
               </div>
             </Link>
           ))}

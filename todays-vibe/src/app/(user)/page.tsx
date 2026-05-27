@@ -24,14 +24,31 @@ export default function Home() {
               <span>{category.name}</span>
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-              {categoryFortunes.map((fortune) => (
-                <Link key={fortune.id} href={fortune.path}>
-                  <div className="group relative rounded-xl backdrop-blur-sm bg-white/10 border border-white/10 p-4 cursor-pointer transition-all duration-200 hover:-translate-y-1 hover:bg-white/15 hover:border-white/20 hover:shadow-lg hover:shadow-purple-900/40">
-                    {fortune.isPremium && (
+              {categoryFortunes.map((fortune) => {
+                const isReady = fortune.ready === true;
+
+                const card = (
+                  <div
+                    className={`group relative rounded-xl backdrop-blur-sm border p-4 transition-all duration-200
+                      ${isReady
+                        ? "bg-white/10 border-white/10 cursor-pointer hover:-translate-y-1 hover:bg-white/15 hover:border-white/20 hover:shadow-lg hover:shadow-purple-900/40"
+                        : "bg-white/5 border-white/5 cursor-not-allowed opacity-50 grayscale"
+                      }`}
+                  >
+                    {/* PRO 뱃지 */}
+                    {fortune.isPremium && isReady && (
                       <span className="absolute top-2 right-2 text-[10px] font-bold text-amber-300 bg-amber-900/50 px-1.5 py-0.5 rounded-full">
                         PRO
                       </span>
                     )}
+
+                    {/* 준비중 뱃지 */}
+                    {!isReady && (
+                      <span className="absolute top-2 right-2 text-[10px] font-medium text-white/50 bg-white/10 px-1.5 py-0.5 rounded-full">
+                        준비중
+                      </span>
+                    )}
+
                     <div className="text-3xl mb-2">{fortune.icon}</div>
                     <h3 className="text-white font-semibold text-sm mb-1 leading-tight">
                       {fortune.nameKo}
@@ -39,14 +56,22 @@ export default function Home() {
                     <p className="text-white/50 text-xs leading-snug">
                       {fortune.description}
                     </p>
-                    {fortune.isAI && (
+                    {fortune.isAI && isReady && (
                       <span className="inline-block mt-2 text-[10px] text-purple-300 bg-purple-900/50 px-1.5 py-0.5 rounded-full">
                         AI
                       </span>
                     )}
                   </div>
-                </Link>
-              ))}
+                );
+
+                return isReady ? (
+                  <Link key={fortune.id} href={fortune.path}>
+                    {card}
+                  </Link>
+                ) : (
+                  <div key={fortune.id}>{card}</div>
+                );
+              })}
             </div>
           </section>
         );

@@ -17,6 +17,7 @@
       "path": "/saju",
       "difficulty": "hard",
       "isAI": true,
+      "ready": false,
       "tags": ["인기", "정통"],
       "color": "from-amber-500 to-orange-600"
     },
@@ -31,6 +32,7 @@
       "difficulty": "expert",
       "isAI": true,
       "isPremium": true,
+      "ready": false,
       "tags": ["프리미엄", "정통"],
       "color": "from-indigo-600 to-violet-700"
     },
@@ -45,6 +47,7 @@
       "difficulty": "hard",
       "isAI": true,
       "isPremium": true,
+      "ready": false,
       "tags": ["프리미엄"],
       "color": "from-indigo-500 to-purple-700"
     },
@@ -58,6 +61,7 @@
       "path": "/tojeong",
       "difficulty": "medium",
       "isAI": false,
+      "ready": false,
       "tags": ["전통", "정통"],
       "color": "from-yellow-600 to-amber-700"
     },
@@ -71,6 +75,7 @@
       "path": "/zodiac",
       "difficulty": "easy",
       "isAI": false,
+      "ready": true,
       "tags": ["인기", "빠른"],
       "color": "from-purple-500 to-pink-500"
     },
@@ -85,6 +90,7 @@
       "difficulty": "hard",
       "isAI": true,
       "isPremium": true,
+      "ready": false,
       "tags": ["프리미엄", "서양"],
       "color": "from-blue-700 to-indigo-800"
     },
@@ -94,10 +100,11 @@
       "name": "띠별 운세",
       "category": "birthday",
       "icon": "🐉",
-      "description": "쥐띠~돼지띠 12띠 기반 월간/연간 운세",
-      "path": "/zodiac-year",
+      "description": "쥐띠~돼지띠 12띠 기반 오늘/주간/월간/연간 운세",
+      "path": "/chinese-zodiac",
       "difficulty": "easy",
       "isAI": false,
+      "ready": true,
       "tags": ["전통"],
       "color": "from-red-500 to-pink-600"
     },
@@ -111,6 +118,7 @@
       "path": "/numerology",
       "difficulty": "easy",
       "isAI": true,
+      "ready": false,
       "tags": ["신비"],
       "color": "from-blue-500 to-cyan-500"
     },
@@ -124,6 +132,7 @@
       "path": "/yuk-hyo",
       "difficulty": "medium",
       "isAI": true,
+      "ready": false,
       "tags": ["전통", "동양"],
       "color": "from-teal-500 to-emerald-600"
     },
@@ -138,6 +147,7 @@
       "difficulty": "expert",
       "isAI": true,
       "isPremium": true,
+      "ready": false,
       "tags": ["프리미엄", "동양"],
       "color": "from-cyan-600 to-teal-700"
     },
@@ -151,6 +161,7 @@
       "path": "/tarot-daily",
       "difficulty": "easy",
       "isAI": false,
+      "ready": false,
       "tags": ["인기", "빠른"],
       "color": "from-violet-500 to-purple-600"
     },
@@ -164,6 +175,7 @@
       "path": "/tarot-3cards",
       "difficulty": "medium",
       "isAI": true,
+      "ready": false,
       "tags": ["인기", "AI"],
       "color": "from-purple-600 to-pink-600"
     },
@@ -178,6 +190,7 @@
       "difficulty": "hard",
       "isAI": true,
       "isPremium": true,
+      "ready": false,
       "tags": ["프리미엄"],
       "color": "from-indigo-700 to-purple-800"
     },
@@ -191,6 +204,7 @@
       "path": "/oracle",
       "difficulty": "easy",
       "isAI": false,
+      "ready": false,
       "tags": ["힐링"],
       "color": "from-sky-400 to-blue-500"
     },
@@ -204,6 +218,7 @@
       "path": "/rune",
       "difficulty": "medium",
       "isAI": true,
+      "ready": false,
       "tags": ["신비"],
       "color": "from-slate-600 to-gray-700"
     },
@@ -217,6 +232,7 @@
       "path": "/iching",
       "difficulty": "hard",
       "isAI": true,
+      "ready": false,
       "tags": ["전통", "동양"],
       "color": "from-yellow-700 to-amber-800"
     },
@@ -230,6 +246,7 @@
       "path": "/sangaji",
       "difficulty": "easy",
       "isAI": false,
+      "ready": false,
       "tags": ["전통", "한국"],
       "color": "from-orange-700 to-amber-800"
     },
@@ -243,6 +260,7 @@
       "path": "/dream",
       "difficulty": "easy",
       "isAI": true,
+      "ready": true,
       "tags": ["인기", "AI"],
       "color": "from-blue-400 to-indigo-500"
     },
@@ -256,6 +274,7 @@
       "path": "/love-fortune",
       "difficulty": "medium",
       "isAI": true,
+      "ready": false,
       "tags": ["인기"],
       "color": "from-pink-500 to-rose-600"
     },
@@ -269,6 +288,7 @@
       "path": "/wealth-fortune",
       "difficulty": "medium",
       "isAI": true,
+      "ready": false,
       "tags": ["실용"],
       "color": "from-green-500 to-emerald-600"
     },
@@ -282,6 +302,7 @@
       "path": "/career-fortune",
       "difficulty": "medium",
       "isAI": true,
+      "ready": false,
       "tags": ["실용"],
       "color": "from-blue-600 to-indigo-700"
     },
@@ -295,6 +316,7 @@
       "path": "/health-fortune",
       "difficulty": "medium",
       "isAI": true,
+      "ready": false,
       "tags": ["실용"],
       "color": "from-green-400 to-teal-500"
     },
@@ -308,6 +330,7 @@
       "path": "/moving-fortune",
       "difficulty": "medium",
       "isAI": true,
+      "ready": false,
       "tags": ["실용", "풍수"],
       "color": "from-teal-600 to-cyan-700"
     },
@@ -321,6 +344,7 @@
       "path": "/love-compatibility",
       "difficulty": "medium",
       "isAI": true,
+      "ready": false,
       "tags": ["인기", "AI"],
       "color": "from-red-400 to-pink-500"
     },
@@ -334,6 +358,7 @@
       "path": "/name-compatibility",
       "difficulty": "easy",
       "isAI": true,
+      "ready": false,
       "tags": ["재미"],
       "color": "from-orange-400 to-red-500"
     },
@@ -347,6 +372,7 @@
       "path": "/zodiac-compatibility",
       "difficulty": "easy",
       "isAI": false,
+      "ready": false,
       "tags": ["전통"],
       "color": "from-yellow-500 to-orange-600"
     },
@@ -360,6 +386,7 @@
       "path": "/business-compatibility",
       "difficulty": "medium",
       "isAI": true,
+      "ready": false,
       "tags": ["실용", "AI"],
       "color": "from-blue-500 to-indigo-600"
     },
@@ -374,6 +401,7 @@
       "difficulty": "medium",
       "isAI": true,
       "isPremium": true,
+      "ready": false,
       "tags": ["프리미엄", "AI"],
       "color": "from-violet-600 to-purple-700"
     },
@@ -388,6 +416,7 @@
       "difficulty": "medium",
       "isAI": true,
       "isPremium": true,
+      "ready": false,
       "tags": ["프리미엄", "AI"],
       "color": "from-pink-600 to-rose-700"
     },
@@ -401,6 +430,7 @@
       "path": "/name-fortune",
       "difficulty": "medium",
       "isAI": true,
+      "ready": false,
       "tags": ["전통"],
       "color": "from-amber-500 to-yellow-600"
     }
