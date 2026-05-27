@@ -72,10 +72,6 @@ export type MonthlyFortuneDoc = Record<string, MonthlyFortune>;
 /** zodiac_yearly / czy_YYYY 문서 전체 */
 export type YearlyFortuneDoc = Record<string, YearlyFortune>;
 
-// ─── 하위 호환 alias ──────────────────────────────────────────────────────────
-/** @deprecated YearlyFortune 사용 권장 */
-export type AnnualFortune = YearlyFortune;
-
 // ─── 배치 실행 결과 ───────────────────────────────────────────────────────────
 export interface BatchResult {
   period: FortunePeriod;

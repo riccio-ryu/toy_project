@@ -2,7 +2,7 @@ import { NextRequest } from "next/server";
 import {
   generateWeeklyFortunes,
   generateMonthlyFortunes,
-  generateAnnualFortunes,
+  generateYearlyFortunes,
 } from "@/lib/fortune/generator";
 import { BatchResult } from "@/types/scheduled-fortune";
 
@@ -11,7 +11,7 @@ function isAuthorized(request: NextRequest): boolean {
   return auth === `Bearer ${process.env.CRON_SECRET}`;
 }
 
-// 강제 실행: ?period=weekly | monthly | annual | all
+// 강제 실행: ?period=weekly | monthly | yearly | all
 export async function POST(request: NextRequest) {
   if (!isAuthorized(request)) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
@@ -29,8 +29,8 @@ export async function POST(request: NextRequest) {
     if (period === "monthly" || period === "all") {
       results.push(await generateMonthlyFortunes(now));
     }
-    if (period === "annual" || period === "all") {
-      results.push(await generateAnnualFortunes(now));
+    if (period === "yearly" || period === "all") {
+      results.push(await generateYearlyFortunes(now));
     }
 
     return Response.json({

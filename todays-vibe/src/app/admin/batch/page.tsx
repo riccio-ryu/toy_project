@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-type Period = "weekly" | "monthly" | "annual" | "all";
+type Period = "weekly" | "monthly" | "yearly" | "all";
 
 interface RunResult {
   period: string;
@@ -33,7 +33,7 @@ const PERIODS: { value: Period; label: string; icon: string; desc: string }[] =
       desc: "12별자리 + 12띠 월간 생성",
     },
     {
-      value: "annual",
+      value: "yearly",
       label: "연간 운세",
       icon: "🎯",
       desc: "12별자리 + 12띠 연간 생성",

@@ -172,6 +172,3 @@ ${animalBlock}
 - lucky.keyword: 올해의 키워드 (한국어 2~3단어)`;
 }
 
-// ─── 하위 호환 alias ──────────────────────────────────────────────────────────
-export const buildAnnualZodiacPrompt = buildYearlyZodiacPrompt;
-export const buildAnnualChineseZodiacPrompt = buildYearlyChineseZodiacPrompt;

@@ -272,5 +272,3 @@ export async function generateYearlyFortunes(now: Date): Promise<BatchResult> {
   return result;
 }
 
-// ─── 하위 호환 alias ──────────────────────────────────────────────────────────
-export const generateAnnualFortunes = generateYearlyFortunes;

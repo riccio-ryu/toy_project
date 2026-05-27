@@ -6,18 +6,18 @@ import Link from "next/link";
 import zodiacData from "@/data/zodiac-signs.json";
 import SpriteCard from "@/components/common/SpriteCard";
 import {
-  getWeeklyFortune,
-  getMonthlyFortune,
-  getAnnualFortune,
+  getWeeklyZodiacFortune,
+  getMonthlyZodiacFortune,
+  getYearlyZodiacFortune,
   getTodayKey,
   getCurrentWeekKey,
   getCurrentMonthKey,
   getCurrentYear,
 } from "@/lib/firebase/fortune-reader";
-import type { WeeklyFortune, MonthlyFortune, AnnualFortune } from "@/types/scheduled-fortune";
+import type { WeeklyFortune, MonthlyFortune, YearlyFortune } from "@/types/scheduled-fortune";
 
 // ─── 타입 ─────────────────────────────────────────────────────────
-type Tab = "today" | "weekly" | "monthly" | "annual";
+type Tab = "today" | "weekly" | "monthly" | "yearly";
 
 const DAY_KO: Record<string, string> = {
   mon: "월요일", tue: "화요일", wed: "수요일",
@@ -48,20 +48,20 @@ export default function ZodiacSignPage() {
   const [tab, setTab] = useState<Tab>("today");
   const [weekly, setWeekly] = useState<WeeklyFortune | null>(null);
   const [monthly, setMonthly] = useState<MonthlyFortune | null>(null);
-  const [annual, setAnnual] = useState<AnnualFortune | null>(null);
+  const [yearly, setYearly] = useState<YearlyFortune | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!signInfo) { router.push("/zodiac"); return; }
     setLoading(true);
     Promise.all([
-      getWeeklyFortune(sign),
-      getMonthlyFortune(sign),
-      getAnnualFortune(sign),
-    ]).then(([w, m, a]) => {
+      getWeeklyZodiacFortune(sign),
+      getMonthlyZodiacFortune(sign),
+      getYearlyZodiacFortune(sign),
+    ]).then(([w, m, y]) => {
       setWeekly(w);
       setMonthly(m);
-      setAnnual(a);
+      setYearly(y);
       setLoading(false);
     });
   }, [sign, signInfo, router]);
@@ -73,7 +73,7 @@ export default function ZodiacSignPage() {
   const todayKey = getTodayKey();
   const todayText = weekly?.days?.[todayKey] ?? null;
   const lucky =
-    tab === "annual" ? (annual?.lucky ?? null) :
+    tab === "yearly" ? (yearly?.lucky ?? null) :
     tab === "monthly" ? (monthly?.lucky ?? null) :
     weekly?.lucky ?? null;
 
@@ -81,7 +81,7 @@ export default function ZodiacSignPage() {
     { id: "today",   label: "오늘" },
     { id: "weekly",  label: "이번 주" },
     { id: "monthly", label: "이번 달" },
-    { id: "annual",  label: "올해" },
+    { id: "yearly",  label: "올해" },
   ];
 
   return (
@@ -204,16 +204,16 @@ export default function ZodiacSignPage() {
             )}
 
             {/* 올해 */}
-            {tab === "annual" && (
-              <FortuneCard title={`${getCurrentYear()}년 연간 운세`} empty={!annual}>
-                {annual && (
+            {tab === "yearly" && (
+              <FortuneCard title={`${getCurrentYear()}년 연간 운세`} empty={!yearly}>
+                {yearly && (
                   <div className="space-y-4">
-                    <p className="text-white/80 leading-relaxed text-sm">{annual.content}</p>
-                    {annual.highlights?.length > 0 && (
+                    <p className="text-white/80 leading-relaxed text-sm">{yearly.content}</p>
+                    {yearly.highlights?.length > 0 && (
                       <div className="border-t border-white/10 pt-4">
                         <p className="text-white/40 text-xs mb-2">올해의 포인트</p>
                         <ul className="space-y-1.5">
-                          {annual.highlights.map((h, i) => (
+                          {yearly.highlights.map((h, i) => (
                             <li key={i} className="flex gap-2 text-sm text-white/70">
                               <span className={elColor}>✦</span>
                               <span>{h}</span>
@@ -223,7 +223,7 @@ export default function ZodiacSignPage() {
                       </div>
                     )}
                     <div className="border-t border-white/10 pt-4 space-y-3">
-                      {(Object.entries(annual.quarters) as [string, string][]).map(([q, text]) => (
+                      {(Object.entries(yearly.quarters) as [string, string][]).map(([q, text]) => (
                         <div key={q}>
                           <p className={`text-xs font-medium mb-1 ${elColor}`}>{QUARTER_KO[q]}</p>
                           <p className="text-white/70 text-sm leading-snug">{text}</p>
@@ -239,7 +239,7 @@ export default function ZodiacSignPage() {
             {lucky && (
               <div className="mt-4 rounded-2xl bg-white/5 border border-white/10 p-4">
                 <p className="text-white/40 text-xs mb-3">
-                  {tab === "annual" ? "올해의 럭키 아이템" : tab === "monthly" ? "이번 달 럭키 아이템" : "이번 주 럭키 아이템"}
+                  {tab === "yearly" ? "올해의 럭키 아이템" : tab === "monthly" ? "이번 달 럭키 아이템" : "이번 주 럭키 아이템"}
                 </p>
                 <div className="flex gap-3">
                   <LuckyBadge label="컬러" value={lucky.color} />
