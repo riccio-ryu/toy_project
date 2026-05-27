@@ -1,4 +1,4 @@
-import { getGemini, DEFAULT_MODEL } from "@/lib/gemini/client";
+import { getGemini, BATCH_MODEL } from "@/lib/gemini/client";
 import { getAdminFirestore } from "@/lib/firebase/admin";
 import zodiacData from "@/data/zodiac-signs.json";
 import chineseData from "@/data/chinese-zodiac.json";
@@ -25,7 +25,7 @@ const CHINESE_ANIMALS = chineseData.animals;
 
 async function callGeminiJson<T>(prompt: string): Promise<T> {
   const response = await getGemini().models.generateContent({
-    model: DEFAULT_MODEL,
+    model: BATCH_MODEL,
     contents: prompt,
     config: { responseMimeType: "application/json" },
   });
