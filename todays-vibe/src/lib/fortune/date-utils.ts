@@ -89,6 +89,23 @@ export function getPrevYearKey(yearKey: string): string {
   return String(parseInt(yearKey) - 1);
 }
 
+/** 이번 주 월요일부터 일요일 범위 계산 */
+export function getCurrentWeekRange(from: Date): { start: string; end: string } {
+  const day = from.getDay(); // 0=일, 1=월...
+  const daysToMonday = day === 0 ? -6 : 1 - day;
+  const monday = new Date(from);
+  monday.setDate(from.getDate() + daysToMonday);
+  const sunday = new Date(monday);
+  sunday.setDate(monday.getDate() + 6);
+  return { start: toDateString(monday), end: toDateString(sunday) };
+}
+
+/** 이번 달 키 (e.g. "2026-05") */
+export function getCurrentMonthKey(date: Date): string {
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  return `${date.getFullYear()}-${m}`;
+}
+
 /** 다음 주 월요일부터 일요일 범위 계산 */
 export function getNextWeekRange(from: Date): { start: string; end: string } {
   const day = from.getDay(); // 0=일, 1=월...

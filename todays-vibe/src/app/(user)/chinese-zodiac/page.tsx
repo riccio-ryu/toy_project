@@ -53,7 +53,7 @@ export default function ChineseZodiacPage() {
                   <div className="bg-white/5 px-3 py-2 text-center">
                     <p className="text-white font-semibold text-sm">{animal.name}띠</p>
                     <p className="text-white/40 text-xs mt-0.5">
-                      {animal.years.slice(0, 3).join(" · ")}
+                      {animal.years.filter((y) => y <= CURRENT_YEAR).slice(0, 3).join(" · ")}
                     </p>
                   </div>
                 </div>

@@ -2,7 +2,7 @@ import { NextRequest } from "next/server";
 import {
   generateWeeklyFortunes,
   generateMonthlyFortunes,
-  generateAnnualFortunes,
+  generateYearlyFortunes,
 } from "@/lib/fortune/generator";
 import {
   isSunday,
@@ -46,8 +46,8 @@ export async function GET(request: NextRequest) {
 
     // 12월 31일 → 내년 연간 운세 생성
     if (isLastDayOfYear(kstNow)) {
-      tasks.push("annual");
-      const r = await generateAnnualFortunes(kstNow);
+      tasks.push("yearly");
+      const r = await generateYearlyFortunes(kstNow);
       results.push(r);
     }
 
