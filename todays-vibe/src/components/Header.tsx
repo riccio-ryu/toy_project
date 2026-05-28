@@ -76,6 +76,14 @@ export default function Header() {
                   <p className="text-white/40 text-xs truncate">{user.email}</p>
                 </div>
                 <div className="py-1">
+                  <Link
+                    href="/mypage"
+                    onClick={() => setOpen(false)}
+                    className="flex items-center gap-2 px-4 py-2 text-sm text-white/80 hover:bg-white/5 transition-colors"
+                  >
+                    <span>👤</span> 마이페이지
+                  </Link>
+                  <div className="border-t border-white/10 my-1" />
                   <button
                     onClick={handleSignOut}
                     className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-white/5 transition-colors"

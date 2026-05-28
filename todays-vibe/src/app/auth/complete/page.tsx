@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { signInWithToken } from "@/lib/firebase/auth";
+import { signInWithToken, createSession } from "@/lib/firebase/auth";
 
 function AuthCompleteInner() {
   const router = useRouter();
@@ -22,7 +22,11 @@ function AuthCompleteInner() {
     window.history.replaceState({}, "", "/auth/complete");
 
     signInWithToken(ct)
-      .then(() => router.replace("/"))
+      .then(async (credential) => {
+        // 세션 쿠키 생성 + users/{uid} 문서 upsert
+        const isAdmin = await createSession(credential.user);
+        router.replace(isAdmin ? "/admin" : "/");
+      })
       .catch(() => router.replace("/login?error=token_failed"));
   }, [router, searchParams]);
 

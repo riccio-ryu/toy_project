@@ -73,10 +73,18 @@ export default function ChineseZodiacAnimalPage() {
   const [yearly, setYearly] = useState<YearlyFortune | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
+  const [prevAnimal, setPrevAnimal] = useState(animal);
+
+  if (prevAnimal !== animal) {
+    setPrevAnimal(animal);
+    setLoading(true);
+    setWeekly(null);
+    setMonthly(null);
+    setYearly(null);
+  }
 
   useEffect(() => {
     if (!animalInfo) { router.push("/chinese-zodiac"); return; }
-    setLoading(true);
     Promise.all([
       getWeeklyChineseFortune(animal),
       getMonthlyChineseFortune(animal),
@@ -85,6 +93,7 @@ export default function ChineseZodiacAnimalPage() {
       setWeekly(w);
       setMonthly(m);
       setYearly(y);
+    }).catch(console.error).finally(() => {
       setLoading(false);
     });
   }, [animal, animalInfo, router]);
@@ -213,17 +222,21 @@ export default function ChineseZodiacAnimalPage() {
                   <div className="space-y-4">
                     <p className="text-white/80 leading-relaxed text-sm">{weekly.summary}</p>
                     <div className="border-t border-white/10 pt-4 space-y-2">
-                      {(Object.entries(weekly.days) as [string, string][]).map(([day, text]) => (
-                        <div
-                          key={day}
-                          className={`flex gap-3 text-sm ${day === todayKey ? "opacity-100" : "opacity-60"}`}
-                        >
-                          <span className={`font-medium w-10 shrink-0 ${day === todayKey ? animalColor : "text-white/50"}`}>
-                            {DAY_KO[day]?.slice(0, 1)}요
-                          </span>
-                          <span className="text-white/70 leading-snug">{text}</span>
-                        </div>
-                      ))}
+                      {(["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const).map((day) => {
+                        const text = weekly.days[day];
+                        if (!text) return null;
+                        return (
+                          <div
+                            key={day}
+                            className={`flex gap-3 text-sm ${day === todayKey ? "opacity-100" : "opacity-60"}`}
+                          >
+                            <span className={`font-medium w-10 shrink-0 ${day === todayKey ? animalColor : "text-white/50"}`}>
+                              {DAY_KO[day]?.slice(0, 1)}요
+                            </span>
+                            <span className="text-white/70 leading-snug">{text}</span>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
                 )}
