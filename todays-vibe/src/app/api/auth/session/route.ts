@@ -1,5 +1,7 @@
 import { NextRequest } from "next/server";
 import { FieldValue } from "firebase-admin/firestore";
+import type { DocumentSnapshot } from "firebase-admin/firestore";
+import type { DecodedIdToken } from "firebase-admin/auth";
 import { getAdminAuth, getAdminFirestore } from "@/lib/firebase/admin";
 import {
   createSessionToken,
@@ -13,6 +15,56 @@ function getEnvAdminEmails(): string[] {
     .split(",")
     .map((e) => e.trim())
     .filter(Boolean);
+}
+
+// users/{uid} 문서 생성 또는 갱신 후 plan 반환
+async function upsertUserDoc(
+  uid: string,
+  email: string,
+  decoded: DecodedIdToken,
+  userDoc: DocumentSnapshot
+): Promise<UserPlan> {
+  const db = getAdminFirestore();
+
+  if (userDoc.exists) {
+    // 기존 회원 — lastLoginAt 갱신, plan 읽기
+    const data = userDoc.data()!;
+    const rawPlan = data.plan as string;
+    const expiresAt = data.planExpiresAt?.toDate() as Date | undefined;
+    const isPremiumValid = rawPlan === "premium" && (!expiresAt || expiresAt > new Date());
+
+    if (rawPlan === "premium" && expiresAt && expiresAt <= new Date()) {
+      // 만료된 프리미엄 → free로 정정
+      await db.collection("users").doc(uid).update({
+        plan: "free",
+        lastLoginAt: FieldValue.serverTimestamp(),
+      });
+      return "free";
+    }
+
+    await db.collection("users").doc(uid).update({
+      lastLoginAt: FieldValue.serverTimestamp(),
+    });
+    return isPremiumValid ? "premium" : "free";
+  }
+
+  // 신규 회원 — 문서 생성
+  const nickname =
+    decoded.name ??
+    (email ? email.split("@")[0] : null) ??
+    "사용자";
+
+  await db.collection("users").doc(uid).set({
+    uid,
+    email,
+    nickname,
+    photoURL: decoded.picture ?? "",
+    plan: "free",
+    createdAt: FieldValue.serverTimestamp(),
+    lastLoginAt: FieldValue.serverTimestamp(),
+  });
+
+  return "free";
 }
 
 // ─── POST: 로그인 후 세션 쿠키 생성 ──────────────────────────────
@@ -33,86 +85,56 @@ export async function POST(request: NextRequest) {
       ),
     ]);
 
-    const uid   = decoded.uid;
-    const email = decoded.email ?? "";
+    const uid = decoded.uid;
+
+    // ② 이메일 확보 — 토큰에 없으면 Firebase Auth에서 직접 조회
+    //    (GitHub 비공개 이메일, Google 일부 케이스 등)
+    let email = decoded.email ?? "";
     if (!email) {
-      return Response.json({ error: "이메일 정보가 없습니다." }, { status: 400 });
+      try {
+        const userRecord = await getAdminAuth().getUser(uid);
+        email = userRecord.email ?? "";
+      } catch {
+        // 이메일 없는 계정도 허용 (isAdmin = false 처리)
+      }
     }
 
-    // ② Firestore 처리 (어드민 체크 + users 문서 upsert)
+    // ③ Firestore 처리
     let isAdmin = false;
     let plan: UserPlan = "free";
 
     try {
       const db = getAdminFirestore();
 
-      const [adminDoc, userDoc] = await Promise.all([
+      const withTimeout = <T>(p: Promise<T>) =>
         Promise.race([
-          db.collection("admins").doc(email).get(),
+          p,
           new Promise<never>((_, reject) =>
-            setTimeout(() => reject(new Error("timeout")), 5000)
+            setTimeout(() => reject(new Error("Firestore timeout")), 5000)
           ),
-        ]),
-        Promise.race([
-          db.collection("users").doc(uid).get(),
-          new Promise<never>((_, reject) =>
-            setTimeout(() => reject(new Error("timeout")), 5000)
-          ),
-        ]),
-      ]);
+        ]);
 
-      // 어드민 여부
-      isAdmin = adminDoc.exists && adminDoc.data()?.allowed === true;
+      // users 문서 조회 (항상)
+      // admins 문서 조회 (이메일 있을 때만)
+      const promises: [Promise<DocumentSnapshot>, Promise<DocumentSnapshot | null>] = [
+        withTimeout(db.collection("users").doc(uid).get()),
+        email
+          ? withTimeout(db.collection("admins").doc(email).get())
+          : Promise.resolve(null),
+      ];
 
-      if (userDoc.exists) {
-        // 기존 회원 — lastLoginAt 갱신, plan 읽기
-        const data = userDoc.data()!;
-        const rawPlan = data.plan as string;
-        const expiresAt = data.planExpiresAt?.toDate() as Date | undefined;
+      const [userDoc, adminDoc] = await Promise.all(promises);
 
-        plan =
-          rawPlan === "premium" && (!expiresAt || expiresAt > new Date())
-            ? "premium"
-            : "free";
+      isAdmin = adminDoc?.exists === true && adminDoc.data()?.allowed === true;
+      plan = await upsertUserDoc(uid, email, decoded, userDoc);
 
-        // planExpiresAt 지났으면 plan 도 free로 정정
-        if (rawPlan === "premium" && expiresAt && expiresAt <= new Date()) {
-          await db.collection("users").doc(uid).update({
-            plan: "free",
-            lastLoginAt: FieldValue.serverTimestamp(),
-          });
-        } else {
-          await db.collection("users").doc(uid).update({
-            lastLoginAt: FieldValue.serverTimestamp(),
-          });
-        }
-      } else {
-        // 신규 회원 — users/{uid} 문서 생성
-        const nickname =
-          decoded.name ??
-          decoded.email?.split("@")[0] ??
-          "사용자";
-
-        await db.collection("users").doc(uid).set({
-          uid,
-          email,
-          nickname,
-          photoURL: decoded.picture ?? "",
-          plan: "free",
-          createdAt: FieldValue.serverTimestamp(),
-          lastLoginAt: FieldValue.serverTimestamp(),
-        });
-        plan = "free";
-      }
-
-      console.log("[Session] Firestore 처리 완료 — isAdmin:", isAdmin, "plan:", plan);
+      console.log("[Session] 완료 — uid:", uid, "isAdmin:", isAdmin, "plan:", plan);
     } catch (fsErr) {
-      // Firestore 연결 실패 시 env 폴백 (어드민만)
-      console.warn("[Session] Firestore 연결 실패, env 폴백:", (fsErr as Error).message);
-      isAdmin = getEnvAdminEmails().includes(email);
+      console.warn("[Session] Firestore 실패, env 폴백:", (fsErr as Error).message);
+      isAdmin = email ? getEnvAdminEmails().includes(email) : false;
     }
 
-    // ③ HMAC 세션 토큰 생성
+    // ④ HMAC 세션 토큰 발급
     const token = await createSessionToken(uid, email, isAdmin, plan);
     const response = Response.json({ status: "ok", isAdmin, plan });
     response.headers.set("Set-Cookie", buildSetCookieHeader(token));
