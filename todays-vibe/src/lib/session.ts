@@ -8,7 +8,9 @@ const EXPIRES_IN_MS = 5 * 24 * 60 * 60 * 1000; // 5일
 
 export interface SessionPayload {
   email: string;
+  uid: string;
   isAdmin: boolean;
+  plan: "free" | "premium";
   exp: number;
 }
 
@@ -45,12 +47,16 @@ function fromB64(str: string): Uint8Array<ArrayBuffer> {
 
 /** 로그인 시 세션 토큰 생성 */
 export async function createSessionToken(
+  uid: string,
   email: string,
-  isAdmin: boolean
+  isAdmin: boolean,
+  plan: "free" | "premium" = "free"
 ): Promise<string> {
   const payload: SessionPayload = {
+    uid,
     email,
     isAdmin,
+    plan,
     exp: Date.now() + EXPIRES_IN_MS,
   };
   const data = toB64(new TextEncoder().encode(JSON.stringify(payload)));
