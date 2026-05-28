@@ -38,7 +38,8 @@ export default function LoginPage() {
       const result = await signInWithGoogle();
       const isAdmin = await createSession(result.user);
       router.push(isAdmin ? "/admin" : "/");
-    } catch {
+    } catch (err) {
+      console.error("[Google] 로그인 에러:", err);
       setError("구글 로그인에 실패했습니다.");
     }
   }
@@ -49,7 +50,8 @@ export default function LoginPage() {
       const result = await signInWithGithub();
       const isAdmin = await createSession(result.user);
       router.push(isAdmin ? "/admin" : "/");
-    } catch {
+    } catch (err) {
+      console.error("[GitHub] 로그인 에러:", err);
       setError("깃허브 로그인에 실패했습니다.");
     }
   }
