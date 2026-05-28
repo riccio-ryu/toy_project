@@ -3,7 +3,7 @@
 import { useState, FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { signUpWithEmail } from "@/lib/firebase/auth";
+import { signUpWithEmail, createSession } from "@/lib/firebase/auth";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -29,7 +29,9 @@ export default function SignupPage() {
 
     setLoading(true);
     try {
-      await signUpWithEmail(email, password, nickname);
+      const credential = await signUpWithEmail(email, password, nickname);
+      // 세션 생성 + users/{uid} 문서 자동 생성
+      await createSession(credential.user);
       router.push("/");
     } catch (err: unknown) {
       const code = (err as { code?: string }).code;
