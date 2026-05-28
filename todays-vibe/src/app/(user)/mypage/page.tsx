@@ -18,6 +18,15 @@ const PLAN_LABEL: Record<string, { label: string; color: string; bg: string }> =
   admin:   { label: "ADMIN",   color: "text-purple-400", bg: "bg-purple-400/15 border border-purple-400/30" },
 };
 
+// 로그인 수단 표시 정보
+const PROVIDER_INFO: Record<string, { label: string; icon: string; color: string; bg: string }> = {
+  "password":   { label: "이메일",  icon: "✉️",  color: "text-blue-300",   bg: "bg-blue-400/10 border border-blue-400/20" },
+  "google.com": { label: "Google",  icon: "G",   color: "text-red-300",    bg: "bg-red-400/10 border border-red-400/20" },
+  "github.com": { label: "GitHub",  icon: "⌥",   color: "text-white/70",   bg: "bg-white/10 border border-white/20" },
+  "naver.com":  { label: "네이버",  icon: "N",   color: "text-green-300",  bg: "bg-green-400/10 border border-green-400/20" },
+  "kakao.com":  { label: "카카오",  icon: "K",   color: "text-yellow-300", bg: "bg-yellow-400/10 border border-yellow-400/20" },
+};
+
 const QUICK_LINKS = [
   { href: "/zodiac",         emoji: "✨", label: "별자리 운세" },
   { href: "/chinese-zodiac", emoji: "🐉", label: "띠별 운세" },
@@ -275,6 +284,27 @@ export default function MyPage() {
               {/* 이메일 */}
               <p className="text-white/40 text-sm truncate">{user.email}</p>
 
+              {/* 로그인 수단 */}
+              <div className="flex flex-wrap gap-1.5 mt-2">
+                {user.providerData.map((p) => {
+                  const info = PROVIDER_INFO[p.providerId] ?? {
+                    label: p.providerId,
+                    icon: "🔗",
+                    color: "text-white/50",
+                    bg: "bg-white/10 border border-white/20",
+                  };
+                  return (
+                    <span
+                      key={p.providerId}
+                      className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full font-medium ${info.bg} ${info.color}`}
+                    >
+                      <span className="text-[10px] leading-none">{info.icon}</span>
+                      {info.label}
+                    </span>
+                  );
+                })}
+              </div>
+
               {/* 플랜 뱃지 */}
               {roleLoading ? (
                 <div className="inline-block mt-2 h-4 w-14 bg-white/10 rounded-full animate-pulse" />
@@ -393,13 +423,21 @@ export default function MyPage() {
               <span>닉네임 변경</span>
               <span className="text-white/30 text-xs">→</span>
             </button>
-            <button
-              disabled
-              className="w-full text-left px-5 py-3 text-sm text-white/30 flex items-center justify-between cursor-not-allowed"
-            >
-              <span>비밀번호 변경</span>
-              <span className="text-white/20 text-xs">준비중</span>
-            </button>
+            {/* 이메일 로그인 사용자만 비밀번호 변경 노출 */}
+            {user.providerData.some((p) => p.providerId === "password") ? (
+              <button
+                disabled
+                className="w-full text-left px-5 py-3 text-sm text-white/30 flex items-center justify-between cursor-not-allowed"
+              >
+                <span>비밀번호 변경</span>
+                <span className="text-white/20 text-xs">준비중</span>
+              </button>
+            ) : (
+              <div className="px-5 py-3 text-sm text-white/20 flex items-center justify-between">
+                <span>비밀번호 변경</span>
+                <span className="text-white/15 text-xs">소셜 로그인 계정</span>
+              </div>
+            )}
             <button
               disabled
               className="w-full text-left px-5 py-3 text-sm text-red-400/40 flex items-center justify-between cursor-not-allowed"
