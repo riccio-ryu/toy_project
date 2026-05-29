@@ -1,10 +1,35 @@
 {
   "categories": [
-    { "id": "birthday", "name": "생년월일 운세", "icon": "📅", "count": 10 },
-    { "id": "cards",    "name": "카드/도구 점술", "icon": "🃏", "count": 7  },
-    { "id": "ai",       "name": "AI 맞춤 운세",  "icon": "💭", "count": 6  },
-    { "id": "compatibility", "name": "궁합/관계", "icon": "💕", "count": 4 },
-    { "id": "appearance",    "name": "관상/신체", "icon": "👤", "count": 3 }
+    {
+      "id": "birthday",
+      "name": "생년월일 운세",
+      "icon": "📅",
+      "count": 10
+    },
+    {
+      "id": "cards",
+      "name": "카드/도구 점술",
+      "icon": "🃏",
+      "count": 7
+    },
+    {
+      "id": "ai",
+      "name": "AI 맞춤 운세",
+      "icon": "💭",
+      "count": 6
+    },
+    {
+      "id": "compatibility",
+      "name": "궁합/관계",
+      "icon": "💕",
+      "count": 4
+    },
+    {
+      "id": "appearance",
+      "name": "관상/신체",
+      "icon": "👤",
+      "count": 3
+    }
   ],
   "fortunes": [
     {
@@ -18,7 +43,10 @@
       "difficulty": "hard",
       "isAI": true,
       "ready": false,
-      "tags": ["인기", "정통"],
+      "tags": [
+        "인기",
+        "정통"
+      ],
       "color": "from-amber-500 to-orange-600"
     },
     {
@@ -33,7 +61,10 @@
       "isAI": true,
       "isPremium": true,
       "ready": false,
-      "tags": ["프리미엄", "정통"],
+      "tags": [
+        "프리미엄",
+        "정통"
+      ],
       "color": "from-indigo-600 to-violet-700"
     },
     {
@@ -48,7 +79,9 @@
       "isAI": true,
       "isPremium": true,
       "ready": false,
-      "tags": ["프리미엄"],
+      "tags": [
+        "프리미엄"
+      ],
       "color": "from-indigo-500 to-purple-700"
     },
     {
@@ -62,7 +95,10 @@
       "difficulty": "medium",
       "isAI": false,
       "ready": false,
-      "tags": ["전통", "정통"],
+      "tags": [
+        "전통",
+        "정통"
+      ],
       "color": "from-yellow-600 to-amber-700"
     },
     {
@@ -76,7 +112,10 @@
       "difficulty": "easy",
       "isAI": false,
       "ready": true,
-      "tags": ["인기", "빠른"],
+      "tags": [
+        "인기",
+        "빠른"
+      ],
       "color": "from-purple-500 to-pink-500"
     },
     {
@@ -91,7 +130,10 @@
       "isAI": true,
       "isPremium": true,
       "ready": false,
-      "tags": ["프리미엄", "서양"],
+      "tags": [
+        "프리미엄",
+        "서양"
+      ],
       "color": "from-blue-700 to-indigo-800"
     },
     {
@@ -105,7 +147,9 @@
       "difficulty": "easy",
       "isAI": false,
       "ready": true,
-      "tags": ["전통"],
+      "tags": [
+        "전통"
+      ],
       "color": "from-red-500 to-pink-600"
     },
     {
@@ -119,7 +163,9 @@
       "difficulty": "easy",
       "isAI": true,
       "ready": false,
-      "tags": ["신비"],
+      "tags": [
+        "신비"
+      ],
       "color": "from-blue-500 to-cyan-500"
     },
     {
@@ -133,7 +179,10 @@
       "difficulty": "medium",
       "isAI": true,
       "ready": false,
-      "tags": ["전통", "동양"],
+      "tags": [
+        "전통",
+        "동양"
+      ],
       "color": "from-teal-500 to-emerald-600"
     },
     {
@@ -148,7 +197,10 @@
       "isAI": true,
       "isPremium": true,
       "ready": false,
-      "tags": ["프리미엄", "동양"],
+      "tags": [
+        "프리미엄",
+        "동양"
+      ],
       "color": "from-cyan-600 to-teal-700"
     },
     {
@@ -161,8 +213,11 @@
       "path": "/tarot-daily",
       "difficulty": "easy",
       "isAI": false,
-      "ready": false,
-      "tags": ["인기", "빠른"],
+      "ready": true,
+      "tags": [
+        "인기",
+        "빠른"
+      ],
       "color": "from-violet-500 to-purple-600"
     },
     {
@@ -175,8 +230,11 @@
       "path": "/tarot-3cards",
       "difficulty": "medium",
       "isAI": true,
-      "ready": false,
-      "tags": ["인기", "AI"],
+      "ready": true,
+      "tags": [
+        "인기",
+        "AI"
+      ],
       "color": "from-purple-600 to-pink-600"
     },
     {
@@ -191,7 +249,9 @@
       "isAI": true,
       "isPremium": true,
       "ready": false,
-      "tags": ["프리미엄"],
+      "tags": [
+        "프리미엄"
+      ],
       "color": "from-indigo-700 to-purple-800"
     },
     {
@@ -205,7 +265,9 @@
       "difficulty": "easy",
       "isAI": false,
       "ready": false,
-      "tags": ["힐링"],
+      "tags": [
+        "힐링"
+      ],
       "color": "from-sky-400 to-blue-500"
     },
     {
@@ -219,7 +281,9 @@
       "difficulty": "medium",
       "isAI": true,
       "ready": false,
-      "tags": ["신비"],
+      "tags": [
+        "신비"
+      ],
       "color": "from-slate-600 to-gray-700"
     },
     {
@@ -233,7 +297,10 @@
       "difficulty": "hard",
       "isAI": true,
       "ready": false,
-      "tags": ["전통", "동양"],
+      "tags": [
+        "전통",
+        "동양"
+      ],
       "color": "from-yellow-700 to-amber-800"
     },
     {
@@ -247,7 +314,10 @@
       "difficulty": "easy",
       "isAI": false,
       "ready": false,
-      "tags": ["전통", "한국"],
+      "tags": [
+        "전통",
+        "한국"
+      ],
       "color": "from-orange-700 to-amber-800"
     },
     {
@@ -261,7 +331,10 @@
       "difficulty": "easy",
       "isAI": true,
       "ready": true,
-      "tags": ["인기", "AI"],
+      "tags": [
+        "인기",
+        "AI"
+      ],
       "color": "from-blue-400 to-indigo-500"
     },
     {
@@ -275,7 +348,9 @@
       "difficulty": "medium",
       "isAI": true,
       "ready": false,
-      "tags": ["인기"],
+      "tags": [
+        "인기"
+      ],
       "color": "from-pink-500 to-rose-600"
     },
     {
@@ -289,7 +364,9 @@
       "difficulty": "medium",
       "isAI": true,
       "ready": false,
-      "tags": ["실용"],
+      "tags": [
+        "실용"
+      ],
       "color": "from-green-500 to-emerald-600"
     },
     {
@@ -303,7 +380,9 @@
       "difficulty": "medium",
       "isAI": true,
       "ready": false,
-      "tags": ["실용"],
+      "tags": [
+        "실용"
+      ],
       "color": "from-blue-600 to-indigo-700"
     },
     {
@@ -317,7 +396,9 @@
       "difficulty": "medium",
       "isAI": true,
       "ready": false,
-      "tags": ["실용"],
+      "tags": [
+        "실용"
+      ],
       "color": "from-green-400 to-teal-500"
     },
     {
@@ -331,7 +412,10 @@
       "difficulty": "medium",
       "isAI": true,
       "ready": false,
-      "tags": ["실용", "풍수"],
+      "tags": [
+        "실용",
+        "풍수"
+      ],
       "color": "from-teal-600 to-cyan-700"
     },
     {
@@ -345,7 +429,10 @@
       "difficulty": "medium",
       "isAI": true,
       "ready": false,
-      "tags": ["인기", "AI"],
+      "tags": [
+        "인기",
+        "AI"
+      ],
       "color": "from-red-400 to-pink-500"
     },
     {
@@ -359,7 +446,9 @@
       "difficulty": "easy",
       "isAI": true,
       "ready": false,
-      "tags": ["재미"],
+      "tags": [
+        "재미"
+      ],
       "color": "from-orange-400 to-red-500"
     },
     {
@@ -373,7 +462,9 @@
       "difficulty": "easy",
       "isAI": false,
       "ready": false,
-      "tags": ["전통"],
+      "tags": [
+        "전통"
+      ],
       "color": "from-yellow-500 to-orange-600"
     },
     {
@@ -387,7 +478,10 @@
       "difficulty": "medium",
       "isAI": true,
       "ready": false,
-      "tags": ["실용", "AI"],
+      "tags": [
+        "실용",
+        "AI"
+      ],
       "color": "from-blue-500 to-indigo-600"
     },
     {
@@ -402,7 +496,10 @@
       "isAI": true,
       "isPremium": true,
       "ready": false,
-      "tags": ["프리미엄", "AI"],
+      "tags": [
+        "프리미엄",
+        "AI"
+      ],
       "color": "from-violet-600 to-purple-700"
     },
     {
@@ -417,7 +514,10 @@
       "isAI": true,
       "isPremium": true,
       "ready": false,
-      "tags": ["프리미엄", "AI"],
+      "tags": [
+        "프리미엄",
+        "AI"
+      ],
       "color": "from-pink-600 to-rose-700"
     },
     {
@@ -431,7 +531,9 @@
       "difficulty": "medium",
       "isAI": true,
       "ready": false,
-      "tags": ["전통"],
+      "tags": [
+        "전통"
+      ],
       "color": "from-amber-500 to-yellow-600"
     }
   ]
