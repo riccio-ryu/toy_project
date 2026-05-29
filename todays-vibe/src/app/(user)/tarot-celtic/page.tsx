@@ -6,7 +6,20 @@ import Link from "next/link";
 import TarotCard from "@/components/tarot/TarotCard";
 import { drawCards, type DrawnCard } from "@/lib/tarot/utils";
 
-const POSITIONS = ["과거", "현재", "미래"] as const;
+const SELECT_COUNT = 10;
+
+const POSITION_NAMES = [
+  "현재 상황",
+  "교차하는 힘",
+  "뿌리 / 과거",
+  "최근 과거",
+  "잠재 가능성",
+  "다가오는 미래",
+  "나 자신",
+  "외부 환경",
+  "희망과 두려움",
+  "최종 결과",
+] as const;
 
 // ── 도넛 섹터 팬 스프레드 상수 ──────────────────────────────────────
 const SPREAD_COUNT = 78;
@@ -14,18 +27,42 @@ const SPAN_DEG     = 140;
 const R_INNER      = 90;
 const CARD_W       = 54;
 const CARD_H       = 90;
-const CONTAINER_H  = R_INNER + CARD_H + 28;
+const FAN_H        = R_INNER + CARD_H + 28;
+
+// ── 켈틱 크로스 레이아웃 ────────────────────────────────────────────
+// xs 카드: 54×92px  컨테이너: 260×404px
+//
+//       [5]                [10]
+// [4] [1/2] [6]            [9]
+//       [3]                [8]
+//                          [7]
+//
+const CROSS_W = 260;
+const CROSS_H = 404;
+
+const CELTIC_LAYOUT = [
+  { x: 66,  y: 156, rotate: 0  },  // 1: 현재 상황 (center)
+  { x: 66,  y: 156, rotate: 90 },  // 2: 교차하는 힘 (rotated, crosses 1)
+  { x: 66,  y: 260, rotate: 0  },  // 3: 뿌리 / 과거 (below)
+  { x: 0,   y: 156, rotate: 0  },  // 4: 최근 과거 (left)
+  { x: 66,  y: 52,  rotate: 0  },  // 5: 잠재 가능성 (above)
+  { x: 132, y: 156, rotate: 0  },  // 6: 다가오는 미래 (right)
+  { x: 206, y: 312, rotate: 0  },  // 7: 나 자신 (staff bottom)
+  { x: 206, y: 208, rotate: 0  },  // 8: 외부 환경 (staff 3rd)
+  { x: 206, y: 104, rotate: 0  },  // 9: 희망과 두려움 (staff 2nd)
+  { x: 206, y: 0,   rotate: 0  },  // 10: 최종 결과 (staff top)
+] as const;
 
 type Phase = "input" | "shuffling" | "spread" | "drawn" | "reading";
 
-export default function Tarot3CardsPage() {
+export default function TarotCelticPage() {
   const [question,        setQuestion]        = useState("");
   const [phase,           setPhase]           = useState<Phase>("input");
   const [spreadCards,     setSpreadCards]     = useState<DrawnCard[]>([]);
   const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
   const [spreadReady,     setSpreadReady]     = useState(false);
   const [drawn,           setDrawn]           = useState<DrawnCard[]>([]);
-  const [revealed,        setRevealed]        = useState([false, false, false]);
+  const [revealed,        setRevealed]        = useState<boolean[]>(Array(SELECT_COUNT).fill(false));
   const [interpretation,  setInterpretation]  = useState("");
   const [isLoading,       setIsLoading]       = useState(false);
   const interpretRef = useRef<HTMLDivElement>(null);
@@ -37,7 +74,6 @@ export default function Tarot3CardsPage() {
       setSelectedIndices([]);
       setSpreadReady(false);
       setPhase("spread");
-      // 카드 cascade 애니메이션 완료 후 spreadReady → true
       setTimeout(() => setSpreadReady(true), SPREAD_COUNT * 8 + 400);
     }, 1800);
   }
@@ -45,7 +81,7 @@ export default function Tarot3CardsPage() {
   function handleSelectCard(index: number) {
     setSelectedIndices((prev) => {
       if (prev.includes(index)) return prev.filter((i) => i !== index);
-      if (prev.length >= 3)     return prev;
+      if (prev.length >= SELECT_COUNT) return prev;
       return [...prev, index];
     });
   }
@@ -53,12 +89,12 @@ export default function Tarot3CardsPage() {
   function handleConfirmSelection() {
     const selected = selectedIndices.map((i) => spreadCards[i]);
     setDrawn(selected);
-    setRevealed([false, false, false]);
+    setRevealed(Array(SELECT_COUNT).fill(false));
     setPhase("drawn");
-    [0, 1, 2].forEach((i) => {
+    Array.from({ length: SELECT_COUNT }, (_, i) => {
       setTimeout(() => {
         setRevealed((prev) => { const n = [...prev]; n[i] = true; return n; });
-      }, 500 + i * 500);
+      }, 500 + i * 400);
     });
   }
 
@@ -68,12 +104,16 @@ export default function Tarot3CardsPage() {
     setInterpretation("");
     setTimeout(() => interpretRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 100);
     try {
-      const res = await fetch("/api/fortune/tarot", {
+      const res = await fetch("/api/fortune/tarot-celtic", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           question: question.trim() || undefined,
-          cards: drawn.map((d, i) => ({ id: d.card.id, reversed: d.reversed, position: POSITIONS[i] })),
+          cards: drawn.map((d, i) => ({
+            id:       d.card.id,
+            reversed: d.reversed,
+            position: POSITION_NAMES[i],
+          })),
         }),
       });
       if (!res.ok || !res.body) throw new Error();
@@ -97,7 +137,7 @@ export default function Tarot3CardsPage() {
     setSelectedIndices([]);
     setSpreadReady(false);
     setDrawn([]);
-    setRevealed([false, false, false]);
+    setRevealed(Array(SELECT_COUNT).fill(false));
     setInterpretation("");
   }
 
@@ -118,7 +158,7 @@ export default function Tarot3CardsPage() {
       <div className="flex items-center gap-3 mb-8">
         <Link href="/" className="text-white/40 hover:text-white/70 text-sm transition-colors">← 홈</Link>
         <span className="text-white/20">|</span>
-        <h1 className="text-white font-semibold text-lg">타로 3장 스프레드</h1>
+        <h1 className="text-white font-semibold text-lg">켈틱 크로스 타로</h1>
         <span className="ml-auto text-[10px] text-purple-300 bg-purple-900/40 px-2 py-0.5 rounded-full border border-purple-500/20">AI</span>
       </div>
 
@@ -130,14 +170,16 @@ export default function Tarot3CardsPage() {
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
             className="flex flex-col items-center gap-6"
           >
-            <p className="text-white/50 text-sm text-center">마음속으로 질문을 생각하며 카드를 뽑아보세요</p>
+            <p className="text-white/50 text-sm text-center">
+              마음속으로 질문을 생각하며 카드 10장을 뽑아보세요
+            </p>
             <div className="w-full">
               <label className="block text-white/40 text-xs mb-2">질문 (선택)</label>
               <input
                 value={question}
                 onChange={(e) => setQuestion(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleStartShuffle()}
-                placeholder="예: 올해 연애운은 어떤가요?"
+                placeholder="예: 올해 나의 방향은 어떤가요?"
                 className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/20 text-sm focus:outline-none focus:border-purple-400/50 focus:bg-white/10 transition-colors"
               />
             </div>
@@ -187,14 +229,14 @@ export default function Tarot3CardsPage() {
           >
             {/* 안내 + 카운터 */}
             <div className="flex items-center justify-between">
-              <p className="text-white/60 text-sm">카드 3장을 선택하세요</p>
+              <p className="text-white/60 text-sm">카드 10장을 선택하세요</p>
               <span className="text-purple-300 font-semibold tabular-nums">
-                {selectedIndices.length}<span className="text-white/30 font-normal"> / 3</span>
+                {selectedIndices.length}<span className="text-white/30 font-normal"> / 10</span>
               </span>
             </div>
 
             {/* ── 도넛 섹터 팬 스프레드 ────────────────────────── */}
-            <div className="relative w-full" style={{ height: CONTAINER_H }}>
+            <div className="relative w-full" style={{ height: FAN_H }}>
               {spreadCards.map((card, i) => {
                 const { x, bottomPx, deg } = cardTransform(i);
                 const isSelected = selectedIndices.includes(i);
@@ -241,45 +283,49 @@ export default function Tarot3CardsPage() {
               })}
             </div>
 
-            {/* ── 선택된 카드 하단 슬롯 ───────────────────────── */}
-            <div className="flex justify-center gap-4">
-              {POSITIONS.map((posLabel, slotIdx) => {
-                const fanIdx = selectedIndices[slotIdx];
-                const card   = fanIdx !== undefined ? spreadCards[fanIdx] : null;
+            {/* ── 선택된 카드 하단 슬롯 (5 × 2 그리드) ─────────── */}
+            <div className="flex flex-col gap-2 items-center">
+              {[0, 1].map((row) => (
+                <div key={row} className="flex gap-2">
+                  {Array.from({ length: 5 }, (_, col) => {
+                    const slotIdx = row * 5 + col;
+                    const fanIdx  = selectedIndices[slotIdx];
+                    const card    = fanIdx !== undefined ? spreadCards[fanIdx] : null;
 
-                return (
-                  <div key={slotIdx} className="flex flex-col items-center gap-1.5">
-                    <AnimatePresence mode="wait">
-                      {card ? (
-                        <motion.div
-                          key={`s${fanIdx}`}
-                          initial={{ opacity: 0, scale: 0.7, y: -20 }}
-                          animate={{ opacity: 1, scale: 1, y: 0 }}
-                          exit={{ opacity: 0, scale: 0.7, y: 10 }}
-                          transition={{ type: "spring", stiffness: 400, damping: 26 }}
-                          className="cursor-pointer hover:opacity-75 transition-opacity"
-                          onClick={() => handleSelectCard(fanIdx)}
-                        >
-                          <TarotCard cardId={card.card.id} isRevealed={false} size="xs" />
-                        </motion.div>
-                      ) : (
-                        <div
-                          key="empty"
-                          className="w-[54px] h-[92px] rounded-xl border-2 border-dashed border-white/15 flex items-center justify-center"
-                        >
-                          <span className="text-white/20 text-sm font-medium">{slotIdx + 1}</span>
-                        </div>
-                      )}
-                    </AnimatePresence>
-                    <span className="text-white/40 text-[10px]">{posLabel}</span>
-                  </div>
-                );
-              })}
+                    return (
+                      <div key={slotIdx} className="flex flex-col items-center gap-1">
+                        <AnimatePresence mode="wait">
+                          {card ? (
+                            <motion.div
+                              key={`s${fanIdx}`}
+                              initial={{ opacity: 0, scale: 0.7, y: -20 }}
+                              animate={{ opacity: 1, scale: 1, y: 0 }}
+                              exit={{ opacity: 0, scale: 0.7, y: 10 }}
+                              transition={{ type: "spring", stiffness: 400, damping: 26 }}
+                              className="cursor-pointer hover:opacity-75 transition-opacity"
+                              onClick={() => handleSelectCard(fanIdx)}
+                            >
+                              <TarotCard cardId={card.card.id} isRevealed={false} size="xs" />
+                            </motion.div>
+                          ) : (
+                            <div
+                              key="empty"
+                              className="w-[54px] h-[92px] rounded-xl border-2 border-dashed border-white/15 flex items-center justify-center"
+                            >
+                              <span className="text-white/20 text-xs font-medium">{slotIdx + 1}</span>
+                            </div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    );
+                  })}
+                </div>
+              ))}
             </div>
 
             {/* 선택 완료 버튼 */}
             <AnimatePresence>
-              {selectedIndices.length === 3 && (
+              {selectedIndices.length === SELECT_COUNT && (
                 <motion.button
                   initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
                   onClick={handleConfirmSelection}
@@ -292,38 +338,80 @@ export default function Tarot3CardsPage() {
           </motion.div>
         )}
 
-        {/* ── 4. 3장 배치 + 공개 + AI ─────────────────────────── */}
+        {/* ── 4. 켈틱 크로스 배치 + 공개 + AI ─────────────────── */}
         {(phase === "drawn" || phase === "reading") && (
           <motion.div key="drawn"
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-            className="flex flex-col items-center gap-8"
+            className="flex flex-col items-center gap-6"
           >
             {question && (
               <p className="text-white/30 text-xs text-center">&quot;{question}&quot;</p>
             )}
 
-            {/* 카드 3장 */}
-            <div className="flex justify-center gap-4">
-              {drawn.map((d, i) => (
-                <motion.div key={i}
-                  initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.12 }}
-                  className="flex flex-col items-center gap-2"
-                >
-                  <TarotCard cardId={d.card.id} isRevealed={revealed[i]} isReversed={d.reversed} size="md" />
-                  <div className="text-center">
-                    <p className="text-white/40 text-[10px]">{POSITIONS[i]}</p>
-                    {revealed[i] && (
-                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}>
-                        <p className="text-white text-[11px] font-medium leading-tight">{d.card.nameKo}</p>
-                        <p className={`text-[9px] ${d.reversed ? "text-rose-400" : "text-emerald-400"}`}>
-                          {d.reversed ? "역방향" : "정방향"}
-                        </p>
-                      </motion.div>
-                    )}
+            {/* 켈틱 크로스 레이아웃 */}
+            <div className="relative mx-auto" style={{ width: CROSS_W, height: CROSS_H }}>
+              {drawn.map((d, i) => {
+                const pos = CELTIC_LAYOUT[i];
+                return (
+                  <motion.div
+                    key={i}
+                    className="absolute"
+                    style={{
+                      left:   pos.x,
+                      top:    pos.y,
+                      zIndex: i === 1 ? 10 : i + 1,
+                    }}
+                    initial={{ opacity: 0, scale: 0.6 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: i * 0.12, type: "spring", stiffness: 300, damping: 24 }}
+                  >
+                    <div
+                      style={{
+                        transformOrigin: "27px 46px",
+                        transform:       `rotate(${pos.rotate}deg)`,
+                      }}
+                    >
+                      <TarotCard cardId={d.card.id} isRevealed={revealed[i]} isReversed={d.reversed} size="xs" />
+                    </div>
+                    <div
+                      className="absolute w-[16px] h-[16px] rounded-full bg-purple-900 border border-purple-500/60 text-white text-[9px] font-bold flex items-center justify-center"
+                      style={{ top: -8, left: i === 1 ? 58 : -8, zIndex: 20 }}
+                    >
+                      {i + 1}
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+
+            {/* 카드 정보 리스트 */}
+            <div className="w-full space-y-1.5">
+              {drawn.map((d, i) =>
+                revealed[i] ? (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    className="flex items-center gap-2 py-1.5 px-3 rounded-lg bg-white/5"
+                  >
+                    <span className="w-[16px] h-[16px] rounded-full bg-purple-900 border border-purple-500/60 text-white text-[9px] font-bold flex items-center justify-center shrink-0">
+                      {i + 1}
+                    </span>
+                    <span className="text-white/40 text-xs shrink-0">{POSITION_NAMES[i]}</span>
+                    <span className="text-white text-xs font-medium ml-auto">{d.card.nameKo}</span>
+                    <span className={`text-[10px] shrink-0 ${d.reversed ? "text-rose-400" : "text-emerald-400"}`}>
+                      {d.reversed ? "역" : "정"}
+                    </span>
+                  </motion.div>
+                ) : (
+                  <div key={i} className="flex items-center gap-2 py-1.5 px-3 rounded-lg opacity-25">
+                    <span className="w-[16px] h-[16px] rounded-full bg-white/10 text-white/40 text-[9px] font-bold flex items-center justify-center shrink-0">
+                      {i + 1}
+                    </span>
+                    <span className="text-white/30 text-xs">{POSITION_NAMES[i]}</span>
                   </div>
-                </motion.div>
-              ))}
+                )
+              )}
             </div>
 
             {/* AI 해석 버튼 */}

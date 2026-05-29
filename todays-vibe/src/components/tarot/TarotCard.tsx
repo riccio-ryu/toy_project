@@ -4,6 +4,7 @@ import { getCardFrontStyle, CARD_BACK_STYLE } from "@/lib/tarot/utils";
 
 // 사이즈: w × h (타로 카드 비율 ~1:1.75)
 const SIZE_CLASS: Record<string, string> = {
+  xs: "w-[54px] h-[92px]",
   sm: "w-[80px] h-[136px]",
   md: "w-[110px] h-[190px]",
   lg: "w-[150px] h-[262px]",
