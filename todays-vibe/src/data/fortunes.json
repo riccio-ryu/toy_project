@@ -298,7 +298,7 @@
       "path": "/tarot-full-moon",
       "difficulty": "medium",
       "isAI": true,
-      "ready": false,
+      "ready": true,
       "tags": [
         "월간",
         "AI"
