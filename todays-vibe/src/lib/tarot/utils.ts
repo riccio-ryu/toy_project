@@ -85,11 +85,10 @@ export function getCardFrontStyle(cardId: string): CSSProperties {
   };
 }
 
-// tarot-back.png: 3열 × 1행, bc3 = 3번째 열 (index 2)
+// tarot-back.png: 380×500 단일 이미지 — 카드 크기에 맞게 꽉 채움
 export const CARD_BACK_STYLE: CSSProperties = {
   backgroundImage: "url('/images/tarot/tarot-back.png')",
-  backgroundSize: "300% 100%",
-  backgroundPosition: "100% 0%",
+  backgroundSize: "100% 100%",
   backgroundRepeat: "no-repeat",
 };
 
