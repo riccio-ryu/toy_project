@@ -57,7 +57,7 @@ export default function Home() {
                       {fortune.description}
                     </p>
                     {fortune.isAI && isReady && (
-                      <span className="inline-block mt-2 text-[10px] font-medium text-purple-300 bg-purple-900/50 px-1.5 py-0.5 rounded-full">
+                      <span className="inline-block mt-2 w-fit text-[10px] font-medium text-purple-300 bg-purple-900/50 px-1.5 py-0.5 rounded-full">
                         AI
                       </span>
                     )}
