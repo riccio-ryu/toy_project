@@ -188,9 +188,17 @@ export default function Tarot3CardsPage() {
             {/* 안내 + 카운터 */}
             <div className="flex items-center justify-between">
               <p className="text-white/60 text-sm">카드 3장을 선택하세요</p>
-              <span className="text-purple-300 font-semibold tabular-nums">
-                {selectedIndices.length}<span className="text-white/30 font-normal"> / 3</span>
-              </span>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={handleStartShuffle}
+                  className="text-white/30 hover:text-white/60 text-xs transition-colors"
+                >
+                  🔀 다시 섞기
+                </button>
+                <span className="text-purple-300 font-semibold tabular-nums">
+                  {selectedIndices.length}<span className="text-white/30 font-normal"> / 3</span>
+                </span>
+              </div>
             </div>
 
             {/* ── 도넛 섹터 팬 스프레드 ────────────────────────── */}

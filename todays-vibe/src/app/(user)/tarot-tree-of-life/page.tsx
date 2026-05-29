@@ -8,17 +8,18 @@ import { drawCards, type DrawnCard } from "@/lib/tarot/utils";
 
 const SELECT_COUNT = 10;
 
-const POSITION_NAMES = [
-  "현재 상황",
-  "교차하는 힘",
-  "뿌리 / 과거",
-  "최근 과거",
-  "잠재 가능성",
-  "다가오는 미래",
-  "나 자신",
-  "외부 환경",
-  "희망과 두려움",
-  "최종 결과",
+// 카발라 세피로트 10위치
+const SEPHIROT = [
+  { name: "케테르 (왕관)",        meaning: "영적인 것" },
+  { name: "호크마 (지혜)",        meaning: "책임" },
+  { name: "비나 (이해)",          meaning: "장애물" },
+  { name: "헤세드 (자비)",        meaning: "도움을 주는 것" },
+  { name: "게부라 (힘)",          meaning: "나를 반대하는 것" },
+  { name: "티파레트 (아름다움)",   meaning: "성취할 수 있는 것" },
+  { name: "네짜흐 (승리)",        meaning: "감정 관계" },
+  { name: "호드 (영광)",          meaning: "인간관계 및 커리어" },
+  { name: "예소드 (기반)",        meaning: "무의식의 기반" },
+  { name: "말쿠트 (왕국)",        meaning: "가족들에 대해" },
 ] as const;
 
 // ── 도넛 섹터 팬 스프레드 상수 ──────────────────────────────────────
@@ -29,33 +30,36 @@ const CARD_W       = 54;
 const CARD_H       = 90;
 const FAN_H        = R_INNER + CARD_H + 28;
 
-// ── 켈틱 크로스 레이아웃 ────────────────────────────────────────────
-// xs 카드: 54×92px  컨테이너: 260×404px
+// ── 생명의 나무 레이아웃 ─────────────────────────────────────────────
+// xs 카드: 54×92px  컨테이너: 242×692px
 //
-//       [5]                [10]
-// [4] [1/2] [6]            [9]
-//       [3]                [8]
-//                          [7]
+//          [ 1 ]
+//     [ 3 ]     [ 2 ]
+//     [ 5 ]     [ 4 ]
+//          [ 6 ]
+//     [ 8 ]     [ 7 ]
+//          [ 9 ]
+//         [ 10 ]
 //
-const CROSS_W = 260;
-const CROSS_H = 404;
+const TREE_W = 242;
+const TREE_H = 692;
 
-const CELTIC_LAYOUT = [
-  { x: 66,  y: 156, rotate: 0  },  // 1: 현재 상황 (center)
-  { x: 66,  y: 156, rotate: 90 },  // 2: 교차하는 힘 (rotated, crosses 1)
-  { x: 66,  y: 260, rotate: 0  },  // 3: 뿌리 / 과거 (below)
-  { x: 0,   y: 156, rotate: 0  },  // 4: 최근 과거 (left)
-  { x: 66,  y: 52,  rotate: 0  },  // 5: 잠재 가능성 (above)
-  { x: 132, y: 156, rotate: 0  },  // 6: 다가오는 미래 (right)
-  { x: 206, y: 312, rotate: 0  },  // 7: 나 자신 (staff bottom)
-  { x: 206, y: 208, rotate: 0  },  // 8: 외부 환경 (staff 3rd)
-  { x: 206, y: 104, rotate: 0  },  // 9: 희망과 두려움 (staff 2nd)
-  { x: 206, y: 0,   rotate: 0  },  // 10: 최종 결과 (staff top)
+const TREE_LAYOUT = [
+  { x: 94,  y: 0   },  // 1: 케테르 (왕관) — top center
+  { x: 188, y: 100 },  // 2: 호크마 (지혜) — right
+  { x: 0,   y: 100 },  // 3: 비나 (이해)   — left
+  { x: 188, y: 200 },  // 4: 헤세드 (자비) — right
+  { x: 0,   y: 200 },  // 5: 게부라 (힘)   — left
+  { x: 94,  y: 300 },  // 6: 티파레트      — center
+  { x: 188, y: 400 },  // 7: 네짜흐 (승리) — right
+  { x: 0,   y: 400 },  // 8: 호드 (영광)   — left
+  { x: 94,  y: 500 },  // 9: 예소드 (기반) — center
+  { x: 94,  y: 600 },  // 10: 말쿠트 (왕국) — bottom center
 ] as const;
 
 type Phase = "input" | "shuffling" | "spread" | "drawn" | "reading";
 
-export default function TarotCelticPage() {
+export default function TarotTreeOfLifePage() {
   const [question,        setQuestion]        = useState("");
   const [phase,           setPhase]           = useState<Phase>("input");
   const [spreadCards,     setSpreadCards]     = useState<DrawnCard[]>([]);
@@ -104,7 +108,7 @@ export default function TarotCelticPage() {
     setInterpretation("");
     setTimeout(() => interpretRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 100);
     try {
-      const res = await fetch("/api/fortune/tarot-celtic", {
+      const res = await fetch("/api/fortune/tarot-tree-of-life", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -112,7 +116,8 @@ export default function TarotCelticPage() {
           cards: drawn.map((d, i) => ({
             id:       d.card.id,
             reversed: d.reversed,
-            position: POSITION_NAMES[i],
+            position: SEPHIROT[i].name,
+            meaning:  SEPHIROT[i].meaning,
           })),
         }),
       });
@@ -158,7 +163,7 @@ export default function TarotCelticPage() {
       <div className="flex items-center gap-3 mb-8">
         <Link href="/" className="text-white/40 hover:text-white/70 text-sm transition-colors">← 홈</Link>
         <span className="text-white/20">|</span>
-        <h1 className="text-white font-semibold text-lg">켈틱 크로스 타로</h1>
+        <h1 className="text-white font-semibold text-lg">생명의 나무 타로</h1>
         <span className="ml-auto text-[10px] text-purple-300 bg-purple-900/40 px-2 py-0.5 rounded-full border border-purple-500/20">AI</span>
       </div>
 
@@ -171,7 +176,7 @@ export default function TarotCelticPage() {
             className="flex flex-col items-center gap-6"
           >
             <p className="text-white/50 text-sm text-center">
-              마음속으로 질문을 생각하며 카드 10장을 뽑아보세요
+              카발라의 세피로트 10위치로 삶의 전 영역을 탐색합니다
             </p>
             <div className="w-full">
               <label className="block text-white/40 text-xs mb-2">질문 (선택)</label>
@@ -179,7 +184,7 @@ export default function TarotCelticPage() {
                 value={question}
                 onChange={(e) => setQuestion(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleStartShuffle()}
-                placeholder="예: 올해 나의 방향은 어떤가요?"
+                placeholder="예: 지금 나의 삶 전체를 보고 싶어요"
                 className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/20 text-sm focus:outline-none focus:border-purple-400/50 focus:bg-white/10 transition-colors"
               />
             </div>
@@ -227,7 +232,6 @@ export default function TarotCelticPage() {
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="flex flex-col gap-5"
           >
-            {/* 안내 + 카운터 */}
             <div className="flex items-center justify-between">
               <p className="text-white/60 text-sm">카드 10장을 선택하세요</p>
               <div className="flex items-center gap-3">
@@ -243,7 +247,7 @@ export default function TarotCelticPage() {
               </div>
             </div>
 
-            {/* ── 도넛 섹터 팬 스프레드 ────────────────────────── */}
+            {/* 도넛 섹터 팬 스프레드 */}
             <div className="relative w-full" style={{ height: FAN_H }}>
               {spreadCards.map((card, i) => {
                 const { x, bottomPx, deg } = cardTransform(i);
@@ -291,7 +295,7 @@ export default function TarotCelticPage() {
               })}
             </div>
 
-            {/* ── 선택된 카드 하단 슬롯 (5 × 2 그리드) ─────────── */}
+            {/* 선택된 카드 하단 슬롯 (5 × 2 그리드) */}
             <div className="flex flex-col gap-2 items-center">
               {[0, 1].map((row) => (
                 <div key={row} className="flex gap-2">
@@ -346,7 +350,7 @@ export default function TarotCelticPage() {
           </motion.div>
         )}
 
-        {/* ── 4. 켈틱 크로스 배치 + 공개 + AI ─────────────────── */}
+        {/* ── 4. 생명의 나무 배치 + 공개 + AI ─────────────────── */}
         {(phase === "drawn" || phase === "reading") && (
           <motion.div key="drawn"
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
@@ -356,34 +360,25 @@ export default function TarotCelticPage() {
               <p className="text-white/30 text-xs text-center">&quot;{question}&quot;</p>
             )}
 
-            {/* 켈틱 크로스 레이아웃 */}
-            <div className="relative mx-auto" style={{ width: CROSS_W, height: CROSS_H }}>
+            {/* 생명의 나무 레이아웃 */}
+            <div className="relative mx-auto" style={{ width: TREE_W, height: TREE_H }}>
               {drawn.map((d, i) => {
-                const pos = CELTIC_LAYOUT[i];
+                const pos = TREE_LAYOUT[i];
                 return (
                   <motion.div
                     key={i}
                     className="absolute"
-                    style={{
-                      left:   pos.x,
-                      top:    pos.y,
-                      zIndex: i === 1 ? 10 : i + 1,
-                    }}
+                    style={{ left: pos.x, top: pos.y, zIndex: i + 1 }}
                     initial={{ opacity: 0, scale: 0.6 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: i * 0.12, type: "spring", stiffness: 300, damping: 24 }}
                   >
+                    <TarotCard cardId={d.card.id} isRevealed={revealed[i]} isReversed={d.reversed} size="xs" />
+
+                    {/* 번호 뱃지 */}
                     <div
-                      style={{
-                        transformOrigin: "27px 46px",
-                        transform:       `rotate(${pos.rotate}deg)`,
-                      }}
-                    >
-                      <TarotCard cardId={d.card.id} isRevealed={revealed[i]} isReversed={d.reversed} size="xs" />
-                    </div>
-                    <div
-                      className="absolute w-[16px] h-[16px] rounded-full bg-purple-900 border border-purple-500/60 text-white text-[9px] font-bold flex items-center justify-center"
-                      style={{ top: -8, left: i === 1 ? 58 : -8, zIndex: 20 }}
+                      className="absolute -top-2 -left-2 w-[16px] h-[16px] rounded-full bg-emerald-900 border border-emerald-500/60 text-white text-[9px] font-bold flex items-center justify-center"
+                      style={{ zIndex: 20 }}
                     >
                       {i + 1}
                     </div>
@@ -402,11 +397,14 @@ export default function TarotCelticPage() {
                     animate={{ opacity: 1, x: 0 }}
                     className="flex items-center gap-2 py-1.5 px-3 rounded-lg bg-white/5"
                   >
-                    <span className="w-[16px] h-[16px] rounded-full bg-purple-900 border border-purple-500/60 text-white text-[9px] font-bold flex items-center justify-center shrink-0">
+                    <span className="w-[16px] h-[16px] rounded-full bg-emerald-900 border border-emerald-500/60 text-white text-[9px] font-bold flex items-center justify-center shrink-0">
                       {i + 1}
                     </span>
-                    <span className="text-white/40 text-xs shrink-0">{POSITION_NAMES[i]}</span>
-                    <span className="text-white text-xs font-medium ml-auto">{d.card.nameKo}</span>
+                    <div className="flex flex-col min-w-0">
+                      <span className="text-white/50 text-[10px] leading-none">{SEPHIROT[i].name}</span>
+                      <span className="text-white/30 text-[9px] leading-none mt-0.5">{SEPHIROT[i].meaning}</span>
+                    </div>
+                    <span className="text-white text-xs font-medium ml-auto shrink-0">{d.card.nameKo}</span>
                     <span className={`text-[10px] shrink-0 ${d.reversed ? "text-rose-400" : "text-emerald-400"}`}>
                       {d.reversed ? "역" : "정"}
                     </span>
@@ -416,7 +414,7 @@ export default function TarotCelticPage() {
                     <span className="w-[16px] h-[16px] rounded-full bg-white/10 text-white/40 text-[9px] font-bold flex items-center justify-center shrink-0">
                       {i + 1}
                     </span>
-                    <span className="text-white/30 text-xs">{POSITION_NAMES[i]}</span>
+                    <span className="text-white/30 text-xs">{SEPHIROT[i].name}</span>
                   </div>
                 )
               )}

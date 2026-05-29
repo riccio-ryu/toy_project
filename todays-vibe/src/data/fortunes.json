@@ -264,7 +264,7 @@
       "path": "/tarot-horseshoe",
       "difficulty": "medium",
       "isAI": true,
-      "ready": false,
+      "ready": true,
       "tags": [
         "AI"
       ],
@@ -280,7 +280,8 @@
       "path": "/tarot-tree-of-life",
       "difficulty": "hard",
       "isAI": true,
-      "ready": false,
+      "isPremium": true,
+      "ready": true,
       "tags": [
         "심층",
         "AI"
