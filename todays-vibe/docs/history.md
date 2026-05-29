@@ -4,6 +4,16 @@
 
 ## 2026-05-29
 
+- 켈틱 크로스 타로 페이지 구현 (`src/app/(user)/tarot-celtic/page.tsx`) — 78장 팬 스프레드에서 10장 선택, Celtic Cross 배열(카드 2 교차 90° 회전), 포지션 리스트, AI 해석 (PRO 뱃지)
+- 생명의 나무 타로 페이지 구현 (`src/app/(user)/tarot-tree-of-life/page.tsx`) — 카발라 세피로트 10위치 배열, 세피로트명·의미 이중 표시, PRO 뱃지
+- 말발굽 타로 페이지 구현 (`src/app/(user)/tarot-horseshoe/page.tsx`) — 5장 호 형태 배열(현재·방향·장애물·지략·결과), AI 해석
+- 보름달 타로 페이지 구현 (`src/app/(user)/tarot-full-moon/page.tsx`) — 7장 마름모 배열, 중심 카드(7번 예상 결과)를 보름달 에너지로 강조(하늘색 뱃지), AI 해석
+- 타로 API 라우트 4종 추가 (`tarot-celtic`, `tarot-tree-of-life`, `tarot-horseshoe`, `tarot-full-moon`) — Gemini 스트리밍, 스프레드별 포지션 프롬프트
+- 타로 스프레드 카드 선택 UX 개선 — 선택 시 팬에서 사라지고 하단 슬롯에 순서대로 배치, 슬롯 클릭 시 해제 및 팬 재등장 (`spreadReady` 플래그로 cascade 딜레이 스킵)
+- 스프레드 단계 🔀 다시 섞기 버튼 추가 — 타로 3장·켈틱·생명의 나무·말발굽·보름달 전 페이지 공통 적용
+- `TarotCard` xs 사이즈 추가 (54×92px) — 팬 스프레드 및 하단 슬롯용
+- `fortunes.json` 켈틱·생명의 나무·말발굽·보름달 타로 `ready: true` 활성화, 생명의 나무 `isPremium: true` 추가
+
 - 소셜 로그인(Google/GitHub) 운영 환경 팝업 차단 버그 수정 (`next.config.ts`) — Vercel 프로덕션에서 `Cross-Origin-Opener-Policy` 헤더가 Firebase `signInWithPopup` 팝업을 차단하는 문제 확인, `same-origin-allow-popups` 헤더 추가로 해결
 - Google/GitHub 로그인 `catch` 에러 로깅 추가 (`src/app/(auth)/login/page.tsx`) — `auth/popup-blocked` 에러 진단을 위한 `console.error` 추가
 - Google/GitHub 소셜 로그인 email 미저장 원인 분석 — Firebase Email Enumeration Protection 비활성화, Google Cloud Console OAuth 동의 화면 범위(`userinfo.email`, `userinfo.profile`) 추가, Firebase 승인 도메인에 운영 서버(`todays-vibe.vercel.app`) 추가
