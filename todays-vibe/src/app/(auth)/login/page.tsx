@@ -1,13 +1,12 @@
 "use client";
 
-import { useState, useEffect, FormEvent } from "react";
+import { useState, FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   signInWithEmail,
   signInWithGoogle,
   signInWithGithub,
-  getOAuthRedirectResult,
   createSession,
 } from "@/lib/firebase/auth";
 
@@ -17,19 +16,6 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    getOAuthRedirectResult()
-      .then(async (result) => {
-        if (!result) return;
-        const isAdmin = await createSession(result.user);
-        router.push(isAdmin ? "/admin" : "/");
-      })
-      .catch((err) => {
-        console.error("[OAuth Redirect] 에러:", err);
-        setError("소셜 로그인에 실패했습니다.");
-      });
-  }, [router]);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -49,7 +35,9 @@ export default function LoginPage() {
   async function handleGoogle() {
     setError("");
     try {
-      await signInWithGoogle();
+      const result = await signInWithGoogle();
+      const isAdmin = await createSession(result.user);
+      router.push(isAdmin ? "/admin" : "/");
     } catch (err) {
       console.error("[Google] 로그인 에러:", err);
       setError("구글 로그인에 실패했습니다.");
@@ -59,7 +47,9 @@ export default function LoginPage() {
   async function handleGithub() {
     setError("");
     try {
-      await signInWithGithub();
+      const result = await signInWithGithub();
+      const isAdmin = await createSession(result.user);
+      router.push(isAdmin ? "/admin" : "/");
     } catch (err) {
       console.error("[GitHub] 로그인 에러:", err);
       setError("깃허브 로그인에 실패했습니다.");
