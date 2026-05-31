@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { getGemini, DEFAULT_MODEL } from "@/lib/gemini/client";
 import { getCardById } from "@/lib/tarot/utils";
+import { checkUsage, denyResponse } from "@/lib/usage-check";
 
 export const runtime = "nodejs";
 
@@ -57,6 +58,9 @@ export async function POST(request: NextRequest) {
     if (!cards || cards.length !== 7) {
       return Response.json({ error: "카드 7장이 필요합니다." }, { status: 400 });
     }
+
+    const usage = await checkUsage(request, "tarot-full-moon");
+    if (!usage.allowed) return denyResponse(usage.reason);
 
     const gemini = getGemini();
     const prompt = buildPrompt(cards, question);
