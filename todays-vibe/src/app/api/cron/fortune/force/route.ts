@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
 
   const { searchParams } = new URL(request.url);
   const period = searchParams.get("period") ?? "weekly-zodiac";
-  const now = new Date();
+  const now = new Date(Date.now() + 9 * 60 * 60 * 1000); // KST 기준
   const results: BatchResult[] = [];
 
   // 강제 실행은 항상 현재 주기 기준으로 생성 (forceCurrentPeriod = true)
