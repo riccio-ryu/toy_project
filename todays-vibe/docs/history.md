@@ -2,6 +2,23 @@
 
 ---
 
+## 2026-06-01
+
+- 어드민 메뉴 관리(`src/app/admin/menus/page.tsx`) 전면 개편 — Firestore 기반 CRUD, 툴바(전체노출/미노출·메뉴추가·선택삭제·선택카테고리변환), 컬럼 표시 설정 모달, 3단계 정렬(오름차순→내림차순→해제)
+- 카테고리 관리 기능 추가 — 카테고리 추가·수정·삭제, 기본 카테고리는 삭제 불가 처리
+- 순서 변경 모달 구현 — 카테고리 순서 및 카테고리별 메뉴 순서를 드래그 앤 드롭 + ▲▼ 버튼으로 조정, 로컬 드래프트 후 "순서 저장" 클릭 시 일괄 반영
+- `src/types/menu.ts` 신규 생성 — `MenuItem`, `Category`, `AccessLevel`, `UsageLimits` 타입 정의
+- `src/app/admin/menus/actions.ts` 신규 생성 — Firestore Admin SDK 기반 메뉴/카테고리 Server Actions (`getMenus`, `saveMenu`, `deleteMenusByIds`, `patchMenusByIds`, `batchUpdateOrders` 등)
+- `scripts/migrate-menus.ts` 신규 생성 — `fortunes.json` → Firestore `menus` 컬렉션 1회성 마이그레이션 스크립트 (33개 항목)
+- 메인 페이지(`src/app/(user)/page.tsx`) Firestore 연동 — Firestore 우선 조회, 없으면 JSON 폴백
+- 회원등급별 일일 사용량 제한 기능 추가 — `MenuItem.usageLimits` 필드 (비회원/회원/프리미엄/관리자별 하루 횟수, -1=무제한, 0=차단), FortuneModal에 등급별 설정 UI
+- `src/lib/firebase/usage.ts` 신규 생성 — KST 기준 일별 사용량 Firestore 트랜잭션 추적 (`checkAndIncrementUsage`, `getUsageCount`, `getBulkUsage`)
+- `src/lib/usage-check.ts` 신규 생성 — 운세 API 라우트용 공통 미들웨어 (`accessLevel` 체크 → `usageLimits` 원자적 체크+증가, 401/403/429 반환)
+- 운세 API 라우트 6종에 사용량 체크 연결 — `fortune`, `tarot`, `tarot-celtic`, `tarot-full-moon`, `tarot-horseshoe`, `tarot-tree-of-life`
+- 배치 강제 실행 KST 버그 수정 (`src/app/api/cron/fortune/force/route.ts`) — `new Date()` UTC 그대로 사용해 자정 이후 이전 달/주차로 생성되던 문제 해결, `Date.now() + 9h` KST 변환 적용
+
+---
+
 ## 2026-05-29
 
 - 켈틱 크로스 타로 페이지 구현 (`src/app/(user)/tarot-celtic/page.tsx`) — 78장 팬 스프레드에서 10장 선택, Celtic Cross 배열(카드 2 교차 90° 회전), 포지션 리스트, AI 해석 (PRO 뱃지)
