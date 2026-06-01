@@ -8,7 +8,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { signOut } from "@/lib/firebase/auth";
 
 export default function Header() {
-  const { user, loading } = useAuth();
+  const { user, loading, isAdmin } = useAuth();
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -83,6 +83,18 @@ export default function Header() {
                   >
                     <span>👤</span> 마이페이지
                   </Link>
+                  {isAdmin && (
+                    <>
+                      <div className="border-t border-white/10 my-1" />
+                      <Link
+                        href="/admin"
+                        onClick={() => setOpen(false)}
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-amber-400 hover:bg-white/5 transition-colors"
+                      >
+                        <span>⚙️</span> 관리자 페이지
+                      </Link>
+                    </>
+                  )}
                   <div className="border-t border-white/10 my-1" />
                   <button
                     onClick={handleSignOut}

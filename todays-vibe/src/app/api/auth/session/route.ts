@@ -145,6 +145,23 @@ export async function POST(request: NextRequest) {
   }
 }
 
+// ─── GET: 현재 세션 확인 ──────────────────────────────────────────
+export async function GET(request: NextRequest) {
+  const { verifySessionToken, SESSION_COOKIE } = await import("@/lib/session");
+  const cookie = request.cookies.get(SESSION_COOKIE)?.value;
+  if (!cookie) return Response.json({ authenticated: false, isAdmin: false });
+
+  const session = await verifySessionToken(cookie);
+  if (!session) return Response.json({ authenticated: false, isAdmin: false });
+
+  return Response.json({
+    authenticated: true,
+    isAdmin: session.isAdmin,
+    plan: session.plan,
+    uid: session.uid,
+  });
+}
+
 // ─── DELETE: 로그아웃 ─────────────────────────────────────────────
 export async function DELETE() {
   const response = Response.json({ status: "ok" });
