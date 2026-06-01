@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, Suspense } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   signInWithEmail,
   signInWithGoogle,
@@ -10,12 +10,19 @@ import {
   createSession,
 } from "@/lib/firebase/auth";
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get("redirect") ?? "/";
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  function getDestination(isAdmin: boolean) {
+    return isAdmin ? "/admin" : redirectTo;
+  }
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -24,7 +31,7 @@ export default function LoginPage() {
     try {
       const result = await signInWithEmail(email, password);
       const isAdmin = await createSession(result.user);
-      router.push(isAdmin ? "/admin" : "/");
+      router.push(getDestination(isAdmin));
     } catch {
       setError("이메일 또는 비밀번호가 올바르지 않습니다.");
     } finally {
@@ -37,7 +44,7 @@ export default function LoginPage() {
     try {
       const result = await signInWithGoogle();
       const isAdmin = await createSession(result.user);
-      router.push(isAdmin ? "/admin" : "/");
+      router.push(getDestination(isAdmin));
     } catch (err) {
       console.error("[Google] 로그인 에러:", err);
       setError("구글 로그인에 실패했습니다.");
@@ -49,19 +56,11 @@ export default function LoginPage() {
     try {
       const result = await signInWithGithub();
       const isAdmin = await createSession(result.user);
-      router.push(isAdmin ? "/admin" : "/");
+      router.push(getDestination(isAdmin));
     } catch (err) {
       console.error("[GitHub] 로그인 에러:", err);
       setError("깃허브 로그인에 실패했습니다.");
     }
-  }
-
-  function handleNaver() {
-    window.location.href = "/api/auth/naver";
-  }
-
-  function handleKakao() {
-    window.location.href = "/api/auth/kakao";
   }
 
   return (
@@ -161,7 +160,7 @@ export default function LoginPage() {
             <svg width="20" height="20" viewBox="0 0 24 24">
               <path
                 fill="#4285F4"
-                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.77c2.08-1.92 3.28-4.74 3.28-8.09z"
               />
               <path
                 fill="#34A853"
@@ -203,5 +202,13 @@ export default function LoginPage() {
         </Link>
       </p>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="w-full max-w-sm" />}>
+      <LoginForm />
+    </Suspense>
   );
 }
