@@ -54,33 +54,64 @@ export function drawCards(count: number): DrawnCard[] {
   }));
 }
 
-// ─── 스프라이트 위치 ─────────────────────────────────────────────────
+// ─── 개별 이미지 경로 ─────────────────────────────────────────────────
 
-const MINOR_ORDER = [
-  "ace", "02", "03", "04", "05", "06", "07",
-  "08", "09", "10", "page", "knight", "queen", "king",
-];
+const MAJOR_FILENAMES: Record<number, string> = {
+  0:  "00_THE_FOOL",
+  1:  "01_THE_MAGICIAN",
+  2:  "02_THE_HIGH_PRIESTESS",
+  3:  "03_THE_EMPRESS",
+  4:  "04_THE_EMPEROR",
+  5:  "05_THE_HIEROPHANT",
+  6:  "06_THE_LOVERS",
+  7:  "07_THE_CHARIOT",
+  8:  "08_STRENGTH",
+  9:  "09_THE_HERMIT",
+  10: "10_WHEEL_OF_FORTUNE",
+  11: "11_JUSTICE",
+  12: "12_THE_HANGED_MAN",
+  13: "13_DEATH",
+  14: "14_TEMPERANCE",
+  15: "15_THE_DEVIL",
+  16: "16_THE_TOWER",
+  17: "17_THE_STAR",
+  18: "18_THE_MOON",
+  19: "19_THE_SUN",
+  20: "20_JUDGEMENT",
+  21: "21_THE_WORLD",
+};
 
-type SpriteInfo = { src: string; cols: number; rows: number; col: number; row: number };
+const MINOR_NUM_TO_FILE: Record<string, string> = {
+  ace:    "01_ace",
+  "02":   "02_two",
+  "03":   "03_three",
+  "04":   "04_four",
+  "05":   "05_five",
+  "06":   "06_six",
+  "07":   "07_seven",
+  "08":   "08_eight",
+  "09":   "09_nine",
+  "10":   "10_ten",
+  page:   "11_page",
+  knight: "12_knight",
+  queen:  "13_queen",
+  king:   "14_king",
+};
 
-function getCardSprite(cardId: string): SpriteInfo {
+export function getCardImageUrl(cardId: string): string {
   if (cardId.startsWith("major-")) {
     const num = parseInt(cardId.split("-")[1], 10);
-    return { src: "/images/tarot/tarot_major.png", cols: 11, rows: 2, col: num % 11, row: Math.floor(num / 11) };
+    return `/images/tarot/tarot_majors/${MAJOR_FILENAMES[num]}.png`;
   }
   const [suit, num] = cardId.split("-");
-  const index = MINOR_ORDER.indexOf(num);
-  return { src: `/images/tarot/tarot_${suit}.png`, cols: 7, rows: 2, col: index % 7, row: Math.floor(index / 7) };
+  const fileNum = MINOR_NUM_TO_FILE[num];
+  return `/images/tarot/tarot_${suit}/${suit}_${fileNum}.png`;
 }
 
 export function getCardFrontStyle(cardId: string): CSSProperties {
-  const { src, cols, rows, col, row } = getCardSprite(cardId);
-  const xPct = cols === 1 ? 0 : (col / (cols - 1)) * 100;
-  const yPct = rows === 1 ? 0 : (row / (rows - 1)) * 100;
   return {
-    backgroundImage: `url('${src}')`,
-    backgroundSize: `${cols * 100}% ${rows * 100}%`,
-    backgroundPosition: `${xPct}% ${yPct}%`,
+    backgroundImage: `url('${getCardImageUrl(cardId)}')`,
+    backgroundSize: "100% 100%",
     backgroundRepeat: "no-repeat",
   };
 }
