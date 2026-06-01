@@ -10,6 +10,12 @@ import { useAuth } from "@/contexts/AuthContext";
 import { getFirebaseApp } from "@/lib/firebase/config";
 import { uploadProfilePhoto } from "@/lib/firebase/storage";
 import { validateNickname } from "@/lib/utils/nickname-validator";
+import { HOUR_OPTIONS } from "@/lib/saju/calculator";
+
+type BirthInfo = {
+  year: number; month: number; day: number;
+  hour: number; isLunar: boolean; gender: "male" | "female";
+};
 
 // ─── 상수 ─────────────────────────────────────────────────────────
 const PLAN_LABEL: Record<string, { label: string; color: string; bg: string }> = {
@@ -28,9 +34,9 @@ const PROVIDER_INFO: Record<string, { label: string; icon: string; color: string
 };
 
 const QUICK_LINKS = [
+  { href: "/saju",           emoji: "📜", label: "사주팔자" },
   { href: "/zodiac",         emoji: "✨", label: "별자리 운세" },
   { href: "/chinese-zodiac", emoji: "🐉", label: "띠별 운세" },
-  { href: "/dream",          emoji: "🌙", label: "꿈해몽" },
 ];
 
 type PlanType = "free" | "premium" | "admin";
@@ -59,6 +65,14 @@ export default function MyPage() {
   const [plan, setPlan] = useState<PlanType>("free");
   const [roleLoading, setRoleLoading] = useState(true);
 
+  // 출생 정보
+  const [birthInfo, setBirthInfo]       = useState<BirthInfo | null>(null);
+  const [birthLoading, setBirthLoading] = useState(true);
+  const [editingBirth, setEditingBirth] = useState(false);
+  const [birthDraft, setBirthDraft]     = useState<BirthInfo>({
+    year: 1990, month: 1, day: 1, hour: -1, isLunar: false, gender: "male",
+  });
+
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // 비로그인 → 로그인 페이지
@@ -72,6 +86,21 @@ export default function MyPage() {
       setNickname(user.displayName ?? "");
       setPhotoPreview(user.photoURL ?? null);
     }
+  }, [user]);
+
+  // 출생 정보 로드
+  useEffect(() => {
+    if (!user) return;
+    fetch("/api/user/birth-info")
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.birthInfo) {
+          setBirthInfo(d.birthInfo);
+          setBirthDraft(d.birthInfo);
+        }
+      })
+      .catch(() => {})
+      .finally(() => setBirthLoading(false));
   }, [user]);
 
   // 세션에서 실제 role 조회
@@ -110,6 +139,26 @@ export default function MyPage() {
   function showToast(msg: string) {
     setToast(msg);
     setTimeout(() => setToast(null), 2500);
+  }
+
+  // ── 출생 정보 저장 ────────────────────────────────────────────
+  async function handleBirthSave() {
+    await fetch("/api/user/birth-info", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(birthDraft),
+    });
+    setBirthInfo(birthDraft);
+    setEditingBirth(false);
+    showToast("출생 정보가 저장되었어요 ✨");
+  }
+
+  async function handleBirthDelete() {
+    await fetch("/api/user/birth-info", { method: "DELETE" });
+    setBirthInfo(null);
+    setBirthDraft({ year: 1990, month: 1, day: 1, hour: -1, isLunar: false, gender: "male" });
+    setEditingBirth(false);
+    showToast("출생 정보가 삭제되었어요");
   }
 
   // ── 프로필 사진 변경 ───────────────────────────────────────────
@@ -393,6 +442,114 @@ export default function MyPage() {
           <p className="text-white/20 text-xs mt-3 text-center">
             * 사용 횟수는 Firestore 연동 후 실시간 반영됩니다
           </p>
+        </div>
+
+        {/* ── 출생 정보 ───────────────────────────────────────── */}
+        <div className="rounded-2xl bg-white/5 border border-white/10 p-5">
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-white/40 text-xs">출생 정보</p>
+            {!birthLoading && !editingBirth && (
+              <button
+                onClick={() => { setBirthDraft(birthInfo ?? birthDraft); setEditingBirth(true); }}
+                className="text-white/30 text-xs hover:text-white/60 transition-colors"
+              >
+                {birthInfo ? "수정" : "+ 등록"}
+              </button>
+            )}
+          </div>
+
+          {birthLoading ? (
+            <div className="h-8 bg-white/5 rounded-lg animate-pulse" />
+          ) : editingBirth ? (
+            <div className="space-y-3">
+              {/* 양력/음력 */}
+              <div className="flex gap-2">
+                {(["양력", "음력"] as const).map((t, i) => (
+                  <button key={t} type="button"
+                    onClick={() => setBirthDraft((d) => ({ ...d, isLunar: i === 1 }))}
+                    className={`flex-1 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+                      birthDraft.isLunar === (i === 1) ? "bg-purple-600 text-white" : "bg-white/10 text-white/50"
+                    }`}
+                  >{t}</button>
+                ))}
+              </div>
+              {/* 생년월일 */}
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { label: "년도", key: "year" as const, min: 1900, max: 2025 },
+                  { label: "월",   key: "month" as const, min: 1, max: 12 },
+                  { label: "일",   key: "day" as const, min: 1, max: 31 },
+                ].map(({ label, key, min, max }) => (
+                  <div key={key}>
+                    <label className="block text-white/30 text-[10px] mb-1">{label}</label>
+                    <input type="number" min={min} max={max}
+                      value={birthDraft[key]}
+                      onChange={(e) => setBirthDraft((d) => ({ ...d, [key]: parseInt(e.target.value) || 0 }))}
+                      className="w-full px-2 py-1.5 rounded-lg bg-white/10 border border-white/15 text-white text-xs focus:outline-none focus:border-purple-400"
+                    />
+                  </div>
+                ))}
+              </div>
+              {/* 태어난 시간 */}
+              <div>
+                <label className="block text-white/30 text-[10px] mb-1">태어난 시간</label>
+                <select
+                  value={birthDraft.hour}
+                  onChange={(e) => setBirthDraft((d) => ({ ...d, hour: parseInt(e.target.value) }))}
+                  className="w-full px-2 py-1.5 rounded-lg bg-white/10 border border-white/15 text-white text-xs focus:outline-none focus:border-purple-400 appearance-none"
+                >
+                  {HOUR_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value} className="bg-gray-900">{opt.label}</option>
+                  ))}
+                </select>
+              </div>
+              {/* 성별 */}
+              <div className="flex gap-2">
+                {([["male", "남성"], ["female", "여성"]] as const).map(([val, label]) => (
+                  <button key={val} type="button"
+                    onClick={() => setBirthDraft((d) => ({ ...d, gender: val }))}
+                    className={`flex-1 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+                      birthDraft.gender === val ? "bg-purple-600 text-white" : "bg-white/10 text-white/50"
+                    }`}
+                  >{label}</button>
+                ))}
+              </div>
+              {/* 버튼 */}
+              <div className="flex gap-2 pt-1">
+                <button onClick={handleBirthSave}
+                  className="flex-1 py-2 rounded-lg bg-purple-600 text-white text-xs font-semibold hover:bg-purple-500 transition-colors">
+                  저장
+                </button>
+                <button onClick={() => setEditingBirth(false)}
+                  className="flex-1 py-2 rounded-lg bg-white/10 text-white/50 text-xs font-semibold hover:bg-white/15 transition-colors">
+                  취소
+                </button>
+                {birthInfo && (
+                  <button onClick={handleBirthDelete}
+                    className="px-3 py-2 rounded-lg bg-red-500/10 text-red-400 text-xs font-semibold hover:bg-red-500/20 transition-colors">
+                    삭제
+                  </button>
+                )}
+              </div>
+            </div>
+          ) : birthInfo ? (
+            <div className="grid grid-cols-2 gap-2 text-sm">
+              {[
+                { label: "생년월일", value: `${birthInfo.year}년 ${birthInfo.month}월 ${birthInfo.day}일 (${birthInfo.isLunar ? "음력" : "양력"})` },
+                { label: "태어난 시간", value: HOUR_OPTIONS.find(h => h.value === birthInfo.hour)?.label.split("(")[0] ?? "모름" },
+                { label: "성별", value: birthInfo.gender === "male" ? "남성" : "여성" },
+              ].map(({ label, value }) => (
+                <div key={label} className="rounded-xl bg-white/5 p-3">
+                  <p className="text-white/30 text-[10px] mb-0.5">{label}</p>
+                  <p className="text-white/80 text-xs font-medium">{value}</p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-white/25 text-xs">
+              출생 정보를 등록하면 사주팔자 등 운세를 볼 때 자동으로 불러옵니다.
+            </p>
+          )}
         </div>
 
         {/* ── 빠른 이동 ───────────────────────────────────────── */}
