@@ -42,7 +42,7 @@
       "path": "/saju",
       "difficulty": "hard",
       "isAI": true,
-      "ready": false,
+      "ready": true,
       "tags": [
         "인기",
         "정통"
