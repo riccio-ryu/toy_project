@@ -4,6 +4,17 @@
 
 ## 2026-06-01
 
+- 타로 카드 이미지 스프라이트 시트 → 개별 PNG 파일로 전환 (`src/lib/tarot/utils.ts`) — `tarot_majors/`, `tarot_cups/`, `tarot_wands/`, `tarot_swords/`, `tarot_pentacles/` 서브폴더 구조 대응
+- 비회원 로그인 유도 모달 구현 (`src/components/common/LoginRequiredModal.tsx`, `src/app/(user)/FortuneGrid.tsx`) — 비회원이 회원 전용 운세 클릭 시 모달 표시 → 로그인 페이지 이동 후 원래 페이지로 복귀
+- 관리자 계정 일반/어드민 페이지 자유 이동 구현 (`src/components/Header.tsx`, `src/contexts/AuthContext.tsx`) — `isAdmin` 상태 추가, 헤더 드롭다운에 관리자 페이지 링크 표시
+- 사주팔자 기능 구현 (`src/app/(user)/saju/page.tsx`, `src/lib/saju/calculator.ts`, `src/app/api/fortune/saju/route.ts`) — lunisolar 기반 만세력 계산, 사주 원국 테이블 UI, 출생 정보 저장 옵션, Gemini AI 스트리밍 해석
+- 출생 정보 API 구현 (`src/app/api/user/birth-info/route.ts`) — GET/POST/DELETE, Firestore `users/{uid}.birthInfo` 저장
+- 마이페이지 출생 정보 섹션 추가 (`src/app/(user)/mypage/page.tsx`) — 등록·수정·삭제 UI, 사주팔자 바로가기 퀵링크 추가
+
+---
+
+## 2026-05-31
+
 - 어드민 메뉴 관리(`src/app/admin/menus/page.tsx`) 전면 개편 — Firestore 기반 CRUD, 툴바(전체노출/미노출·메뉴추가·선택삭제·선택카테고리변환), 컬럼 표시 설정 모달, 3단계 정렬(오름차순→내림차순→해제)
 - 카테고리 관리 기능 추가 — 카테고리 추가·수정·삭제, 기본 카테고리는 삭제 불가 처리
 - 순서 변경 모달 구현 — 카테고리 순서 및 카테고리별 메뉴 순서를 드래그 앤 드롭 + ▲▼ 버튼으로 조정, 로컬 드래프트 후 "순서 저장" 클릭 시 일괄 반영
