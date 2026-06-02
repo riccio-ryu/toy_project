@@ -4,5 +4,16 @@
       "path": "/api/cron/fortune",
       "schedule": "30 14 * * *"
     }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Cross-Origin-Opener-Policy",
+          "value": "same-origin-allow-popups"
+        }
+      ]
+    }
   ]
 }
