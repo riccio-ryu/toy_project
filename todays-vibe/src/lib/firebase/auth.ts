@@ -4,7 +4,8 @@ import {
   getAuth,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
-  signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   signOut as firebaseSignOut,
   GoogleAuthProvider,
   GithubAuthProvider,
@@ -36,11 +37,15 @@ export async function signUpWithEmail(
 }
 
 export async function signInWithGoogle() {
-  return signInWithPopup(auth(), googleProvider);
+  return signInWithRedirect(auth(), googleProvider);
 }
 
 export async function signInWithGithub() {
-  return signInWithPopup(auth(), githubProvider);
+  return signInWithRedirect(auth(), githubProvider);
+}
+
+export async function getAuthRedirectResult() {
+  return getRedirectResult(auth());
 }
 
 export async function signInWithToken(token: string) {
