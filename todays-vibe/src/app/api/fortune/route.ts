@@ -3,6 +3,7 @@ import { getGemini, DEFAULT_MODEL } from "@/lib/gemini/client";
 import { buildPrompt } from "@/lib/claude/prompts";
 import { FortuneRequest } from "@/types/fortune";
 import { checkUsage, denyResponse } from "@/lib/usage-check";
+import { saveAiReading, type ReadingType } from "@/lib/firebase/readings";
 
 export const runtime = "nodejs";
 
@@ -41,11 +42,17 @@ export async function POST(request: NextRequest) {
     const readable = new ReadableStream({
       async start(controller) {
         try {
+          const chunks: string[] = [];
           for await (const chunk of stream) {
             const text = chunk.text;
             if (text) {
+              chunks.push(text);
               controller.enqueue(encoder.encode(text));
             }
+          }
+          if (usage.userId) {
+            await saveAiReading(usage.userId, type as ReadingType, input as unknown as Record<string, unknown>, chunks.join(""))
+              .catch((err) => console.error("[ai_readings]", err));
           }
           controller.close();
         } catch (err) {
