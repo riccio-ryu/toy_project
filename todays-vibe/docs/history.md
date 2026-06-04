@@ -10,6 +10,17 @@
 
 ---
 
+## 2026-06-02
+
+- Firestore `undefined` 저장 오류 수정 (`src/lib/firebase/readings.ts`) — `saveAiReading()` 신규 생성, `input` 객체에서 `undefined` 필드를 `cleanInput`으로 필터링 후 저장, 모든 fortune API 라우트 6종에 연결
+- 운세 기록 조회 API 추가 (`src/app/api/user/readings/route.ts`) — 세션 인증 후 `ai_readings` 컬렉션에서 본인 기록 최대 20건 조회, 복합 인덱스 없이 동작하도록 JS 정렬 처리
+- 오늘 AI 사용 현황 API 추가 (`src/app/api/user/usage/route.ts`) — `daily_usage` 컬렉션에서 오늘 메뉴별 사용 횟수 조회
+- 마이페이지 운세 기록·사용 현황 섹션 구현 (`src/app/(user)/mypage/page.tsx`) — "내 운세 기록" 섹션 추가(최근 5개 표시 → 더보기로 5개씩 추가, 클릭 시 전체 결과 펼치기), 오늘 AI 사용 현황 실제 Firestore 데이터 연동 (한도 초과 시 빨간 막대)
+- 어드민 운세 기록 페이지 신규 추가 (`src/app/admin/readings/page.tsx`, `src/app/api/admin/readings/route.ts`) — 전체 `ai_readings` 조회, 타입 드롭다운·userId 검색 필터, 행 클릭 시 결과 전문·docId·userId 펼쳐보기, 사이드바 및 대시보드 카드에 항목 추가
+- `lunisolar` 패키지 설치 — 빌드 오류 수정 (`package.json`)
+
+---
+
 ## 2026-06-01
 
 - 타로 카드 이미지 스프라이트 시트 → 개별 PNG 파일로 전환 (`src/lib/tarot/utils.ts`) — `tarot_majors/`, `tarot_cups/`, `tarot_wands/`, `tarot_swords/`, `tarot_pentacles/` 서브폴더 구조 대응

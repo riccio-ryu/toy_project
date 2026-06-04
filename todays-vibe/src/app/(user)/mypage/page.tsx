@@ -17,6 +17,26 @@ type BirthInfo = {
   hour: number; isLunar: boolean; gender: "male" | "female";
 };
 
+type Reading = {
+  id: string;
+  type: string;
+  date: string;
+  result: string;
+  createdAt: string | null;
+};
+
+const READING_META: Record<string, { emoji: string; label: string }> = {
+  saju:               { emoji: "📜", label: "사주팔자" },
+  dream:              { emoji: "🌙", label: "꿈해몽" },
+  "tarot-3cards":     { emoji: "🃏", label: "타로 3장" },
+  "tarot-celtic":     { emoji: "🔮", label: "켈틱 크로스" },
+  "tarot-horseshoe":  { emoji: "🔮", label: "말발굽" },
+  "tarot-full-moon":  { emoji: "🌕", label: "보름달" },
+  "tarot-tree-of-life": { emoji: "🌳", label: "생명의 나무" },
+  zodiac:             { emoji: "✨", label: "별자리" },
+  "chinese-zodiac":   { emoji: "🐉", label: "띠별 운세" },
+};
+
 // ─── 상수 ─────────────────────────────────────────────────────────
 const PLAN_LABEL: Record<string, { label: string; color: string; bg: string }> = {
   free:    { label: "FREE",    color: "text-white/60",   bg: "bg-white/10" },
@@ -65,6 +85,16 @@ export default function MyPage() {
   const [plan, setPlan] = useState<PlanType>("free");
   const [roleLoading, setRoleLoading] = useState(true);
 
+  // 운세 기록
+  const [readings, setReadings]         = useState<Reading[]>([]);
+  const [readingsLoading, setReadingsLoading] = useState(true);
+  const [expandedId, setExpandedId]     = useState<string | null>(null);
+  const [visibleCount, setVisibleCount] = useState(5);
+
+  // 사용 현황
+  const [usageData, setUsageData]       = useState<Record<string, number>>({});
+  const [usageLoading, setUsageLoading] = useState(true);
+
   // 출생 정보
   const [birthInfo, setBirthInfo]       = useState<BirthInfo | null>(null);
   const [birthLoading, setBirthLoading] = useState(true);
@@ -86,6 +116,29 @@ export default function MyPage() {
       setNickname(user.displayName ?? "");
       setPhotoPreview(user.photoURL ?? null);
     }
+  }, [user]);
+
+  // 운세 기록 로드
+  useEffect(() => {
+    if (!user) return;
+    fetch("/api/user/readings?limit=20")
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.readings) setReadings(d.readings);
+        else console.error("[readings]", d.error);
+      })
+      .catch(console.error)
+      .finally(() => setReadingsLoading(false));
+  }, [user]);
+
+  // 사용 현황 로드
+  useEffect(() => {
+    if (!user) return;
+    fetch("/api/user/usage")
+      .then((r) => r.json())
+      .then((d) => { if (d.usage) setUsageData(d.usage); })
+      .catch(() => {})
+      .finally(() => setUsageLoading(false));
   }, [user]);
 
   // 출생 정보 로드
@@ -417,31 +470,43 @@ export default function MyPage() {
         {/* ── AI 사용 현황 ─────────────────────────────────────── */}
         <div className="rounded-2xl bg-white/5 border border-white/10 p-5">
           <p className="text-white/40 text-xs mb-3">오늘 AI 사용 현황</p>
-          <div className="grid grid-cols-3 gap-3">
-            {[
-              { emoji: "🌙", label: "꿈해몽",   used: 0, limit: 1 },
-              { emoji: "🃏", label: "타로",     used: 0, limit: 1 },
-              { emoji: "🔯", label: "사주",     used: 0, limit: 1 },
-            ].map((item) => (
-              <div key={item.label} className="rounded-xl bg-white/5 border border-white/10 p-3 text-center">
-                <p className="text-lg mb-1">{item.emoji}</p>
-                <p className="text-white/50 text-xs mb-1">{item.label}</p>
-                <p className="text-white font-medium text-sm">
-                  {item.used}
-                  <span className="text-white/30 text-xs">/{item.limit}</span>
-                </p>
-                <div className="mt-1.5 h-1 rounded-full bg-white/10 overflow-hidden">
-                  <div
-                    className="h-full bg-purple-500 rounded-full transition-all"
-                    style={{ width: `${(item.used / item.limit) * 100}%` }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-          <p className="text-white/20 text-xs mt-3 text-center">
-            * 사용 횟수는 Firestore 연동 후 실시간 반영됩니다
-          </p>
+          {usageLoading ? (
+            <div className="grid grid-cols-3 gap-3">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="rounded-xl bg-white/5 border border-white/10 p-3 h-20 animate-pulse" />
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-3 gap-3">
+              {[
+                { emoji: "🌙", label: "꿈해몽", menuId: "dream" },
+                { emoji: "🃏", label: "타로",   menuId: "tarot-3cards" },
+                { emoji: "📜", label: "사주",   menuId: "saju" },
+              ].map((item) => {
+                const used = usageData[item.menuId] ?? 0;
+                const limit = plan === "admin" ? Infinity : plan === "premium" ? 5 : 1;
+                const pct = limit === Infinity ? 0 : Math.min((used / limit) * 100, 100);
+                return (
+                  <div key={item.label} className="rounded-xl bg-white/5 border border-white/10 p-3 text-center">
+                    <p className="text-lg mb-1">{item.emoji}</p>
+                    <p className="text-white/50 text-xs mb-1">{item.label}</p>
+                    <p className="text-white font-medium text-sm">
+                      {used}
+                      <span className="text-white/30 text-xs">
+                        /{limit === Infinity ? "∞" : limit}
+                      </span>
+                    </p>
+                    <div className="mt-1.5 h-1 rounded-full bg-white/10 overflow-hidden">
+                      <div
+                        className={`h-full rounded-full transition-all ${used >= (limit as number) && limit !== Infinity ? "bg-red-500" : "bg-purple-500"}`}
+                        style={{ width: `${pct}%` }}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         {/* ── 출생 정보 ───────────────────────────────────────── */}
@@ -549,6 +614,74 @@ export default function MyPage() {
             <p className="text-white/25 text-xs">
               출생 정보를 등록하면 사주팔자 등 운세를 볼 때 자동으로 불러옵니다.
             </p>
+          )}
+        </div>
+
+        {/* ── 내 운세 기록 ─────────────────────────────────────── */}
+        <div className="rounded-2xl bg-white/5 border border-white/10 p-5">
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-white/40 text-xs">내 운세 기록</p>
+            {readings.length > 0 && (
+              <span className="text-white/20 text-xs">{readings.length}건</span>
+            )}
+          </div>
+          {readingsLoading ? (
+            <div className="space-y-2">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="h-12 bg-white/5 rounded-xl animate-pulse" />
+              ))}
+            </div>
+          ) : readings.length === 0 ? (
+            <p className="text-white/25 text-xs text-center py-4">
+              아직 AI 운세를 이용한 기록이 없어요
+            </p>
+          ) : (
+            <>
+              <div className="space-y-2">
+                {readings.slice(0, visibleCount).map((r) => {
+                  const meta = READING_META[r.type] ?? { emoji: "🔮", label: r.type };
+                  const isExpanded = expandedId === r.id;
+                  const dateStr = r.createdAt
+                    ? new Date(r.createdAt).toLocaleDateString("ko-KR", { month: "long", day: "numeric", hour: "2-digit", minute: "2-digit" })
+                    : r.date
+                      ? `${r.date.slice(0, 4)}.${r.date.slice(4, 6)}.${r.date.slice(6, 8)}`
+                      : "";
+                  return (
+                    <div key={r.id} className="rounded-xl bg-white/5 border border-white/8 overflow-hidden">
+                      <button
+                        onClick={() => setExpandedId(isExpanded ? null : r.id)}
+                        className="w-full flex items-center gap-3 px-4 py-3 hover:bg-white/5 transition-colors text-left"
+                      >
+                        <span className="text-base shrink-0">{meta.emoji}</span>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-white/80 text-sm font-medium">{meta.label}</p>
+                          <p className="text-white/30 text-xs">{dateStr}</p>
+                        </div>
+                        <span className={`text-white/30 text-xs transition-transform ${isExpanded ? "rotate-180" : ""}`}>
+                          ▼
+                        </span>
+                      </button>
+                      {isExpanded && (
+                        <div className="px-4 pb-4 pt-1 border-t border-white/5">
+                          <p className="text-white/60 text-xs leading-relaxed whitespace-pre-wrap">
+                            {r.result}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+
+              {visibleCount < readings.length && (
+                <button
+                  onClick={() => setVisibleCount((c) => c + 5)}
+                  className="mt-3 w-full py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white/40 hover:text-white/60 text-xs transition-colors"
+                >
+                  더보기 ({readings.length - visibleCount}건 남음)
+                </button>
+              )}
+            </>
           )}
         </div>
 
