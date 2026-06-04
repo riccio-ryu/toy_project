@@ -2,6 +2,14 @@
 
 ---
 
+## 2026-06-04
+
+- 어드민 사용 통계 페이지 실데이터 연동 (`src/app/admin/stats/page.tsx`, `src/app/api/admin/stats/route.ts`) — `daily_usage` 기간별 집계, 통계 카드 4종(총 이용 횟수·인기 운세·총 가입자·신규 가입), 일별 바 차트(CSS, 호버 툴팁)
+- 운세별 이용 순위 드릴다운 구현 — 테이블 행 클릭 시 해당 메뉴의 기간 내 총 이용·이용 유저 수·일별 추이 미니 차트 인라인 펼침
+- 커스텀 날짜 범위 필터 추가 — 시작일~종료일 직접 입력, 기간 버튼과 독립 동작, 역방향 입력 방지
+
+---
+
 ## 2026-06-02
 
 - Firestore `undefined` 저장 오류 수정 (`src/lib/firebase/readings.ts`) — `saveAiReading()` 신규 생성, `input` 객체에서 `undefined` 필드를 `cleanInput`으로 필터링 후 저장, 모든 fortune API 라우트 6종에 연결
