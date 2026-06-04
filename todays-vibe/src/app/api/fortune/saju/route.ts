@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { getGemini, DEFAULT_MODEL } from "@/lib/gemini/client";
 import { checkUsage, denyResponse } from "@/lib/usage-check";
+import { saveAiReading } from "@/lib/firebase/readings";
 
 export const runtime = "nodejs";
 
@@ -52,9 +53,17 @@ export async function POST(req: NextRequest) {
     const stream = new ReadableStream({
       async start(controller) {
         const enc = new TextEncoder();
+        const chunks: string[] = [];
         for await (const chunk of result) {
           const text = chunk.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
-          if (text) controller.enqueue(enc.encode(text));
+          if (text) {
+            chunks.push(text);
+            controller.enqueue(enc.encode(text));
+          }
+        }
+        if (check.userId) {
+          await saveAiReading(check.userId, "saju", { summary, question }, chunks.join(""))
+            .catch((err) => console.error("[ai_readings]", err));
         }
         controller.close();
       },
