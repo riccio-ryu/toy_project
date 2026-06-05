@@ -8,13 +8,16 @@ import {
   buildSetCookieHeader,
   buildClearCookieHeader,
 } from "@/lib/session";
-import type { UserPlan } from "@/types/user";
 
-function getEnvAdminEmails(): string[] {
-  return (process.env.ADMIN_EMAILS ?? "")
-    .split(",")
-    .map((e) => e.trim())
-    .filter(Boolean);
+function detectProvider(uid: string, decoded: DecodedIdToken): string {
+  if (uid.startsWith("kakao:")) return "kakao";
+  if (uid.startsWith("naver:")) return "naver";
+  const signInProvider = (decoded as Record<string, unknown> & { firebase?: { sign_in_provider?: string } })
+    .firebase?.sign_in_provider ?? "";
+  if (signInProvider === "google.com") return "google";
+  if (signInProvider === "github.com") return "github";
+  if (signInProvider === "password")   return "email";
+  return "unknown";
 }
 
 // users/{uid} 문서 생성 또는 갱신 후 plan 반환
@@ -22,33 +25,35 @@ async function upsertUserDoc(
   uid: string,
   email: string,
   decoded: DecodedIdToken,
-  userDoc: DocumentSnapshot
-): Promise<UserPlan> {
+  userDoc: DocumentSnapshot,
+): Promise<string> {
   const db = getAdminFirestore();
+  const provider = detectProvider(uid, decoded);
 
   if (userDoc.exists) {
-    // 기존 회원 — lastLoginAt 갱신, plan 읽기
     const data = userDoc.data()!;
-    const rawPlan = data.plan as string;
+    const rawPlan: string = data.plan ?? "free";
     const expiresAt = data.planExpiresAt?.toDate() as Date | undefined;
-    const isPremiumValid = rawPlan === "premium" && (!expiresAt || expiresAt > new Date());
 
+    // 만료된 프리미엄 → free로 정정
     if (rawPlan === "premium" && expiresAt && expiresAt <= new Date()) {
-      // 만료된 프리미엄 → free로 정정
       await db.collection("users").doc(uid).update({
         plan: "free",
+        provider,
         lastLoginAt: FieldValue.serverTimestamp(),
       });
       return "free";
     }
 
     await db.collection("users").doc(uid).update({
+      provider,
       lastLoginAt: FieldValue.serverTimestamp(),
     });
-    return isPremiumValid ? "premium" : "free";
+
+    return rawPlan;
   }
 
-  // 신규 회원 — 문서 생성
+  // 신규 회원 — 문서 생성 (plan은 항상 free, 어드민 지정은 스크립트로)
   const nickname =
     decoded.name ??
     (email ? email.split("@")[0] : null) ??
@@ -60,6 +65,7 @@ async function upsertUserDoc(
     nickname,
     photoURL: decoded.picture ?? "",
     plan: "free",
+    provider,
     createdAt: FieldValue.serverTimestamp(),
     lastLoginAt: FieldValue.serverTimestamp(),
   });
@@ -87,21 +93,20 @@ export async function POST(request: NextRequest) {
 
     const uid = decoded.uid;
 
-    // ② 이메일 확보 — 토큰에 없으면 Firebase Auth에서 직접 조회
-    //    (GitHub 비공개 이메일, Google 일부 케이스 등)
+    // ② 이메일 확보
     let email = decoded.email ?? "";
     if (!email) {
       try {
         const userRecord = await getAdminAuth().getUser(uid);
         email = userRecord.email ?? "";
       } catch {
-        // 이메일 없는 계정도 허용 (isAdmin = false 처리)
+        // 이메일 없는 계정도 허용
       }
     }
 
     // ③ Firestore 처리
     let isAdmin = false;
-    let plan: UserPlan = "free";
+    let plan = "free";
 
     try {
       const db = getAdminFirestore();
@@ -114,24 +119,15 @@ export async function POST(request: NextRequest) {
           ),
         ]);
 
-      // users 문서 조회 (항상)
-      // admins 문서 조회 (이메일 있을 때만)
-      const promises: [Promise<DocumentSnapshot>, Promise<DocumentSnapshot | null>] = [
-        withTimeout(db.collection("users").doc(uid).get()),
-        email
-          ? withTimeout(db.collection("admins").doc(email).get())
-          : Promise.resolve(null),
-      ];
+      const userDoc = await withTimeout(db.collection("users").doc(uid).get());
 
-      const [userDoc, adminDoc] = await Promise.all(promises);
-
-      isAdmin = adminDoc?.exists === true && adminDoc.data()?.allowed === true;
-      plan = await upsertUserDoc(uid, email, decoded, userDoc);
+      plan    = await upsertUserDoc(uid, email, decoded, userDoc);
+      // users.plan === "admin" 이면 관리자
+      isAdmin = plan === "admin";
 
       console.log("[Session] 완료 — uid:", uid, "isAdmin:", isAdmin, "plan:", plan);
     } catch (fsErr) {
-      console.warn("[Session] Firestore 실패, env 폴백:", (fsErr as Error).message);
-      isAdmin = email ? getEnvAdminEmails().includes(email) : false;
+      console.warn("[Session] Firestore 실패:", (fsErr as Error).message);
     }
 
     // ④ HMAC 세션 토큰 발급
