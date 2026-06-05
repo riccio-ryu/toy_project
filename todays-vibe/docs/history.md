@@ -2,6 +2,20 @@
 
 ---
 
+## 2026-06-05
+
+- 어드민 회원 관리 페이지 전면 개편 (`src/app/admin/users/page.tsx`) — 상단 통계 카드 고정(검색/필터와 무관), 검색 결과 건수 "N건 / 전체 M건" 표시, 컬럼 정렬 3단계(내림차순→오름차순→해제), 플랜 필터에 admin 추가, 가입 경로(provider) 필터 추가
+- 플랜 관리 기능 추가 (`src/app/api/admin/plans/route.ts`) — 커스텀 플랜 CRUD API, 플랜 생성 팝업(이름·ID·설명·할당 계정) 구현
+- 회원 상세 드로어 구현 (`src/app/admin/users/UserDetailDrawer.tsx`, `src/app/api/admin/users/[uid]/route.ts`) — 우측 슬라이드 패널, 프로필 카드, 이용 히스토리 탭(최근 50건), 오늘 사용량 탭
+- `admins` Firestore 컬렉션 제거 → `users.plan === "admin"` 단일 소스로 통합 — 플랜 변경 시 Firestore 즉시 반영, 로그인 시 plan 값 그대로 세션에 유지
+- provider 감지 로직 강화 (`src/app/api/auth/session/route.ts`) — UID 프리픽스(`kakao:`, `naver:`, `google:`, `github:`) 및 `sign_in_provider` 필드 기반 자동 감지, 신규 로그인마다 Firestore에 업데이트
+- `scripts/migrate-provider.mjs` 신규 생성 — 기존 회원 `provider` 필드 일괄 마이그레이션 (Firebase Auth `getUsers` 100명 배치)
+- `scripts/add-admin.mjs` 신규 생성 — 이메일로 `users.plan = "admin"` 설정하는 관리자 지정 스크립트
+- `src/types/user.ts` 타입 확장 — `UserProvider`, `BuiltinPlan`, `PlanConfig`, `AllStats` 추가, `UserPlan`을 `string`으로 확장
+- Google/GitHub 소셜 로그인을 서버사이드 OAuth로 전환 (`src/app/api/auth/google/`, `src/app/api/auth/github/`) — popup/redirect 방식 모두 Vercel 환경에서 동작 불가, Kakao/Naver와 동일한 Authorization Code Flow + Firebase Custom Token 방식으로 변경
+
+---
+
 ## 2026-06-01
 
 - 타로 카드 이미지 스프라이트 시트 → 개별 PNG 파일로 전환 (`src/lib/tarot/utils.ts`) — `tarot_majors/`, `tarot_cups/`, `tarot_wands/`, `tarot_swords/`, `tarot_pentacles/` 서브폴더 구조 대응
