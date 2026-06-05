@@ -1,13 +1,12 @@
 "use client";
 
-import { useState, useEffect, FormEvent, Suspense } from "react";
+import { useState, FormEvent, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   signInWithEmail,
   signInWithGoogle,
   signInWithGithub,
-  getAuthRedirectResult,
   createSession,
 } from "@/lib/firebase/auth";
 
@@ -20,20 +19,6 @@ function LoginForm() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    getAuthRedirectResult()
-      .then(async (result) => {
-        if (!result) return;
-        setLoading(true);
-        const isAdmin = await createSession(result.user);
-        router.push(getDestination(isAdmin));
-      })
-      .catch((err) => {
-        console.error("[Redirect] 로그인 에러:", err);
-        setError("소셜 로그인에 실패했습니다.");
-      });
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   function getDestination(isAdmin: boolean) {
     return isAdmin ? "/admin" : redirectTo;
@@ -54,20 +39,40 @@ function LoginForm() {
     }
   }
 
-  function handleGoogle() {
+  async function handleGoogle() {
     setError("");
-    signInWithGoogle().catch((err) => {
-      console.error("[Google] 로그인 에러:", err);
-      setError("구글 로그인에 실패했습니다.");
-    });
+    setLoading(true);
+    try {
+      const result = await signInWithGoogle();
+      const isAdmin = await createSession(result.user);
+      router.push(getDestination(isAdmin));
+    } catch (err: unknown) {
+      const code = (err as { code?: string }).code;
+      if (code !== "auth/popup-closed-by-user" && code !== "auth/cancelled-popup-request") {
+        console.error("[Google] 로그인 에러:", err);
+        setError("구글 로그인에 실패했습니다.");
+      }
+    } finally {
+      setLoading(false);
+    }
   }
 
-  function handleGithub() {
+  async function handleGithub() {
     setError("");
-    signInWithGithub().catch((err) => {
-      console.error("[GitHub] 로그인 에러:", err);
-      setError("깃허브 로그인에 실패했습니다.");
-    });
+    setLoading(true);
+    try {
+      const result = await signInWithGithub();
+      const isAdmin = await createSession(result.user);
+      router.push(getDestination(isAdmin));
+    } catch (err: unknown) {
+      const code = (err as { code?: string }).code;
+      if (code !== "auth/popup-closed-by-user" && code !== "auth/cancelled-popup-request") {
+        console.error("[GitHub] 로그인 에러:", err);
+        setError("깃허브 로그인에 실패했습니다.");
+      }
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
