@@ -10,7 +10,7 @@ export interface SessionPayload {
   email: string;
   uid: string;
   isAdmin: boolean;
-  plan: "free" | "premium";
+  plan: string;
   exp: number;
 }
 
@@ -50,7 +50,7 @@ export async function createSessionToken(
   uid: string,
   email: string,
   isAdmin: boolean,
-  plan: "free" | "premium" = "free"
+  plan: string = "free"
 ): Promise<string> {
   const payload: SessionPayload = {
     uid,
