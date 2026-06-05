@@ -4,18 +4,12 @@ import {
   getAuth,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
-  signInWithPopup,
   signOut as firebaseSignOut,
-  GoogleAuthProvider,
-  GithubAuthProvider,
   signInWithCustomToken,
   updateProfile,
   User,
 } from "firebase/auth";
 import { getFirebaseApp } from "./config";
-
-const googleProvider = new GoogleAuthProvider();
-const githubProvider = new GithubAuthProvider();
 
 function auth() {
   return getAuth(getFirebaseApp());
@@ -33,14 +27,6 @@ export async function signUpWithEmail(
   const credential = await createUserWithEmailAndPassword(auth(), email, password);
   await updateProfile(credential.user, { displayName: nickname });
   return credential;
-}
-
-export async function signInWithGoogle() {
-  return signInWithPopup(auth(), googleProvider);
-}
-
-export async function signInWithGithub() {
-  return signInWithPopup(auth(), githubProvider);
 }
 
 export async function signInWithToken(token: string) {

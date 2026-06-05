@@ -10,8 +10,10 @@ import {
 } from "@/lib/session";
 
 function detectProvider(uid: string, decoded: DecodedIdToken): string {
-  if (uid.startsWith("kakao:")) return "kakao";
-  if (uid.startsWith("naver:")) return "naver";
+  if (uid.startsWith("kakao:"))  return "kakao";
+  if (uid.startsWith("naver:"))  return "naver";
+  if (uid.startsWith("google:")) return "google";
+  if (uid.startsWith("github:")) return "github";
   const signInProvider = (decoded as Record<string, unknown> & { firebase?: { sign_in_provider?: string } })
     .firebase?.sign_in_provider ?? "";
   if (signInProvider === "google.com") return "google";
@@ -54,8 +56,10 @@ async function upsertUserDoc(
   }
 
   // 신규 회원 — 문서 생성 (plan은 항상 free, 어드민 지정은 스크립트로)
+  const claims = decoded as Record<string, unknown>;
   const nickname =
-    decoded.name ??
+    (decoded.name as string | undefined) ??
+    (claims.displayName as string | undefined) ??
     (email ? email.split("@")[0] : null) ??
     "사용자";
 
@@ -63,7 +67,7 @@ async function upsertUserDoc(
     uid,
     email,
     nickname,
-    photoURL: decoded.picture ?? "",
+    photoURL: decoded.picture ?? (claims.photoURL as string | undefined) ?? "",
     plan: "free",
     provider,
     createdAt: FieldValue.serverTimestamp(),
