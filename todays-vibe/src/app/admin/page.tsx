@@ -30,6 +30,13 @@ const CARDS = [
     color: "from-amber-500/20 to-orange-500/20 border-amber-400/30",
   },
   {
+    href: "/admin/readings",
+    icon: "📖",
+    label: "운세 기록",
+    desc: "전체 AI 운세 결과 조회 · 유저별 확인",
+    color: "from-indigo-500/20 to-purple-500/20 border-indigo-400/30",
+  },
+  {
     href: "/admin/batch",
     icon: "⚡",
     label: "운세 배치 관리",

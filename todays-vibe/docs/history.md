@@ -14,6 +14,23 @@
 - `src/types/user.ts` 타입 확장 — `UserProvider`, `BuiltinPlan`, `PlanConfig`, `AllStats` 추가, `UserPlan`을 `string`으로 확장
 - Google/GitHub 소셜 로그인을 서버사이드 OAuth로 전환 (`src/app/api/auth/google/`, `src/app/api/auth/github/`) — popup/redirect 방식 모두 Vercel 환경에서 동작 불가, Kakao/Naver와 동일한 Authorization Code Flow + Firebase Custom Token 방식으로 변경
 
+## 2026-06-04
+
+- 어드민 사용 통계 페이지 실데이터 연동 (`src/app/admin/stats/page.tsx`, `src/app/api/admin/stats/route.ts`) — `daily_usage` 기간별 집계, 통계 카드 4종(총 이용 횟수·인기 운세·총 가입자·신규 가입), 일별 바 차트(CSS, 호버 툴팁)
+- 운세별 이용 순위 드릴다운 구현 — 테이블 행 클릭 시 해당 메뉴의 기간 내 총 이용·이용 유저 수·일별 추이 미니 차트 인라인 펼침
+- 커스텀 날짜 범위 필터 추가 — 시작일~종료일 직접 입력, 기간 버튼과 독립 동작, 역방향 입력 방지
+
+---
+
+## 2026-06-02
+
+- Firestore `undefined` 저장 오류 수정 (`src/lib/firebase/readings.ts`) — `saveAiReading()` 신규 생성, `input` 객체에서 `undefined` 필드를 `cleanInput`으로 필터링 후 저장, 모든 fortune API 라우트 6종에 연결
+- 운세 기록 조회 API 추가 (`src/app/api/user/readings/route.ts`) — 세션 인증 후 `ai_readings` 컬렉션에서 본인 기록 최대 20건 조회, 복합 인덱스 없이 동작하도록 JS 정렬 처리
+- 오늘 AI 사용 현황 API 추가 (`src/app/api/user/usage/route.ts`) — `daily_usage` 컬렉션에서 오늘 메뉴별 사용 횟수 조회
+- 마이페이지 운세 기록·사용 현황 섹션 구현 (`src/app/(user)/mypage/page.tsx`) — "내 운세 기록" 섹션 추가(최근 5개 표시 → 더보기로 5개씩 추가, 클릭 시 전체 결과 펼치기), 오늘 AI 사용 현황 실제 Firestore 데이터 연동 (한도 초과 시 빨간 막대)
+- 어드민 운세 기록 페이지 신규 추가 (`src/app/admin/readings/page.tsx`, `src/app/api/admin/readings/route.ts`) — 전체 `ai_readings` 조회, 타입 드롭다운·userId 검색 필터, 행 클릭 시 결과 전문·docId·userId 펼쳐보기, 사이드바 및 대시보드 카드에 항목 추가
+- `lunisolar` 패키지 설치 — 빌드 오류 수정 (`package.json`)
+
 ---
 
 ## 2026-06-01

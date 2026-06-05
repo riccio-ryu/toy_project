@@ -5,6 +5,7 @@ const NAV = [
   { href: "/admin/batch", label: "운세 배치", icon: "⚡" },
   { href: "/admin/users", label: "회원 관리", icon: "👥" },
   { href: "/admin/menus", label: "메뉴 관리", icon: "📋" },
+  { href: "/admin/readings", label: "운세 기록", icon: "📖" },
   { href: "/admin/stats", label: "사용 통계", icon: "📈" },
   { href: "/admin/ai-usage", label: "AI 사용량", icon: "🤖" },
 ];
