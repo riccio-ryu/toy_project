@@ -1,13 +1,7 @@
 import { NextRequest } from "next/server";
 import { verifySessionToken, SESSION_COOKIE } from "@/lib/session";
 import { getAdminFirestore } from "@/lib/firebase/admin";
-
-function todayKST(): string {
-  return new Date(Date.now() + 9 * 60 * 60 * 1000)
-    .toISOString()
-    .slice(0, 10)
-    .replace(/-/g, "");
-}
+import { todayKST } from "@/lib/utils/date";
 
 const TRACKED_MENUS = ["saju", "dream", "tarot-3cards", "tarot-celtic", "tarot-horseshoe", "tarot-full-moon", "tarot-tree-of-life"];
 

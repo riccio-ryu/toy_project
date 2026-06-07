@@ -5,6 +5,8 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import zodiacData from "@/data/zodiac-signs.json";
 import SpriteCard from "@/components/common/SpriteCard";
+import FortuneCard from "@/components/common/FortuneCard";
+import LuckyBadge from "@/components/common/LuckyBadge";
 import {
   getWeeklyZodiacFortune,
   getMonthlyZodiacFortune,
@@ -266,36 +268,3 @@ export default function ZodiacSignPage() {
   );
 }
 
-// ─── 서브 컴포넌트 ────────────────────────────────────────────────
-function FortuneCard({
-  title,
-  children,
-  empty,
-}: {
-  title: string;
-  children?: React.ReactNode;
-  empty?: boolean;
-}) {
-  return (
-    <div className="rounded-2xl bg-white/5 border border-white/10 p-6">
-      <p className="text-white/40 text-xs mb-3">{title}</p>
-      {empty ? (
-        <div className="text-center py-6">
-          <p className="text-white/30 text-sm">아직 운세가 준비되지 않았어요</p>
-          <p className="text-white/20 text-xs mt-1">배치 생성 후 확인해주세요</p>
-        </div>
-      ) : (
-        children
-      )}
-    </div>
-  );
-}
-
-function LuckyBadge({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex-1 rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-center">
-      <p className="text-white/30 text-xs mb-0.5">{label}</p>
-      <p className="text-white text-sm font-medium">{value}</p>
-    </div>
-  );
-}

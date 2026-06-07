@@ -1,16 +1,12 @@
 import { NextRequest } from "next/server";
 import { getAdminFirestore } from "@/lib/firebase/admin";
 import { SESSION_COOKIE, verifySessionToken } from "@/lib/session";
+import { todayKST } from "@/lib/utils/date";
 
 async function requireAdmin(request: NextRequest) {
   const token = request.cookies.get(SESSION_COOKIE)?.value;
   const payload = token ? await verifySessionToken(token) : null;
   return payload?.isAdmin ? payload : null;
-}
-
-function todayKST(): string {
-  const kst = new Date(Date.now() + 9 * 60 * 60 * 1000);
-  return kst.toISOString().slice(0, 10).replace(/-/g, "");
 }
 
 export async function GET(

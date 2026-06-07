@@ -1,3 +1,12 @@
+// ─── Fortune Status (오늘 사용 현황 API 응답) ────────────────────────────────
+
+export interface FortuneStatus {
+  used: number;
+  limit: number | null;
+  exhausted: boolean;
+  todayReading: { id: string; result: string; createdAt: string | null } | null;
+}
+
 // ─── Fortune Types ────────────────────────────────────────────────────────────
 
 export type FortuneType =

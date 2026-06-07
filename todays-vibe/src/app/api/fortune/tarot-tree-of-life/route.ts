@@ -1,8 +1,7 @@
 import { NextRequest } from "next/server";
-import { getGemini, DEFAULT_MODEL } from "@/lib/gemini/client";
 import { getCardById } from "@/lib/tarot/utils";
 import { checkUsage, denyResponse } from "@/lib/usage-check";
-import { saveAiReading } from "@/lib/firebase/readings";
+import { createFortuneStreamResponse } from "@/lib/gemini/stream-response";
 
 export const runtime = "nodejs";
 
@@ -65,39 +64,13 @@ export async function POST(request: NextRequest) {
     const usage = await checkUsage(request, "tarot-tree-of-life");
     if (!usage.allowed) return denyResponse(usage.reason);
 
-    const gemini = getGemini();
     const prompt = buildPrompt(cards, question);
 
-    const result = await gemini.models.generateContentStream({
-      model: DEFAULT_MODEL,
+    return createFortuneStreamResponse({
       contents: [{ role: "user", parts: [{ text: prompt }] }],
-    });
-
-    const stream = new ReadableStream({
-      async start(controller) {
-        const enc = new TextEncoder();
-        const chunks: string[] = [];
-        for await (const chunk of result) {
-          const text = chunk.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
-          if (text) {
-            chunks.push(text);
-            controller.enqueue(enc.encode(text));
-          }
-        }
-        if (usage.userId) {
-          await saveAiReading(usage.userId, "tarot-tree-of-life", { cards, question }, chunks.join(""))
-            .catch((err) => console.error("[ai_readings]", err));
-        }
-        controller.close();
-      },
-    });
-
-    return new Response(stream, {
-      headers: {
-        "Content-Type": "text/plain; charset=utf-8",
-        "Cache-Control": "no-cache",
-        "X-Accel-Buffering": "no",
-      },
+      userId: usage.userId,
+      readingType: "tarot-tree-of-life",
+      input: { cards, question },
     });
   } catch (err) {
     console.error("[Tree of Life API]", err);
