@@ -3,12 +3,7 @@
 import { useState, FormEvent, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import {
-  signInWithEmail,
-  signInWithGoogle,
-  signInWithGithub,
-  createSession,
-} from "@/lib/firebase/auth";
+import { signInWithEmail, createSession } from "@/lib/firebase/auth";
 
 function LoginForm() {
   const router = useRouter();
@@ -39,40 +34,12 @@ function LoginForm() {
     }
   }
 
-  async function handleGoogle() {
-    setError("");
-    setLoading(true);
-    try {
-      const result = await signInWithGoogle();
-      const isAdmin = await createSession(result.user);
-      router.push(getDestination(isAdmin));
-    } catch (err: unknown) {
-      const code = (err as { code?: string }).code;
-      if (code !== "auth/popup-closed-by-user" && code !== "auth/cancelled-popup-request") {
-        console.error("[Google] 로그인 에러:", err);
-        setError("구글 로그인에 실패했습니다.");
-      }
-    } finally {
-      setLoading(false);
-    }
+  function handleGoogle() {
+    window.location.href = "/api/auth/google";
   }
 
-  async function handleGithub() {
-    setError("");
-    setLoading(true);
-    try {
-      const result = await signInWithGithub();
-      const isAdmin = await createSession(result.user);
-      router.push(getDestination(isAdmin));
-    } catch (err: unknown) {
-      const code = (err as { code?: string }).code;
-      if (code !== "auth/popup-closed-by-user" && code !== "auth/cancelled-popup-request") {
-        console.error("[GitHub] 로그인 에러:", err);
-        setError("깃허브 로그인에 실패했습니다.");
-      }
-    } finally {
-      setLoading(false);
-    }
+  function handleGithub() {
+    window.location.href = "/api/auth/github";
   }
 
   return (
