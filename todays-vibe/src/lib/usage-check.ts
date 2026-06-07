@@ -3,6 +3,7 @@ import { FieldValue } from "firebase-admin/firestore";
 import { SESSION_COOKIE, verifySessionToken } from "@/lib/session";
 import type { AccessLevel } from "@/types/menu";
 import type { NextRequest } from "next/server";
+import { todayKST } from "@/lib/utils/date";
 
 const ROLE_RANK: Record<AccessLevel, number> = {
   public: 0,
@@ -16,13 +17,6 @@ function planToRole(payload: { isAdmin: boolean; plan: string } | null): AccessL
   if (payload.isAdmin) return "admin";
   if (payload.plan === "premium") return "premium";
   return "member";
-}
-
-function todayKST(): string {
-  return new Date(Date.now() + 9 * 60 * 60 * 1000)
-    .toISOString()
-    .slice(0, 10)
-    .replace(/-/g, "");
 }
 
 type DenyReason =

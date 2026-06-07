@@ -540,20 +540,44 @@ export default function MyPage() {
               </div>
               {/* 생년월일 */}
               <div className="grid grid-cols-3 gap-2">
-                {[
-                  { label: "년도", key: "year" as const, min: 1900, max: 2025 },
-                  { label: "월",   key: "month" as const, min: 1, max: 12 },
-                  { label: "일",   key: "day" as const, min: 1, max: 31 },
-                ].map(({ label, key, min, max }) => (
-                  <div key={key}>
-                    <label className="block text-white/30 text-[10px] mb-1">{label}</label>
-                    <input type="number" min={min} max={max}
-                      value={birthDraft[key]}
-                      onChange={(e) => setBirthDraft((d) => ({ ...d, [key]: parseInt(e.target.value) || 0 }))}
-                      className="w-full px-2 py-1.5 rounded-lg bg-white/10 border border-white/15 text-white text-xs focus:outline-none focus:border-purple-400"
-                    />
-                  </div>
-                ))}
+                {/* 년도 */}
+                <div>
+                  <label className="block text-white/30 text-[10px] mb-1">년도</label>
+                  <input
+                    type="number"
+                    min={1900}
+                    max={2025}
+                    value={birthDraft.year}
+                    onChange={(e) => setBirthDraft((d) => ({ ...d, year: parseInt(e.target.value) || 0 }))}
+                    className="w-full px-2 py-1.5 rounded-lg bg-white/10 border border-white/15 text-white text-xs focus:outline-none focus:border-purple-400"
+                  />
+                </div>
+                {/* 월 */}
+                <div>
+                  <label className="block text-white/30 text-[10px] mb-1">월</label>
+                  <select
+                    value={birthDraft.month}
+                    onChange={(e) => setBirthDraft((d) => ({ ...d, month: parseInt(e.target.value) }))}
+                    className="w-full px-2 py-1.5 rounded-lg bg-white/10 border border-white/15 text-white text-xs focus:outline-none focus:border-purple-400 appearance-none"
+                  >
+                    {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
+                      <option key={m} value={m} className="bg-gray-900">{m}월</option>
+                    ))}
+                  </select>
+                </div>
+                {/* 일 */}
+                <div>
+                  <label className="block text-white/30 text-[10px] mb-1">일</label>
+                  <select
+                    value={birthDraft.day}
+                    onChange={(e) => setBirthDraft((d) => ({ ...d, day: parseInt(e.target.value) }))}
+                    className="w-full px-2 py-1.5 rounded-lg bg-white/10 border border-white/15 text-white text-xs focus:outline-none focus:border-purple-400 appearance-none"
+                  >
+                    {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => (
+                      <option key={d} value={d} className="bg-gray-900">{d}일</option>
+                    ))}
+                  </select>
+                </div>
               </div>
               {/* 태어난 시간 */}
               <div>

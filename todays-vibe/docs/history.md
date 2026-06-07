@@ -2,6 +2,26 @@
 
 ---
 
+## 2026-06-06 ~ 2026-06-07
+
+- 사주 페이지 오늘 사용량 소진 시 버튼 비활성화 + 결과 표시 기능 완성 (`src/app/(user)/saju/page.tsx`) — `fortune-status` API 연동, 제출 버튼 `cursor-not-allowed` 비활성화, 오늘의 사주 결과 섹션 표시, finally 블록에서 상태 갱신
+- 타로 5개 페이지에 오늘 사용 현황 패턴 동일 적용 (`tarot`, `tarot-celtic`, `tarot-full-moon`, `tarot-horseshoe`, `tarot-tree-of-life`) — 섞기 버튼 비활성화, `TarotTodayResult` 컴포넌트로 오늘 결과 표시
+- **전체 코드 리팩토링 — 높은 우선순위**
+  - `src/lib/utils/date.ts` 신규 생성 — `todayKST()` 중앙화, 5개 파일의 중복 인라인 정의 제거
+  - `src/lib/gemini/stream-response.ts` 신규 생성 — `createFortuneStreamResponse()` 스트리밍 boilerplate 추출, 7개 fortune API 라우트에 일괄 적용
+  - `src/types/fortune.ts` — `FortuneStatus` 인터페이스 추가, 6개 페이지의 인라인 타입 정의 제거
+- **전체 코드 리팩토링 — 중간 우선순위**
+  - `src/lib/hooks/useTarotSpread.ts` 신규 생성 — 5개 타로 페이지의 공통 상태·로직 훅으로 추출 (phase, spreadCards, fortuneStatus, interpret 등)
+  - `src/components/tarot/TarotFanSpread.tsx`, `TarotShufflingAnimation.tsx`, `TarotReadingResult.tsx`, `TarotTodayResult.tsx` 신규 생성 — 반복 UI 컴포넌트화
+  - 타로 5개 페이지 전면 재작성 — 각 400~500줄 → 150~260줄로 축소, 훅·공통 컴포넌트 사용
+- **전체 코드 리팩토링 — 낮은 우선순위**
+  - `src/lib/utils/date.ts` — `kstNow(): Date`, `kstDateOffset(daysAgo): string` 함수 추가
+  - 어드민/크론 라우트 3종 (`admin/users/[uid]`, `admin/stats`, `cron/fortune/force`) — 인라인 KST 날짜 계산 제거, 공유 유틸 사용으로 통일
+  - `src/components/common/FortuneCard.tsx`, `LuckyBadge.tsx` 신규 생성 — `zodiac/[sign]`, `chinese-zodiac/[animal]` 두 페이지에 중복된 서브 컴포넌트 추출
+  - `src/lib/hooks/useFortuneStatus.ts` 신규 생성 — fortune-status fetch 패턴 훅으로 추출, `saju/page.tsx`에 적용
+- `/refactor` 커스텀 스킬 저장 (`.claude/commands/refactor.md`) — 코드 탐색 → 우선순위 분류 → 단계별 리팩토링 실행 워크플로우
+
+---
 ## 2026-06-05
 
 - 어드민 회원 관리 페이지 전면 개편 (`src/app/admin/users/page.tsx`) — 상단 통계 카드 고정(검색/필터와 무관), 검색 결과 건수 "N건 / 전체 M건" 표시, 컬럼 정렬 3단계(내림차순→오름차순→해제), 플랜 필터에 admin 추가, 가입 경로(provider) 필터 추가

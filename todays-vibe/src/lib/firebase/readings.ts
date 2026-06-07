@@ -1,4 +1,5 @@
 import { getAdminFirestore } from "./admin";
+import { todayKST } from "@/lib/utils/date";
 
 export type ReadingType =
   | "saju"
@@ -10,13 +11,6 @@ export type ReadingType =
   | "dream"
   | "zodiac"
   | "chinese-zodiac";
-
-function todayKST(): string {
-  return new Date(Date.now() + 9 * 60 * 60 * 1000)
-    .toISOString()
-    .slice(0, 10)
-    .replace(/-/g, "");
-}
 
 export async function saveAiReading(
   userId: string,
