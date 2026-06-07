@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { calculateSaju, HOUR_OPTIONS, type BirthInput, type SajuResult } from "@/lib/saju/calculator";
+import { useFortuneStatus } from "@/lib/hooks/useFortuneStatus";
 
 // ─── 사주 원국 테이블 ──────────────────────────────────────────────────
 function SajuTable({ result }: { result: SajuResult }) {
@@ -96,6 +97,8 @@ export default function SajuPage() {
   const [error, setError]           = useState("");
   const interpRef = useRef<HTMLDivElement>(null);
 
+  const { fortuneStatus, refreshFortuneStatus } = useFortuneStatus("saju");
+
   // 저장된 출생 정보 불러오기
   useEffect(() => {
     if (!user) return;
@@ -175,6 +178,7 @@ export default function SajuPage() {
       console.error(err);
     } finally {
       setLoading(false);
+      refreshFortuneStatus();
     }
   }
 
@@ -249,25 +253,50 @@ export default function SajuPage() {
             <div>
               <label className="block text-white/60 text-xs mb-2">생년월일</label>
               <div className="grid grid-cols-3 gap-2">
-                {[
-                  { label: "년도", value: year, set: setYear, min: 1900, max: currentYear, placeholder: "1990" },
-                  { label: "월", value: month, set: setMonth, min: 1, max: 12, placeholder: "1" },
-                  { label: "일", value: day, set: setDay, min: 1, max: 31, placeholder: "1" },
-                ].map(({ label, value, set, min, max, placeholder }) => (
-                  <div key={label}>
-                    <label className="block text-white/40 text-[10px] mb-1">{label}</label>
-                    <input
-                      type="number"
-                      value={value}
-                      onChange={(e) => set(e.target.value)}
-                      min={min}
-                      max={max}
-                      placeholder={placeholder}
-                      required
-                      className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/15 text-white text-sm placeholder-white/20 focus:outline-none focus:border-purple-400 transition-colors"
-                    />
-                  </div>
-                ))}
+                {/* 년도 */}
+                <div>
+                  <label className="block text-white/40 text-[10px] mb-1">년도</label>
+                  <input
+                    type="number"
+                    value={year}
+                    onChange={(e) => setYear(e.target.value)}
+                    min={1900}
+                    max={currentYear}
+                    placeholder="1990"
+                    required
+                    className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/15 text-white text-sm placeholder-white/20 focus:outline-none focus:border-purple-400 transition-colors"
+                  />
+                </div>
+                {/* 월 */}
+                <div>
+                  <label className="block text-white/40 text-[10px] mb-1">월</label>
+                  <select
+                    value={month}
+                    onChange={(e) => setMonth(e.target.value)}
+                    required
+                    className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/15 text-white text-sm focus:outline-none focus:border-purple-400 transition-colors appearance-none"
+                  >
+                    <option value="" className="bg-gray-900 text-white/40">월</option>
+                    {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
+                      <option key={m} value={m} className="bg-gray-900">{m}월</option>
+                    ))}
+                  </select>
+                </div>
+                {/* 일 */}
+                <div>
+                  <label className="block text-white/40 text-[10px] mb-1">일</label>
+                  <select
+                    value={day}
+                    onChange={(e) => setDay(e.target.value)}
+                    required
+                    className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/15 text-white text-sm focus:outline-none focus:border-purple-400 transition-colors appearance-none"
+                  >
+                    <option value="" className="bg-gray-900 text-white/40">일</option>
+                    {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => (
+                      <option key={d} value={d} className="bg-gray-900">{d}일</option>
+                    ))}
+                  </select>
+                </div>
               </div>
             </div>
 
@@ -345,11 +374,41 @@ export default function SajuPage() {
 
           <button
             type="submit"
-            className="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold text-sm hover:opacity-90 transition-opacity"
+            disabled={fortuneStatus?.exhausted === true}
+            className={`w-full py-3 rounded-xl font-bold text-sm transition-opacity ${
+              fortuneStatus?.exhausted
+                ? "bg-white/10 text-white/30 cursor-not-allowed"
+                : "bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:opacity-90"
+            }`}
           >
-            사주 풀이 보기
+            {fortuneStatus?.exhausted ? "오늘 사주풀이를 이미 이용했어요" : "사주 풀이 보기"}
           </button>
         </form>
+      )}
+
+      {/* 오늘의 사주 결과 (사용량 소진 시) */}
+      {fortuneStatus?.exhausted && fortuneStatus.todayReading && !result && (
+        <div className="mt-6 space-y-4">
+          <div className="flex items-center gap-2">
+            <div className="flex-1 h-px bg-white/10" />
+            <span className="text-white/30 text-xs">오늘의 사주 결과</span>
+            <div className="flex-1 h-px bg-white/10" />
+          </div>
+          <div className="rounded-2xl bg-white/5 border border-white/10 p-5">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-white/60 text-xs font-semibold uppercase tracking-widest">AI 사주 해석</h2>
+              {fortuneStatus.todayReading.createdAt && (
+                <span className="text-white/30 text-xs">
+                  {new Date(fortuneStatus.todayReading.createdAt).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" })} 열람
+                </span>
+              )}
+            </div>
+            <div
+              className="text-white/80 text-sm leading-relaxed whitespace-pre-wrap"
+              dangerouslySetInnerHTML={{ __html: fortuneStatus.todayReading.result.replace(/\*\*(.*?)\*\*/g, '<strong class="text-amber-300">$1</strong>') }}
+            />
+          </div>
+        </div>
       )}
 
       {/* 결과 */}

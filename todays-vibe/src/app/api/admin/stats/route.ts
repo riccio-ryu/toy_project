@@ -1,13 +1,9 @@
 import { NextRequest } from "next/server";
 import { getAdminFirestore } from "@/lib/firebase/admin";
 import { SESSION_COOKIE, verifySessionToken } from "@/lib/session";
+import { todayKST, kstDateOffset } from "@/lib/utils/date";
 
 type Period = "today" | "7d" | "30d" | "all";
-
-function kstDateStr(daysAgo: number): string {
-  const d = new Date(Date.now() + 9 * 60 * 60 * 1000 - daysAgo * 24 * 60 * 60 * 1000);
-  return d.toISOString().slice(0, 10).replace(/-/g, "");
-}
 
 function dateRangeArray(startDate: string, endDate: string): string[] {
   const dates: string[] = [];
@@ -38,14 +34,14 @@ export async function GET(req: NextRequest) {
   const menuId    = req.nextUrl.searchParams.get("menuId");
   const customStart = req.nextUrl.searchParams.get("start");  // YYYY-MM-DD
   const customEnd   = req.nextUrl.searchParams.get("end");    // YYYY-MM-DD
-  const today     = kstDateStr(0);
+  const today     = todayKST();
 
   // 커스텀 범위가 있으면 우선 적용, 없으면 period 기반
   const startDate = customStart
     ? customStart.replace(/-/g, "")
     : period === "today" ? today
-    : period === "7d"    ? kstDateStr(6)
-    : period === "30d"   ? kstDateStr(29)
+    : period === "7d"    ? kstDateOffset(6)
+    : period === "30d"   ? kstDateOffset(29)
     : "20000101";
   const endDate = customEnd ? customEnd.replace(/-/g, "") : today;
   const isAll   = !customStart && period === "all";

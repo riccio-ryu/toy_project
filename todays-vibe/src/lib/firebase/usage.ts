@@ -3,14 +3,9 @@
 import { getAdminFirestore } from "@/lib/firebase/admin";
 import { FieldValue } from "firebase-admin/firestore";
 import type { AccessLevel, UsageLimits } from "@/types/menu";
+import { todayKST } from "@/lib/utils/date";
 
 const COL = "daily_usage";
-
-/** KST 기준 오늘 날짜 YYYYMMDD */
-function todayKST(): string {
-  const kst = new Date(Date.now() + 9 * 60 * 60 * 1000);
-  return kst.toISOString().slice(0, 10).replace(/-/g, "");
-}
 
 function docId(userId: string, menuId: string) {
   return `${todayKST()}_${userId}_${menuId}`;
