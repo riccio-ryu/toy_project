@@ -2,6 +2,18 @@
 
 ---
 
+## 2026-06-08
+
+- 공용 AI 로딩 컴포넌트 추가 (`src/components/common/AILoadingIndicator.tsx`) — 운세 타입별 메시지 로테이션(2.5초 간격 페이드), 보라색 3-dot 바운스 애니메이션, 사주·타로·꿈해몽 전 페이지에 동일 로딩 화면 적용
+- 메인 화면 준비중 항목 필터 추가 (`src/app/(user)/FortuneGrid.tsx`) — 토글 버튼으로 `ready: false` 항목 노출/숨김, 빈 카테고리 자동 숨김
+- 브랜드 에셋 정리 및 적용 — `public/brand/` 디렉토리 신규 생성, logo/favicon/appicon 이동, Next.js 기본 SVG 삭제, 헤더 로고 이미지 교체(emoji → `logo.svg`), 브라우저 탭 아이콘 `src/app/icon.png` 등록
+- 폰트 변경 (`src/app/layout.tsx`, `src/app/globals.css`) — Geist → Noto Sans KR(한글) + Roboto(영문) 적용, Google Fonts `next/font` 연동
+- `logo.svg` 텍스트 색상 수정 — 어두운 배경에서 보이도록 `#15204A` → 흰색, `Today's Vibe` → 연보라(`#C4B5FD`), 폰트 사이즈 및 y 위치 조정
+- 푸터 추가 (`src/components/Footer.tsx`) — 접힘/펼침 토글 구조, 면책조항·이용약관·개인정보처리방침·문의하기 포함
+- 이용약관·개인정보처리방침 팝업 모달 (`src/components/common/LegalModal.tsx`) — 모바일 하단 시트 / PC 가운데 팝업, ESC 및 배경 클릭 닫기 지원
+
+---
+
 ## 2026-06-06 ~ 2026-06-07
 
 - 사주 페이지 오늘 사용량 소진 시 버튼 비활성화 + 결과 표시 기능 완성 (`src/app/(user)/saju/page.tsx`) — `fortune-status` API 연동, 제출 버튼 `cursor-not-allowed` 비활성화, 오늘의 사주 결과 섹션 표시, finally 블록에서 상태 갱신
