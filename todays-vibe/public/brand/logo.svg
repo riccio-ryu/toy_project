@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="400" viewBox="0 0 1200 400">
+<defs>
+<linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" stop-color="#B8A7FF"/>
+<stop offset="55%" stop-color="#F1C0D8"/>
+<stop offset="100%" stop-color="#FFE6B8"/>
+</linearGradient>
+</defs>
+<circle cx="180" cy="200" r="120" fill="url(#g)"/>
+<path d="M180 110 C190 170 210 190 270 200 C210 210 190 230 180 290 C170 230 150 210 90 200 C150 190 170 170 180 110Z" fill="white"/>
+<text x="350" y="235" font-size="140" font-family="sans-serif" fill="#FFFFFF" font-weight="700">오늘 운</text>
+<text x="355" y="320" font-size="60" font-family="serif" fill="#C4B5FD">Today's Vibe</text>
+</svg>
