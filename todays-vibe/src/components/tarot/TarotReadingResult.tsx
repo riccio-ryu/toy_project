@@ -2,6 +2,7 @@
 
 import { RefObject } from "react";
 import { motion } from "framer-motion";
+import AILoadingIndicator from "@/components/common/AILoadingIndicator";
 
 type Props = {
   interpretRef: RefObject<HTMLDivElement | null>;
@@ -20,7 +21,7 @@ export default function TarotReadingResult({ interpretRef, interpretation, isLoa
       <div className="rounded-xl bg-white/5 border border-white/10 p-5 min-h-[120px]">
         <p className="text-white/40 text-xs mb-3">AI 카드 해석</p>
         {isLoading && !interpretation && (
-          <p className="text-white/30 text-sm animate-pulse">카드를 읽는 중...</p>
+          <AILoadingIndicator type="tarot" />
         )}
         {interpretation && (
           <p className="text-white/85 text-sm leading-relaxed whitespace-pre-wrap">

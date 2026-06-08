@@ -1,11 +1,14 @@
 "use client";
 
+import AILoadingIndicator from "@/components/common/AILoadingIndicator";
+
 interface FortuneResultProps {
   result: string;
   isLoading: boolean;
   onReset: () => void;
   title: string;
   icon: string;
+  fortuneType?: "tarot" | "saju" | "dream" | "default";
 }
 
 // 마크다운 헤더(## 제목)를 간단하게 렌더링하는 파서
@@ -74,6 +77,7 @@ export default function FortuneResult({
   onReset,
   title,
   icon,
+  fortuneType = "default",
 }: FortuneResultProps) {
   return (
     <div className="max-w-xl mx-auto px-4 py-8">
@@ -86,13 +90,7 @@ export default function FortuneResult({
       {/* 결과 카드 */}
       <div className="rounded-2xl bg-white/10 border border-white/15 backdrop-blur-sm px-6 py-5 min-h-[200px]">
         {isLoading && result === "" ? (
-          // 초기 로딩 스피너
-          <div className="flex flex-col items-center justify-center py-12 gap-3">
-            <div className="w-8 h-8 border-2 border-purple-400 border-t-transparent rounded-full animate-spin" />
-            <p className="text-purple-300 text-sm animate-pulse">
-              AI가 해석하고 있어요...
-            </p>
-          </div>
+          <AILoadingIndicator type={fortuneType} />
         ) : (
           <div>
             {parseMarkdown(result)}
