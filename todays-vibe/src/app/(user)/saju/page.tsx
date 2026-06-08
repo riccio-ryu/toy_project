@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { calculateSaju, HOUR_OPTIONS, type BirthInput, type SajuResult } from "@/lib/saju/calculator";
 import { useFortuneStatus } from "@/lib/hooks/useFortuneStatus";
+import AILoadingIndicator from "@/components/common/AILoadingIndicator";
 
 // ─── 사주 원국 테이블 ──────────────────────────────────────────────────
 function SajuTable({ result }: { result: SajuResult }) {
@@ -437,10 +438,7 @@ export default function SajuPage() {
           <div className="rounded-2xl bg-white/5 border border-white/10 p-5">
             <h2 className="text-white/60 text-xs font-semibold uppercase tracking-widest mb-4">AI 사주 해석</h2>
             {loading && !interpretation && (
-              <div className="flex items-center gap-2 text-white/40 text-sm">
-                <div className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
-                사주를 해석하고 있습니다...
-              </div>
+              <AILoadingIndicator type="saju" />
             )}
             {interpretation && (
               <div
