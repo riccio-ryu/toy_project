@@ -47,6 +47,7 @@ export default function DreamForm() {
         onReset={handleReset}
         title="꿈해몽 결과"
         icon="💭"
+        fortuneType="dream"
       />
     );
   }

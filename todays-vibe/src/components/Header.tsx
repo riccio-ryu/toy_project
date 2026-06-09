@@ -33,11 +33,14 @@ export default function Header() {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-3 backdrop-blur-md bg-black/30 border-b border-white/10">
       {/* Logo */}
-      <Link href="/" className="flex items-center gap-2">
-        <span className="text-2xl">🔮</span>
-        <span className="text-white font-bold text-lg tracking-tight">
-          오늘운
-        </span>
+      <Link href="/">
+        <Image
+          src="/brand/logo.svg"
+          alt="오늘운"
+          width={108}
+          height={36}
+          priority
+        />
       </Link>
 
       {/* Auth */}
