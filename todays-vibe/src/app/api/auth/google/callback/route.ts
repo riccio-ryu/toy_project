@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createCustomToken } from "@/lib/firebase/admin";
+import { createCustomToken, upsertOAuthUser } from "@/lib/firebase/admin";
 
 interface GoogleTokenResponse {
   access_token: string;
@@ -48,6 +48,11 @@ export async function GET(req: NextRequest) {
     if (userData.error) throw new Error(userData.error.message);
 
     const uid = `google:${userData.id}`;
+    await upsertOAuthUser(uid, {
+      email: userData.email,
+      displayName: userData.name,
+      photoURL: userData.picture,
+    });
     const customToken = await createCustomToken(uid, {
       provider: "google",
       email: userData.email ?? "",
