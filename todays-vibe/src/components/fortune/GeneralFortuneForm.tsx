@@ -30,6 +30,10 @@ export default function GeneralFortuneForm({ config }: Props) {
   const [gender, setGender] = useState<"male" | "female">("male");
   const [question, setQuestion] = useState("");
 
+  const [saveBirth, setSaveBirth] = useState(false);
+  const [savedInfo, setSavedInfo] = useState<{ year: number; month: number; day: number; gender: "male" | "female" } | null>(null);
+  const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved">("idle");
+
   // 저장된 출생 정보 자동 불러오기
   useEffect(() => {
     if (!user) return;
@@ -37,6 +41,7 @@ export default function GeneralFortuneForm({ config }: Props) {
       .then((r) => r.json())
       .then((d) => {
         if (d.birthInfo) {
+          setSavedInfo(d.birthInfo);
           setYear(String(d.birthInfo.year));
           setMonth(String(d.birthInfo.month));
           setDay(String(d.birthInfo.day));
@@ -59,18 +64,38 @@ export default function GeneralFortuneForm({ config }: Props) {
       question: question.trim() || undefined,
     };
 
+    if (saveBirth && user) {
+      setSaveStatus("saving");
+      fetch("/api/user/birth-info", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ year: y, month: m, day: d, gender }),
+      })
+        .then(() => { setSaveStatus("saved"); setSavedInfo({ year: y, month: m, day: d, gender }); })
+        .catch(() => setSaveStatus("idle"));
+    }
+
     await submit(config.type, input);
   }
 
   if (result || isLoading) {
     return (
-      <FortuneResult
-        result={result}
-        isLoading={isLoading}
-        onReset={() => { reset(); setQuestion(""); }}
-        title={`${config.title} 결과`}
-        icon={config.icon}
-      />
+      <div>
+        {saveStatus === "saved" && (
+          <div className="max-w-xl mx-auto px-4 pt-6">
+            <div className="px-4 py-2.5 rounded-xl bg-green-500/10 border border-green-400/20 text-center">
+              <p className="text-green-400 text-sm">출생 정보가 저장되었습니다</p>
+            </div>
+          </div>
+        )}
+        <FortuneResult
+          result={result}
+          isLoading={isLoading}
+          onReset={() => { reset(); setQuestion(""); setSaveStatus("idle"); }}
+          title={`${config.title} 결과`}
+          icon={config.icon}
+        />
+      </div>
     );
   }
 
@@ -84,6 +109,22 @@ export default function GeneralFortuneForm({ config }: Props) {
         <h1 className="text-white font-bold text-2xl">{config.title}</h1>
         <p className="text-white/50 text-sm mt-2">{config.questionLabel}</p>
       </div>
+
+      {/* 저장된 정보 알림 */}
+      {savedInfo && (
+        <div className="mb-4 px-4 py-3 rounded-xl bg-amber-500/10 border border-amber-400/20 flex items-center justify-between">
+          <p className="text-amber-300 text-sm">저장된 생년월일 정보가 있습니다</p>
+          <button
+            onClick={() => {
+              setYear(""); setMonth(""); setDay(""); setGender("male"); setSavedInfo(null);
+              fetch("/api/user/birth-info", { method: "DELETE" }).catch(() => {});
+            }}
+            className="text-white/40 text-xs hover:text-white/70 transition-colors"
+          >
+            삭제
+          </button>
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} className="space-y-5">
         <div className="rounded-2xl bg-white/5 border border-white/10 p-6 space-y-5">
@@ -170,6 +211,26 @@ export default function GeneralFortuneForm({ config }: Props) {
               className="w-full px-3 py-2.5 rounded-lg bg-white/10 border border-white/15 text-white text-sm placeholder-white/30 focus:outline-none focus:border-purple-400 transition-colors"
             />
           </div>
+
+          {/* 출생 정보 저장 (로그인 시) */}
+          {user && (
+            <label className="flex items-center gap-3 cursor-pointer">
+              <div
+                onClick={() => setSaveBirth((v) => !v)}
+                className={`w-10 h-5 rounded-full transition-colors relative shrink-0 ${
+                  saveBirth ? "bg-purple-600" : "bg-white/20"
+                }`}
+              >
+                <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform ${
+                  saveBirth ? "translate-x-5" : "translate-x-0.5"
+                }`} />
+              </div>
+              <div>
+                <p className="text-white/80 text-sm">출생 정보 저장</p>
+                <p className="text-white/40 text-xs">다음에 자동으로 불러옵니다</p>
+              </div>
+            </label>
+          )}
         </div>
 
         {error && <p className="text-red-400 text-sm text-center">{error}</p>}
