@@ -7,6 +7,8 @@ import {
   LoveCompatibilityInput,
   NameCompatibilityInput,
   ZodiacCompatibilityInput,
+  RuneInput,
+  NameFortuneInput,
   GeneralFortuneInput,
   FortuneInput,
 } from "@/types/fortune";
@@ -31,6 +33,10 @@ export function buildPrompt(type: FortuneType, input: FortuneInput): string {
       return buildNameCompatibilityPrompt(input as NameCompatibilityInput);
     case "zodiac-compatibility":
       return buildZodiacCompatibilityPrompt(input as ZodiacCompatibilityInput);
+    case "rune":
+      return buildRunePrompt(input as RuneInput);
+    case "name-fortune":
+      return buildNameFortunePrompt(input as NameFortuneInput);
     case "love-fortune":
       return buildGeneralFortunePrompt("love", input as GeneralFortuneInput);
     case "wealth-fortune":
@@ -462,4 +468,82 @@ ${animal1}띠와 ${animal2}띠 각자의 타고난 성격, 기질, 강점을 설
 전체적인 궁합을 100점 만점으로 점수를 매기고 (예: 85점), 한 줄 요약으로 마무리해 주세요.
 
 한국어로, 전통적이면서도 친근한 톤으로 작성해 주세요.`;
+}
+
+// ─── 룬 문자 ─────────────────────────────────────────────────────────────────
+
+function buildRunePrompt(input: RuneInput): string {
+  const [r1, r2, r3] = input.runes;
+  const questionLine = input.question ? `\n질문: ${input.question}` : "";
+
+  return `당신은 북유럽 룬(Rune) 문자 전문 리더입니다. 고대 바이킹의 지혜와 신비를 담은 룬 문자를 해석합니다.
+${questionLine}
+
+뽑힌 룬 3개 (과거 / 현재 / 미래):
+- 과거: ${r1}
+- 현재: ${r2}
+- 미래: ${r3}
+
+아래 형식으로 해석해 주세요:
+
+## ᚱ 룬 배치 개요
+세 개의 룬이 전체적으로 전달하는 메시지와 에너지 흐름을 소개해 주세요.
+
+## ⬅️ 과거 — ${r1}
+이 룬이 과거의 상황이나 영향으로서 의미하는 바를 해석해 주세요.
+
+## ⚡ 현재 — ${r2}
+이 룬이 현재 상황의 핵심 에너지로서 의미하는 바를 해석해 주세요.
+
+## ➡️ 미래 — ${r3}
+이 룬이 앞으로의 방향과 가능성으로서 의미하는 바를 해석해 주세요.
+
+## ✨ 종합 메시지
+${input.question ? `질문 "${input.question}"에 대한` : "지금 당신에게 전하는"} 룬의 최종 메시지를 전해 주세요.
+
+## 💡 행동 조언
+이 룬 리딩을 바탕으로 취할 수 있는 구체적인 행동이나 마음가짐을 1~3가지 제안해 주세요.
+
+한국어로, 고대의 신비로움과 따뜻한 인도감을 담아 작성해 주세요.`;
+}
+
+// ─── 성명학 ──────────────────────────────────────────────────────────────────
+
+function buildNameFortunePrompt(input: NameFortuneInput): string {
+  const birthLine = (input.birthYear && input.birthMonth && input.birthDay)
+    ? `\n생년월일: ${input.birthYear}년 ${input.birthMonth}월 ${input.birthDay}일`
+    : "";
+  const year = new Date().getFullYear();
+
+  return `당신은 한국의 성명학(姓名學) 전문가입니다. 이름에 담긴 수리(數理)·음양오행·발음 에너지로 운세와 기질을 분석합니다.
+
+이름: ${input.name}${birthLine}
+
+아래 형식으로 성명학 분석을 풀이해 주세요. 올해는 ${year}년입니다.
+
+## ✍️ 이름의 기본 에너지
+이름 "${input.name}"이 담고 있는 전체적인 기운과 첫인상을 설명해 주세요.
+
+## 🔢 수리 분석
+이름 획수(한자 기준으로 추정)를 계산하고, 원격(元格)·형격(亨格)·이격(利格)·정격(貞格)의 수리 구조와 길흉을 분석해 주세요.
+
+## ☯️ 음양오행 분석
+이름의 자음과 모음에서 드러나는 음양오행의 조화를 분석해 주세요. 강한 기운과 보완이 필요한 기운을 설명해 주세요.
+
+## 🎵 발음 에너지
+이름의 발음(성조·리듬·소리의 조화)이 지니는 에너지와 주변에 미치는 인상을 분석해 주세요.
+
+## 💫 타고난 기질 & 적성
+이름에서 드러나는 성격적 특성, 재능, 적합한 분야를 설명해 주세요.
+
+## 🌟 올해 (${year}년) 이름 운세
+이름의 기운이 올해와 어떻게 어우러지는지, 올해 특히 빛날 분야와 조심할 시기를 알려주세요.
+
+## 💡 이름 활용 조언
+이름의 에너지를 최대한 활용하거나 약한 기운을 보완하는 생활 조언을 해주세요.
+
+## ✨ 종합 평가
+이름 전체에 대한 종합 평가와 응원 메시지로 마무리해 주세요.
+
+한국어로, 전문적이면서도 따뜻하고 긍정적인 톤으로 작성해 주세요.`;
 }

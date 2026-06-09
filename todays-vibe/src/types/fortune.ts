@@ -23,7 +23,9 @@ export type FortuneType =
   | "love-compatibility"
   | "name-compatibility"
   | "zodiac-compatibility"
-  | "business-compatibility";
+  | "business-compatibility"
+  | "rune"
+  | "name-fortune";
 
 // ─── Input Types (fortune별 입력 스키마) ──────────────────────────────────────
 
@@ -72,6 +74,18 @@ export interface ZodiacCompatibilityInput {
   person2BirthYear: number;
 }
 
+export interface RuneInput {
+  question?: string;
+  runes: [string, string, string];
+}
+
+export interface NameFortuneInput {
+  name: string;
+  birthYear?: number;
+  birthMonth?: number;
+  birthDay?: number;
+}
+
 export interface GeneralFortuneInput {
   birthYear: number;
   birthMonth: number;
@@ -89,6 +103,8 @@ export type FortuneInput =
   | LoveCompatibilityInput
   | NameCompatibilityInput
   | ZodiacCompatibilityInput
+  | RuneInput
+  | NameFortuneInput
   | GeneralFortuneInput;
 
 // ─── API Request / Response ───────────────────────────────────────────────────

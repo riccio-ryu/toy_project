@@ -40,7 +40,8 @@ export async function createFortuneStreamResponse(opts: {
             .catch((err) => console.error("[ai_readings]", err));
         }
       } catch (err) {
-        controller.error(err);
+        console.error("[stream error]", err);
+        controller.close();
         return;
       }
       controller.close();
