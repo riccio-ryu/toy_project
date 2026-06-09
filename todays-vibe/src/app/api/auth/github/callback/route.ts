@@ -86,7 +86,11 @@ export async function GET(req: NextRequest) {
     res.cookies.delete("github_oauth_state");
     return res;
   } catch (err) {
-    console.error("[GitHub OAuth callback]", err);
-    return NextResponse.redirect(new URL("/login?error=github_failed", req.url));
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error("[GitHub OAuth callback]", msg);
+    const url = new URL("/login", req.url);
+    url.searchParams.set("error", "github_failed");
+    url.searchParams.set("detail", msg.slice(0, 100));
+    return NextResponse.redirect(url.toString());
   }
 }
