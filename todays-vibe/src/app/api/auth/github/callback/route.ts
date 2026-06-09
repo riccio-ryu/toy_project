@@ -68,8 +68,10 @@ export async function GET(req: NextRequest) {
           Accept: "application/vnd.github.v3+json",
         },
       });
-      const emails: GitHubEmail[] = await emailRes.json();
-      email = emails.find((e) => e.primary)?.email ?? "";
+      const emailsData: unknown = await emailRes.json();
+      if (Array.isArray(emailsData)) {
+        email = (emailsData as GitHubEmail[]).find((e) => e.primary)?.email ?? "";
+      }
     }
 
     const uid = `github:${userData.id}`;
