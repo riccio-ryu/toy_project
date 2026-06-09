@@ -388,23 +388,27 @@ export default function MyPage() {
 
               {/* 로그인 수단 */}
               <div className="flex flex-wrap gap-1.5 mt-2">
-                {user.providerData.map((p) => {
-                  const info = PROVIDER_INFO[p.providerId] ?? {
-                    label: p.providerId,
-                    icon: "🔗",
-                    color: "text-white/50",
-                    bg: "bg-white/10 border border-white/20",
-                  };
-                  return (
-                    <span
-                      key={p.providerId}
-                      className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full font-medium ${info.bg} ${info.color}`}
-                    >
-                      <span className="text-[10px] leading-none">{info.icon}</span>
-                      {info.label}
-                    </span>
-                  );
-                })}
+                {(() => {
+                  const providerIds = user.providerData.length > 0
+                    ? user.providerData.map((p) => p.providerId)
+                    : user.uid.startsWith("google:") ? ["google.com"]
+                    : user.uid.startsWith("github:") ? ["github.com"]
+                    : user.uid.startsWith("naver:") ? ["naver.com"]
+                    : user.uid.startsWith("kakao:") ? ["kakao.com"]
+                    : ["password"];
+                  return providerIds.map((pid) => {
+                    const info = PROVIDER_INFO[pid] ?? {
+                      label: pid, icon: "🔗",
+                      color: "text-white/50", bg: "bg-white/10 border border-white/20",
+                    };
+                    return (
+                      <span key={pid} className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full font-medium ${info.bg} ${info.color}`}>
+                        <span className="text-[10px] leading-none">{info.icon}</span>
+                        {info.label}
+                      </span>
+                    );
+                  });
+                })()}
               </div>
 
               {/* 플랜 뱃지 */}

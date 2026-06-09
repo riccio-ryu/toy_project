@@ -38,3 +38,15 @@ export async function createCustomToken(
 ) {
   return getAdminAuth().createCustomToken(uid, claims);
 }
+
+export async function upsertOAuthUser(
+  uid: string,
+  profile: { email?: string; displayName?: string; photoURL?: string }
+) {
+  const auth = getAdminAuth();
+  try {
+    await auth.updateUser(uid, profile);
+  } catch {
+    await auth.createUser({ uid, ...profile });
+  }
+}

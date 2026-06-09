@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createCustomToken } from "@/lib/firebase/admin";
+import { createCustomToken, upsertOAuthUser } from "@/lib/firebase/admin";
 
 interface GitHubTokenResponse {
   access_token: string;
@@ -75,6 +75,11 @@ export async function GET(req: NextRequest) {
     }
 
     const uid = `github:${userData.id}`;
+    await upsertOAuthUser(uid, {
+      email: email || undefined,
+      displayName: userData.name ?? userData.login,
+      photoURL: userData.avatar_url,
+    });
     const customToken = await createCustomToken(uid, {
       provider: "github",
       email,
