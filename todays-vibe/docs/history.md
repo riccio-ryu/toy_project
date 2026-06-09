@@ -16,6 +16,10 @@
 - GitHub OAuth 콜백 이메일 조회 버그 수정 (`src/app/api/auth/github/callback/route.ts`) — `/user/emails` API 에러 응답을 배열로 잘못 처리하던 문제, `Array.isArray` 체크 추가
 - Google/GitHub OAuth 로그인 시 Firebase Auth 프로필 미저장 문제 수정 — `upsertOAuthUser()` 추가(`src/lib/firebase/admin.ts`), 콜백에서 이메일·닉네임·프로필사진 Firebase Auth에 저장
 - 마이페이지 소셜 로그인 provider 뱃지 표시 수정 (`src/app/(user)/mypage/page.tsx`) — Custom Token 로그인은 `providerData`가 비어 뱃지 미표시 문제, UID prefix(`google:`, `github:`)로 provider 추론
+- 로그인 버튼 로딩 상태를 텍스트("로그인 중...")에서 `loading.svg` 애니메이션으로 교체 (`src/app/(auth)/login/page.tsx`)
+- Google OAuth 콜백 디버그 코드 제거 및 에러 메시지 정리 (`src/app/api/auth/google/callback/route.ts`)
+- Google AdSense 연동 — `layout.tsx`에 AdSense 스크립트 삽입, `public/ads.txt` 추가 (게시자 ID: ca-pub-2343737818437914)
+- 커스텀 도메인 `todays-vibe.com` 연결 — Cloudflare DNS + Vercel 도메인 설정
 
 ---
 
