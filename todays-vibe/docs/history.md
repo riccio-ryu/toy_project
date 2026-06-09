@@ -2,6 +2,23 @@
 
 ---
 
+## 2026-06-09
+
+- `src/lib/gemini/stream-response.ts` 스트림 에러 처리 수정 — `controller.error(err)` → `controller.close()`로 변경, 룬 문자 페이지 `ERR_INCOMPLETE_CHUNKED_ENCODING` 오류 해결
+- 공유 취소 시 `AbortError` 콘솔 에러 무시 (`src/components/fortune/FortuneResult.tsx`) — Web Share API 다이얼로그 닫을 때 발생하던 에러 무시 처리
+- 생일 숫자 운세(수비학) 페이지 추가 (`src/app/(user)/numerology/page.tsx`) — 생년월일 입력, 클라이언트 사이드 생명경로 수 계산, 숫자별 색상 원형 UI, AI 해석 스트리밍
+- 궁합 4종 추가 — 연애 궁합(`love-compatibility`), 이름 궁합(`name-compatibility`), 띠 궁합(`zodiac-compatibility`), 사업 파트너 궁합(`business-compatibility`), `CompatibilityBirthForm.tsx` 공용 컴포넌트 생성
+- 오라클 카드 페이지 추가 (`src/app/(user)/oracle/page.tsx`) — AI 없이 정적 30장 카드 덱, Framer Motion 플립 애니메이션, 확언·메시지 표시
+- 룬 문자 페이지 추가 (`src/app/(user)/rune/page.tsx`) — Elder Futhark 24룬 데이터(`src/data/runes.ts`), 3장 랜덤 뽑기, AI 해석 스트리밍
+- 성명학 페이지 추가 (`src/app/(user)/name-fortune/page.tsx`) — 이름 입력, 생년월일 선택(토글), 저장된 생년월일 자동 불러오기
+- `fortunes.json` ready 상태 업데이트 — 신규 8개 운세 `ready: true` 처리
+- Vercel 환경변수 누락으로 인한 Google/GitHub OAuth 로그인 실패 수정 — `NEXT_PUBLIC_BASE_URL` 미설정으로 redirect_uri_mismatch 발생, Vercel에 환경변수 추가 가이드
+- GitHub OAuth 콜백 이메일 조회 버그 수정 (`src/app/api/auth/github/callback/route.ts`) — `/user/emails` API 에러 응답을 배열로 잘못 처리하던 문제, `Array.isArray` 체크 추가
+- Google/GitHub OAuth 로그인 시 Firebase Auth 프로필 미저장 문제 수정 — `upsertOAuthUser()` 추가(`src/lib/firebase/admin.ts`), 콜백에서 이메일·닉네임·프로필사진 Firebase Auth에 저장
+- 마이페이지 소셜 로그인 provider 뱃지 표시 수정 (`src/app/(user)/mypage/page.tsx`) — Custom Token 로그인은 `providerData`가 비어 뱃지 미표시 문제, UID prefix(`google:`, `github:`)로 provider 추론
+
+---
+
 ## 2026-06-08
 
 - 공용 AI 로딩 컴포넌트 추가 (`src/components/common/AILoadingIndicator.tsx`) — 운세 타입별 메시지 로테이션(2.5초 간격 페이드), 보라색 3-dot 바운스 애니메이션, 사주·타로·꿈해몽 전 페이지에 동일 로딩 화면 적용
