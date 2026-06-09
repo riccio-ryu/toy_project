@@ -315,7 +315,7 @@
       "path": "/oracle",
       "difficulty": "easy",
       "isAI": false,
-      "ready": false,
+      "ready": true,
       "tags": [
         "힐링"
       ],
@@ -331,7 +331,7 @@
       "path": "/rune",
       "difficulty": "medium",
       "isAI": true,
-      "ready": false,
+      "ready": true,
       "tags": [
         "신비"
       ],
@@ -581,7 +581,7 @@
       "path": "/name-fortune",
       "difficulty": "medium",
       "isAI": true,
-      "ready": false,
+      "ready": true,
       "tags": [
         "전통"
       ],

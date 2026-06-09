@@ -19,7 +19,9 @@ export type ReadingType =
   | "love-compatibility"
   | "name-compatibility"
   | "zodiac-compatibility"
-  | "business-compatibility";
+  | "business-compatibility"
+  | "rune"
+  | "name-fortune";
 
 export async function saveAiReading(
   userId: string,
