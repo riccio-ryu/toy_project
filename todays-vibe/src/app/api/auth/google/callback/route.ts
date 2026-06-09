@@ -26,6 +26,7 @@ export async function GET(req: NextRequest) {
 
   try {
     const redirectUri = `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/google/callback`;
+    console.log("[Google OAuth] redirect_uri:", redirectUri);
 
     const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
       method: "POST",
@@ -39,13 +40,13 @@ export async function GET(req: NextRequest) {
       }),
     });
     const tokenData: GoogleTokenResponse = await tokenRes.json();
-    if (tokenData.error) throw new Error(tokenData.error);
+    if (tokenData.error) throw new Error(`token_error: ${tokenData.error}`);
 
     const userRes = await fetch("https://www.googleapis.com/oauth2/v2/userinfo", {
       headers: { Authorization: `Bearer ${tokenData.access_token}` },
     });
     const userData: GoogleUserResponse = await userRes.json();
-    if (userData.error) throw new Error(userData.error.message);
+    if (userData.error) throw new Error(`userinfo_error: ${userData.error.message}`);
 
     const uid = `google:${userData.id}`;
     await upsertOAuthUser(uid, {
@@ -66,7 +67,7 @@ export async function GET(req: NextRequest) {
     res.cookies.delete("google_oauth_state");
     return res;
   } catch (err) {
-    console.error("[Google OAuth callback]", err);
-    return NextResponse.redirect(new URL("/login?error=google_failed", req.url));
+    console.error("[Google OAuth callback] 상세 에러:", String(err));
+    return NextResponse.redirect(new URL(`/login?error=google_failed&detail=${encodeURIComponent(String(err))}`, req.url));
   }
 }
