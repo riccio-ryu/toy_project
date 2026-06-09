@@ -46,7 +46,16 @@ export async function upsertOAuthUser(
   const auth = getAdminAuth();
   try {
     await auth.updateUser(uid, profile);
-  } catch {
-    await auth.createUser({ uid, ...profile });
+  } catch (err: unknown) {
+    const code = (err as { code?: string })?.code;
+    if (code === "auth/user-not-found") {
+      await auth.createUser({ uid, ...profile });
+    } else if (code === "auth/email-already-exists") {
+      // 이메일 충돌 시 이메일 제외하고 프로필만 업데이트
+      const { email: _email, ...profileWithoutEmail } = profile;
+      await auth.updateUser(uid, profileWithoutEmail);
+    } else {
+      throw err;
+    }
   }
 }

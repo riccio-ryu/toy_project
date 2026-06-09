@@ -2,6 +2,7 @@
 
 import { useState, FormEvent, Suspense } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signInWithEmail, createSession } from "@/lib/firebase/auth";
 
@@ -46,11 +47,8 @@ function LoginForm() {
     <div className="w-full max-w-sm">
       {/* Logo */}
       <div className="text-center mb-8">
-        <Link href="/" className="inline-flex flex-col items-center gap-2">
-          <span className="text-5xl">🔮</span>
-          <span className="text-white font-bold text-2xl tracking-tight">
-            오늘운
-          </span>
+        <Link href="/" className="inline-block">
+          <Image src="/brand/logo.svg" alt="오늘운" width={200} height={67} priority />
         </Link>
         <p className="text-white/50 text-sm mt-2">AI가 풀어주는 나만의 운세</p>
       </div>
@@ -94,7 +92,9 @@ function LoginForm() {
             disabled={loading}
             className="w-full py-2.5 rounded-lg bg-purple-600 text-white font-semibold text-sm hover:bg-purple-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
-            {loading ? "로그인 중..." : "로그인"}
+            {loading ? (
+              <Image src="/brand/loading.svg" alt="로딩 중" width={20} height={20} className="mx-auto" />
+            ) : "로그인"}
           </button>
         </form>
 
