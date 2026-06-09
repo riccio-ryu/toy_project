@@ -1,0 +1,44 @@
+<svg width="160" height="160" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="starGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#C9B8FF"/>
+      <stop offset="50%" stop-color="#E7C3E8"/>
+      <stop offset="100%" stop-color="#FFE3B3"/>
+    </linearGradient>
+
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <g transform="translate(80 80)">
+    <g filter="url(#glow)">
+      <path
+        fill="url(#starGradient)"
+        d="
+        M0,-48
+        C6,-20 20,-6 48,0
+        C20,6 6,20 0,48
+        C-6,20 -20,6 -48,0
+        C-20,-6 -6,-20 0,-48
+        "
+      >
+        <animateTransform
+          attributeName="transform"
+          type="scale"
+          values="0.92;1.08;0.92"
+          dur="2.4s"
+          repeatCount="indefinite"/>
+        <animate
+          attributeName="opacity"
+          values="0.75;1;0.75"
+          dur="2.4s"
+          repeatCount="indefinite"/>
+      </path>
+    </g>
+  </g>
+</svg>

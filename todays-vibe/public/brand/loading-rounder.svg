@@ -1,0 +1,44 @@
+<svg width="180" height="180" viewBox="0 0 180 180" xmlns="http://www.w3.org/2000/svg">
+
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#C9B8FF"/>
+      <stop offset="50%" stop-color="#E7C3E8"/>
+      <stop offset="100%" stop-color="#FFE3B3"/>
+    </linearGradient>
+  </defs>
+
+  <circle cx="90" cy="90" r="48"
+          fill="none"
+          stroke="rgba(255,255,255,.12)"
+          stroke-width="1"/>
+
+  <g>
+    <animateTransform
+      attributeName="transform"
+      type="rotate"
+      from="0 90 90"
+      to="360 90 90"
+      dur="4s"
+      repeatCount="indefinite"/>
+
+    <circle cx="138" cy="90" r="6" fill="url(#g)"/>
+    <circle cx="42" cy="90" r="4" fill="url(#g)" opacity=".5"/>
+  </g>
+
+  <path
+    fill="url(#g)"
+    d="
+      M90 60
+      C95 77 103 85 120 90
+      C103 95 95 103 90 120
+      C85 103 77 95 60 90
+      C77 85 85 77 90 60
+    ">
+    <animate attributeName="opacity"
+      values="0.8;1;0.8"
+      dur="2s"
+      repeatCount="indefinite"/>
+  </path>
+
+</svg>

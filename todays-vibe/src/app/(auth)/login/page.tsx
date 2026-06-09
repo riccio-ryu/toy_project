@@ -92,7 +92,9 @@ function LoginForm() {
             disabled={loading}
             className="w-full py-2.5 rounded-lg bg-purple-600 text-white font-semibold text-sm hover:bg-purple-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
-            {loading ? "로그인 중..." : "로그인"}
+            {loading ? (
+              <Image src="/brand/loading.svg" alt="로딩 중" width={20} height={20} className="mx-auto" />
+            ) : "로그인"}
           </button>
         </form>
 

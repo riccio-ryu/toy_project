@@ -1,0 +1,62 @@
+<svg width="180" height="180" viewBox="0 0 180 180" xmlns="http://www.w3.org/2000/svg">
+
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#C9B8FF"/>
+      <stop offset="50%" stop-color="#E7C3E8"/>
+      <stop offset="100%" stop-color="#FFE3B3"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- 배경 트랙 원 -->
+  <circle cx="90" cy="90" r="48"
+          fill="none"
+          stroke="rgba(255,255,255,.12)"
+          stroke-width="1"/>
+
+  <!-- 회전하는 점들 -->
+  <g>
+    <animateTransform
+      attributeName="transform"
+      type="rotate"
+      from="0 90 90"
+      to="360 90 90"
+      dur="4s"
+      repeatCount="indefinite"/>
+    <circle cx="138" cy="90" r="6" fill="url(#g)"/>
+    <circle cx="42" cy="90" r="4" fill="url(#g)" opacity=".5"/>
+  </g>
+
+  <!-- 중앙 별 (커졌다 작아졌다) -->
+  <g transform="translate(90 90)" filter="url(#glow)">
+    <path
+      fill="url(#g)"
+      d="
+        M0,-30
+        C4,-12 12,-4 30,0
+        C12,4 4,12 0,30
+        C-4,12 -12,4 -30,0
+        C-12,-4 -4,-12 0,-30
+      ">
+      <animateTransform
+        attributeName="transform"
+        type="scale"
+        values="0.92;1.08;0.92"
+        dur="2.4s"
+        repeatCount="indefinite"/>
+      <animate
+        attributeName="opacity"
+        values="0.75;1;0.75"
+        dur="2.4s"
+        repeatCount="indefinite"/>
+    </path>
+  </g>
+
+</svg>
