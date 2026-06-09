@@ -398,7 +398,7 @@
       "path": "/love-fortune",
       "difficulty": "medium",
       "isAI": true,
-      "ready": false,
+      "ready": true,
       "tags": [
         "인기"
       ],
@@ -414,7 +414,7 @@
       "path": "/wealth-fortune",
       "difficulty": "medium",
       "isAI": true,
-      "ready": false,
+      "ready": true,
       "tags": [
         "실용"
       ],
@@ -430,7 +430,7 @@
       "path": "/career-fortune",
       "difficulty": "medium",
       "isAI": true,
-      "ready": false,
+      "ready": true,
       "tags": [
         "실용"
       ],
@@ -446,7 +446,7 @@
       "path": "/health-fortune",
       "difficulty": "medium",
       "isAI": true,
-      "ready": false,
+      "ready": true,
       "tags": [
         "실용"
       ],

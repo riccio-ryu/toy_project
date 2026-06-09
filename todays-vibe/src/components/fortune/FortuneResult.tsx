@@ -114,7 +114,9 @@ export default function FortuneResult({
           <button
             onClick={() => {
               if (navigator.share) {
-                navigator.share({ title, text: result });
+                navigator.share({ title, text: result }).catch((e) => {
+                  if (e?.name !== "AbortError") throw e;
+                });
               } else {
                 navigator.clipboard.writeText(result);
                 alert("결과가 클립보드에 복사됐어요!");
