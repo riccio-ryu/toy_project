@@ -162,7 +162,7 @@
       "path": "/numerology",
       "difficulty": "easy",
       "isAI": true,
-      "ready": false,
+      "ready": true,
       "tags": [
         "신비"
       ],

@@ -3,6 +3,7 @@ import {
   DreamInput,
   SajuInput,
   Tarot3Input,
+  NumerologyInput,
   GeneralFortuneInput,
   FortuneInput,
 } from "@/types/fortune";
@@ -17,6 +18,8 @@ export function buildPrompt(type: FortuneType, input: FortuneInput): string {
       return buildSajuPrompt(input as SajuInput);
     case "tarot-3cards":
       return buildTarot3Prompt(input as Tarot3Input);
+    case "numerology":
+      return buildNumerologyPrompt(input as NumerologyInput);
     case "love-fortune":
       return buildGeneralFortunePrompt("love", input as GeneralFortuneInput);
     case "wealth-fortune":
@@ -240,4 +243,57 @@ ${input.birthYear}년생 ${genderKo}의 ${cfg.title}을(를) 아래 형식으로
 ${cfg.sections}
 
 한국어로, 전문적이지만 따뜻하고 공감 어린 톤으로 작성해 주세요. 부정적인 내용도 건설적인 방향으로 마무리해 주세요.`;
+}
+
+// ─── 수비학 (생일 숫자 운세) ──────────────────────────────────────────────────
+
+function reduceToSingleDigit(n: number): number {
+  while (n > 9 && n !== 11 && n !== 22 && n !== 33) {
+    n = String(n).split("").reduce((sum, d) => sum + parseInt(d), 0);
+  }
+  return n;
+}
+
+function calcLifePathNumber(year: number, month: number, day: number): number {
+  const digits = `${year}${String(month).padStart(2, "0")}${String(day).padStart(2, "0")}`;
+  const sum = digits.split("").reduce((acc, d) => acc + parseInt(d), 0);
+  return reduceToSingleDigit(sum);
+}
+
+function buildNumerologyPrompt(input: NumerologyInput): string {
+  const lifePathNumber = calcLifePathNumber(input.birthYear, input.birthMonth, input.birthDay);
+  const birthdayNumber = reduceToSingleDigit(input.birthDay);
+  const isMaster = [11, 22, 33].includes(lifePathNumber);
+
+  return `당신은 수비학(Numerology) 전문가입니다. 생년월일에서 도출한 숫자로 사람의 타고난 기질, 인생 경로, 운세를 풀이합니다.
+
+사용자 정보:
+생년월일: ${input.birthYear}년 ${input.birthMonth}월 ${input.birthDay}일
+생명수 (Life Path Number): ${lifePathNumber}${isMaster ? " (마스터 넘버)" : ""}
+생일수 (Birthday Number): ${birthdayNumber}
+
+아래 형식으로 수비학 운세를 풀이해 주세요:
+
+## 🔢 생명수 ${lifePathNumber}의 의미
+이 숫자가 상징하는 핵심 에너지와 삶의 주제를 설명해 주세요.${isMaster ? " 마스터 넘버의 특별한 의미와 높은 책임감에 대해서도 언급해 주세요." : ""}
+
+## ✨ 타고난 성격 & 강점
+생명수에서 드러나는 성격적 특징, 타고난 재능, 강점을 구체적으로 설명해 주세요.
+
+## 🌱 인생 과제 & 성장 방향
+이 숫자를 가진 사람이 평생 마주하는 과제와 성장을 위해 개발해야 할 면을 알려주세요.
+
+## 💼 적합한 직업 & 환경
+생명수의 에너지와 잘 맞는 직업군, 일하는 환경, 협업 스타일을 제안해 주세요.
+
+## 💕 인간관계 & 사랑
+이 숫자를 가진 사람의 관계 방식, 잘 맞는 파트너의 특성, 사랑에서의 패턴을 풀이해 주세요.
+
+## 📅 올해 (${new Date().getFullYear()}년) 흐름
+개인연도수(Personal Year Number)를 계산해 올해의 전반적인 에너지와 기회를 알려주세요.
+
+## 🎯 종합 메시지
+이 숫자를 가진 분에게 드리는 핵심 인사이트와 응원 메시지로 마무리해 주세요.
+
+한국어로, 신비롭고 따뜻한 톤으로 작성해 주세요.`;
 }

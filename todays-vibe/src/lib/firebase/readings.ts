@@ -11,6 +11,7 @@ export type ReadingType =
   | "dream"
   | "zodiac"
   | "chinese-zodiac"
+  | "numerology"
   | "love-fortune"
   | "wealth-fortune"
   | "career-fortune"

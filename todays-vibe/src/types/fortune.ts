@@ -47,6 +47,12 @@ export interface ZodiacInput {
   sign: string; // e.g. "aries", "taurus" ...
 }
 
+export interface NumerologyInput {
+  birthYear: number;
+  birthMonth: number;
+  birthDay: number;
+}
+
 export interface LoveCompatibilityInput {
   person1BirthDate: string; // YYYY-MM-DD
   person2BirthDate: string;
@@ -67,6 +73,7 @@ export type FortuneInput =
   | SajuInput
   | Tarot3Input
   | ZodiacInput
+  | NumerologyInput
   | LoveCompatibilityInput
   | GeneralFortuneInput;
 
