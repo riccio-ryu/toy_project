@@ -68,8 +68,10 @@ export async function GET(req: NextRequest) {
           Accept: "application/vnd.github.v3+json",
         },
       });
-      const emails: GitHubEmail[] = await emailRes.json();
-      email = emails.find((e) => e.primary)?.email ?? "";
+      const emailsData: unknown = await emailRes.json();
+      if (Array.isArray(emailsData)) {
+        email = (emailsData as GitHubEmail[]).find((e) => e.primary)?.email ?? "";
+      }
     }
 
     const uid = `github:${userData.id}`;
@@ -86,11 +88,7 @@ export async function GET(req: NextRequest) {
     res.cookies.delete("github_oauth_state");
     return res;
   } catch (err) {
-    const msg = err instanceof Error ? err.message : String(err);
-    console.error("[GitHub OAuth callback]", msg);
-    const url = new URL("/login", req.url);
-    url.searchParams.set("error", "github_failed");
-    url.searchParams.set("detail", msg.slice(0, 100));
-    return NextResponse.redirect(url.toString());
+    console.error("[GitHub OAuth callback]", err);
+    return NextResponse.redirect(new URL("/login?error=github_failed", req.url));
   }
 }
