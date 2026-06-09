@@ -3,6 +3,10 @@ import {
   DreamInput,
   SajuInput,
   Tarot3Input,
+  NumerologyInput,
+  LoveCompatibilityInput,
+  NameCompatibilityInput,
+  ZodiacCompatibilityInput,
   GeneralFortuneInput,
   FortuneInput,
 } from "@/types/fortune";
@@ -17,6 +21,16 @@ export function buildPrompt(type: FortuneType, input: FortuneInput): string {
       return buildSajuPrompt(input as SajuInput);
     case "tarot-3cards":
       return buildTarot3Prompt(input as Tarot3Input);
+    case "numerology":
+      return buildNumerologyPrompt(input as NumerologyInput);
+    case "love-compatibility":
+      return buildLoveCompatibilityPrompt(input as LoveCompatibilityInput);
+    case "business-compatibility":
+      return buildBusinessCompatibilityPrompt(input as LoveCompatibilityInput);
+    case "name-compatibility":
+      return buildNameCompatibilityPrompt(input as NameCompatibilityInput);
+    case "zodiac-compatibility":
+      return buildZodiacCompatibilityPrompt(input as ZodiacCompatibilityInput);
     case "love-fortune":
       return buildGeneralFortunePrompt("love", input as GeneralFortuneInput);
     case "wealth-fortune":
@@ -240,4 +254,212 @@ ${input.birthYear}년생 ${genderKo}의 ${cfg.title}을(를) 아래 형식으로
 ${cfg.sections}
 
 한국어로, 전문적이지만 따뜻하고 공감 어린 톤으로 작성해 주세요. 부정적인 내용도 건설적인 방향으로 마무리해 주세요.`;
+}
+
+// ─── 수비학 (생일 숫자 운세) ──────────────────────────────────────────────────
+
+function reduceToSingleDigit(n: number): number {
+  while (n > 9 && n !== 11 && n !== 22 && n !== 33) {
+    n = String(n).split("").reduce((sum, d) => sum + parseInt(d), 0);
+  }
+  return n;
+}
+
+function calcLifePathNumber(year: number, month: number, day: number): number {
+  const digits = `${year}${String(month).padStart(2, "0")}${String(day).padStart(2, "0")}`;
+  const sum = digits.split("").reduce((acc, d) => acc + parseInt(d), 0);
+  return reduceToSingleDigit(sum);
+}
+
+function buildNumerologyPrompt(input: NumerologyInput): string {
+  const lifePathNumber = calcLifePathNumber(input.birthYear, input.birthMonth, input.birthDay);
+  const birthdayNumber = reduceToSingleDigit(input.birthDay);
+  const isMaster = [11, 22, 33].includes(lifePathNumber);
+
+  return `당신은 수비학(Numerology) 전문가입니다. 생년월일에서 도출한 숫자로 사람의 타고난 기질, 인생 경로, 운세를 풀이합니다.
+
+사용자 정보:
+생년월일: ${input.birthYear}년 ${input.birthMonth}월 ${input.birthDay}일
+생명수 (Life Path Number): ${lifePathNumber}${isMaster ? " (마스터 넘버)" : ""}
+생일수 (Birthday Number): ${birthdayNumber}
+
+아래 형식으로 수비학 운세를 풀이해 주세요:
+
+## 🔢 생명수 ${lifePathNumber}의 의미
+이 숫자가 상징하는 핵심 에너지와 삶의 주제를 설명해 주세요.${isMaster ? " 마스터 넘버의 특별한 의미와 높은 책임감에 대해서도 언급해 주세요." : ""}
+
+## ✨ 타고난 성격 & 강점
+생명수에서 드러나는 성격적 특징, 타고난 재능, 강점을 구체적으로 설명해 주세요.
+
+## 🌱 인생 과제 & 성장 방향
+이 숫자를 가진 사람이 평생 마주하는 과제와 성장을 위해 개발해야 할 면을 알려주세요.
+
+## 💼 적합한 직업 & 환경
+생명수의 에너지와 잘 맞는 직업군, 일하는 환경, 협업 스타일을 제안해 주세요.
+
+## 💕 인간관계 & 사랑
+이 숫자를 가진 사람의 관계 방식, 잘 맞는 파트너의 특성, 사랑에서의 패턴을 풀이해 주세요.
+
+## 📅 올해 (${new Date().getFullYear()}년) 흐름
+개인연도수(Personal Year Number)를 계산해 올해의 전반적인 에너지와 기회를 알려주세요.
+
+## 🎯 종합 메시지
+이 숫자를 가진 분에게 드리는 핵심 인사이트와 응원 메시지로 마무리해 주세요.
+
+한국어로, 신비롭고 따뜻한 톤으로 작성해 주세요.`;
+}
+
+// ─── 궁합 공통 유틸 ───────────────────────────────────────────────────────────
+
+const ZODIAC_ANIMALS_KO = ["쥐", "소", "호랑이", "토끼", "용", "뱀", "말", "양", "원숭이", "닭", "개", "돼지"];
+
+function getZodiacAnimal(year: number): string {
+  return ZODIAC_ANIMALS_KO[(year - 4 + 1200) % 12];
+}
+
+function formatBirthDate(dateStr: string): string {
+  const [y, m, d] = dateStr.split("-");
+  return `${y}년 ${parseInt(m)}월 ${parseInt(d)}일`;
+}
+
+function genderKo(g: "male" | "female"): string {
+  return g === "male" ? "남성" : "여성";
+}
+
+// ─── 연애 궁합 ────────────────────────────────────────────────────────────────
+
+function buildLoveCompatibilityPrompt(input: LoveCompatibilityInput): string {
+  const year = new Date().getFullYear();
+  return `당신은 한국의 사주명리학 전문가입니다. 두 사람의 생년월일을 바탕으로 연애 궁합을 분석합니다.
+
+나:
+생년월일: ${formatBirthDate(input.person1BirthDate)}
+성별: ${genderKo(input.person1Gender)}
+
+상대방:
+생년월일: ${formatBirthDate(input.person2BirthDate)}
+성별: ${genderKo(input.person2Gender)}
+
+아래 형식으로 두 사람의 연애 궁합을 풀이해 주세요. 올해는 ${year}년입니다.
+
+## 💑 첫인상 & 끌림
+두 사람이 처음 만났을 때 서로에게 느끼는 첫인상과 끌림의 에너지를 분석해 주세요.
+
+## ☯️ 오행 & 음양 조화
+두 사람의 사주 오행과 음양이 어떻게 조화를 이루는지 분석해 주세요. 상생(相生)과 상극(相剋) 관계를 설명해 주세요.
+
+## 💬 연애 스타일 & 소통
+각자의 연애 방식과 두 사람이 함께할 때 소통 패턴을 분석해 주세요.
+
+## ⚡ 갈등 요소 & 주의점
+두 사람 사이에서 생길 수 있는 갈등 원인과 주의해야 할 상황을 알려주세요.
+
+## 🌹 관계 발전 조언
+더 깊고 오래가는 관계를 위한 구체적인 조언을 주세요.
+
+## ✨ 종합 궁합 점수
+전체적인 궁합을 100점 만점으로 점수를 매기고 (예: 78점), 한 줄 요약으로 마무리해 주세요.
+
+한국어로, 따뜻하고 현실적인 톤으로 작성해 주세요. 부정적인 면도 솔직하게 말하되 건설적으로 마무리해 주세요.`;
+}
+
+// ─── 사업 파트너 궁합 ─────────────────────────────────────────────────────────
+
+function buildBusinessCompatibilityPrompt(input: LoveCompatibilityInput): string {
+  return `당신은 한국의 사주명리학 전문가입니다. 두 사람의 생년월일을 바탕으로 비즈니스 파트너십 궁합을 분석합니다.
+
+나:
+생년월일: ${formatBirthDate(input.person1BirthDate)}
+성별: ${genderKo(input.person1Gender)}
+
+파트너:
+생년월일: ${formatBirthDate(input.person2BirthDate)}
+성별: ${genderKo(input.person2Gender)}
+
+아래 형식으로 두 사람의 사업 파트너 궁합을 풀이해 주세요.
+
+## 🏢 리더십 & 역할 분담
+각자의 사주에서 드러나는 리더십 스타일과 두 사람이 사업에서 맡으면 좋을 역할을 분석해 주세요.
+
+## 🤝 시너지 & 강점 보완
+두 사람의 사주가 만났을 때 생기는 시너지와 서로의 약점을 어떻게 보완하는지 설명해 주세요.
+
+## 💰 재물운 & 사업 방향
+두 사람이 함께할 때 맞는 사업 분야, 재물을 모으는 방식, 유망한 방향을 조언해 주세요.
+
+## ⚠️ 갈등 포인트 & 위기 관리
+비즈니스 관계에서 발생할 수 있는 갈등 원인과 위기 상황을 대처하는 방법을 알려주세요.
+
+## 📈 파트너십 성공 전략
+이 두 사람이 함께 성공하기 위한 구체적인 협업 전략과 주의사항을 제시해 주세요.
+
+## ✨ 종합 파트너십 점수
+전체적인 사업 궁합을 100점 만점으로 점수를 매기고 (예: 82점), 한 줄 요약으로 마무리해 주세요.
+
+한국어로, 전문적이고 실용적인 톤으로 작성해 주세요.`;
+}
+
+// ─── 이름 궁합 ────────────────────────────────────────────────────────────────
+
+function buildNameCompatibilityPrompt(input: NameCompatibilityInput): string {
+  return `당신은 한국의 성명학(姓名學) 및 이름 궁합 전문가입니다. 두 사람의 이름으로 궁합을 분석합니다.
+
+이름 1: ${input.name1}
+이름 2: ${input.name2}
+
+아래 형식으로 두 사람의 이름 궁합을 풀이해 주세요.
+
+## 📝 이름의 기운 분석
+각 이름이 지닌 음양오행의 기운과 한글 자모의 특성을 분석해 주세요.
+
+## 🔤 소리 궁합 (음성학)
+두 이름의 발음, 성조, 리듬이 어우러질 때 생기는 에너지를 분석해 주세요.
+
+## ✍️ 획수 궁합
+두 이름의 획수(한자 기준)를 계산하고 수리적 조화를 풀이해 주세요.
+
+## ☯️ 음양 조화
+두 이름의 음양 균형이 어떻게 맞는지 설명해 주세요.
+
+## 💕 관계 에너지
+이 두 이름이 만났을 때 형성되는 관계의 성격과 에너지를 설명해 주세요.
+
+## ✨ 종합 이름 궁합 점수
+전체적인 이름 궁합을 100점 만점으로 점수를 매기고 (예: 73점), 한 줄 요약으로 마무리해 주세요.
+
+한국어로, 재미있고 흥미롭게 작성해 주세요. 전통적 해석과 현대적 감각을 균형 있게 담아주세요.`;
+}
+
+// ─── 띠 궁합 ─────────────────────────────────────────────────────────────────
+
+function buildZodiacCompatibilityPrompt(input: ZodiacCompatibilityInput): string {
+  const animal1 = getZodiacAnimal(input.person1BirthYear);
+  const animal2 = getZodiacAnimal(input.person2BirthYear);
+
+  return `당신은 한국의 전통 십이지(十二支) 궁합 전문가입니다. 두 사람의 띠로 궁합을 분석합니다.
+
+나: ${input.person1BirthYear}년생 (${animal1}띠)
+상대방: ${input.person2BirthYear}년생 (${animal2}띠)
+
+아래 형식으로 두 사람의 띠 궁합을 풀이해 주세요.
+
+## 🐾 두 띠의 기본 성격
+${animal1}띠와 ${animal2}띠 각자의 타고난 성격, 기질, 강점을 설명해 주세요.
+
+## ⚡ 상생 & 상극 관계
+십이지 오합(五合), 삼합(三合), 충(沖), 형(刑) 등의 관계를 분석해 주세요. ${animal1}띠와 ${animal2}띠가 어떤 관계인지 명확히 설명해 주세요.
+
+## 💫 잘 맞는 점
+두 사람이 함께할 때 자연스럽게 조화를 이루는 부분, 서로 끌리는 이유를 설명해 주세요.
+
+## ⚠️ 주의할 점
+두 사람 사이에서 충돌이 일어날 수 있는 상황과 관계에서 조심해야 할 부분을 알려주세요.
+
+## 🌟 관계별 궁합
+연인/부부, 친구, 직장 동료로서의 궁합을 각각 간략히 설명해 주세요.
+
+## ✨ 종합 띠 궁합 점수
+전체적인 궁합을 100점 만점으로 점수를 매기고 (예: 85점), 한 줄 요약으로 마무리해 주세요.
+
+한국어로, 전통적이면서도 친근한 톤으로 작성해 주세요.`;
 }

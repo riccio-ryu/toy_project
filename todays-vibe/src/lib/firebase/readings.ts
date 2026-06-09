@@ -11,10 +11,15 @@ export type ReadingType =
   | "dream"
   | "zodiac"
   | "chinese-zodiac"
+  | "numerology"
   | "love-fortune"
   | "wealth-fortune"
   | "career-fortune"
-  | "health-fortune";
+  | "health-fortune"
+  | "love-compatibility"
+  | "name-compatibility"
+  | "zodiac-compatibility"
+  | "business-compatibility";
 
 export async function saveAiReading(
   userId: string,
