@@ -17,6 +17,7 @@ export type FortuneType =
   | "love-fortune"
   | "wealth-fortune"
   | "career-fortune"
+  | "health-fortune"
   | "zodiac"
   | "numerology"
   | "love-compatibility"
@@ -53,12 +54,21 @@ export interface LoveCompatibilityInput {
   person2Gender: "male" | "female";
 }
 
+export interface GeneralFortuneInput {
+  birthYear: number;
+  birthMonth: number;
+  birthDay: number;
+  gender: "male" | "female";
+  question?: string;
+}
+
 export type FortuneInput =
   | DreamInput
   | SajuInput
   | Tarot3Input
   | ZodiacInput
-  | LoveCompatibilityInput;
+  | LoveCompatibilityInput
+  | GeneralFortuneInput;
 
 // ─── API Request / Response ───────────────────────────────────────────────────
 

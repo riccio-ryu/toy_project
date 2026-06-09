@@ -10,7 +10,11 @@ export type ReadingType =
   | "tarot-full-moon"
   | "dream"
   | "zodiac"
-  | "chinese-zodiac";
+  | "chinese-zodiac"
+  | "love-fortune"
+  | "wealth-fortune"
+  | "career-fortune"
+  | "health-fortune";
 
 export async function saveAiReading(
   userId: string,

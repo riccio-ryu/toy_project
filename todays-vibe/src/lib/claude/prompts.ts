@@ -3,6 +3,7 @@ import {
   DreamInput,
   SajuInput,
   Tarot3Input,
+  GeneralFortuneInput,
   FortuneInput,
 } from "@/types/fortune";
 
@@ -16,6 +17,14 @@ export function buildPrompt(type: FortuneType, input: FortuneInput): string {
       return buildSajuPrompt(input as SajuInput);
     case "tarot-3cards":
       return buildTarot3Prompt(input as Tarot3Input);
+    case "love-fortune":
+      return buildGeneralFortunePrompt("love", input as GeneralFortuneInput);
+    case "wealth-fortune":
+      return buildGeneralFortunePrompt("wealth", input as GeneralFortuneInput);
+    case "career-fortune":
+      return buildGeneralFortunePrompt("career", input as GeneralFortuneInput);
+    case "health-fortune":
+      return buildGeneralFortunePrompt("health", input as GeneralFortuneInput);
     default:
       throw new Error(`지원하지 않는 운세 타입입니다: ${type}`);
   }
@@ -131,4 +140,104 @@ function buildTarot3Prompt(input: Tarot3Input): string {
 이 리딩을 바탕으로 사용자가 취할 수 있는 구체적인 행동 1~3가지를 제안해 주세요.
 
 한국어로, 신비롭고 따뜻한 tone으로 작성해 주세요.`;
+}
+
+// ─── 연애운 / 재물운 / 취업운 / 건강운 ──────────────────────────────────────
+
+const GENERAL_FORTUNE_CONFIG = {
+  love: {
+    title: "연애운",
+    emoji: "💕",
+    sections: `## 💕 현재 연애 에너지
+사주를 바탕으로 이 시기 연애 기운과 감정 상태를 분석해 주세요.
+
+## 🌹 이상형 & 인연
+타고난 사주에서 드러나는 인연의 특성과 잘 맞는 상대를 알려주세요.
+
+## 📅 올해 연애운 흐름
+올해 연애운의 전반적인 흐름과 좋은 시기, 주의할 시기를 설명해 주세요.
+
+## 💌 현재 상황 조언
+입력하신 상황을 바탕으로 현재 연애에서 취해야 할 행동과 마음가짐을 조언해 주세요.
+
+## ✨ 종합 메시지
+사랑과 인연에 대한 따뜻한 응원 메시지로 마무리해 주세요.`,
+  },
+  wealth: {
+    title: "재물운",
+    emoji: "💰",
+    sections: `## 💰 타고난 재물 기운
+사주에서 드러나는 재물을 모으는 방식과 재물운의 특성을 분석해 주세요.
+
+## 📈 올해 재물운 흐름
+올해 재물운의 전반적인 흐름, 투자나 사업에 좋은 시기와 주의할 시기를 알려주세요.
+
+## 🎯 재테크 & 사업 조언
+이 사주에 맞는 재물을 늘리는 방법과 피해야 할 투자 유형을 조언해 주세요.
+
+## 💡 현재 상황 조언
+입력하신 재정 목표나 상황에 맞는 구체적인 조언을 해주세요.
+
+## ✨ 종합 메시지
+풍요로운 미래를 위한 응원 메시지로 마무리해 주세요.`,
+  },
+  career: {
+    title: "취업/시험운",
+    emoji: "📋",
+    sections: `## 📋 타고난 직업 기운
+사주에서 드러나는 적성, 강점, 어울리는 직종과 분야를 분석해 주세요.
+
+## 🎓 올해 취업 & 시험운
+올해 취업이나 시험 운의 흐름과 도전에 좋은 시기를 알려주세요.
+
+## 💪 성공을 위한 전략
+이 사주의 특성을 살린 취업 준비 전략이나 시험 합격을 위한 조언을 해주세요.
+
+## 🎯 현재 목표 조언
+입력하신 목표(직장/시험)에 맞춘 구체적이고 실질적인 조언을 해주세요.
+
+## ✨ 종합 메시지
+목표 달성을 향한 힘찬 응원 메시지로 마무리해 주세요.`,
+  },
+  health: {
+    title: "건강운",
+    emoji: "🌿",
+    sections: `## 🌿 사주로 보는 체질
+사주 오행을 바탕으로 타고난 체질과 건강상 강점 및 약점을 분석해 주세요.
+
+## ⚠️ 주의해야 할 건강 부위
+이 사주에서 특히 신경 써야 할 신체 부위나 건강 문제를 알려주세요.
+
+## 📅 올해 건강운 흐름
+올해 건강운의 흐름과 특히 주의해야 할 시기를 설명해 주세요.
+
+## 💚 현재 상태 조언
+입력하신 건강 상태나 고민에 맞춘 생활 습관 및 건강 관리 조언을 해주세요.
+
+## ✨ 종합 메시지
+건강한 삶을 위한 따뜻한 응원 메시지로 마무리해 주세요.`,
+  },
+} as const;
+
+type GeneralFortuneKind = keyof typeof GENERAL_FORTUNE_CONFIG;
+
+function buildGeneralFortunePrompt(kind: GeneralFortuneKind, input: GeneralFortuneInput): string {
+  const cfg = GENERAL_FORTUNE_CONFIG[kind];
+  const genderKo = input.gender === "male" ? "남성" : "여성";
+  const questionLine = input.question
+    ? `\n현재 상황 / 목표: ${input.question}`
+    : "";
+  const year = new Date().getFullYear();
+
+  return `당신은 한국의 사주명리학 전문가입니다. ${cfg.title} 전문 상담사로서 따뜻하고 실용적인 조언을 드립니다.
+
+사용자 정보:
+생년월일: ${input.birthYear}년 ${input.birthMonth}월 ${input.birthDay}일
+성별: ${genderKo}${questionLine}
+
+${input.birthYear}년생 ${genderKo}의 ${cfg.title}을(를) 아래 형식으로 풀이해 주세요. 올해는 ${year}년입니다.
+
+${cfg.sections}
+
+한국어로, 전문적이지만 따뜻하고 공감 어린 톤으로 작성해 주세요. 부정적인 내용도 건설적인 방향으로 마무리해 주세요.`;
 }
