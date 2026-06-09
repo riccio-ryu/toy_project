@@ -479,7 +479,7 @@
       "path": "/love-compatibility",
       "difficulty": "medium",
       "isAI": true,
-      "ready": false,
+      "ready": true,
       "tags": [
         "인기",
         "AI"
@@ -496,7 +496,7 @@
       "path": "/name-compatibility",
       "difficulty": "easy",
       "isAI": true,
-      "ready": false,
+      "ready": true,
       "tags": [
         "재미"
       ],
@@ -511,8 +511,8 @@
       "description": "두 사람 생년 → 12지 조합 상생/상극 분석",
       "path": "/zodiac-compatibility",
       "difficulty": "easy",
-      "isAI": false,
-      "ready": false,
+      "isAI": true,
+      "ready": true,
       "tags": [
         "전통"
       ],
@@ -528,7 +528,7 @@
       "path": "/business-compatibility",
       "difficulty": "medium",
       "isAI": true,
-      "ready": false,
+      "ready": true,
       "tags": [
         "실용",
         "AI"
