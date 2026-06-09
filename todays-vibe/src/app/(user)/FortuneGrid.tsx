@@ -20,6 +20,7 @@ interface Props {
 export default function FortuneGrid({ categories, fortunes }: Props) {
   const { user, loading } = useAuth();
   const [modalPath, setModalPath] = useState<string | null>(null);
+  const [showComingSoon, setShowComingSoon] = useState(true);
 
   function handleClick(fortune: MenuItem, e: React.MouseEvent) {
     if (!loading && !user && fortune.accessLevel !== "public") {
@@ -36,8 +37,24 @@ export default function FortuneGrid({ categories, fortunes }: Props) {
         redirectPath={modalPath ?? "/"}
       />
 
+      <div className="flex justify-end mb-6">
+        <button
+          onClick={() => setShowComingSoon((v) => !v)}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
+            showComingSoon
+              ? "bg-white/10 border-white/15 text-white/50 hover:bg-white/15 hover:text-white/70"
+              : "bg-purple-900/40 border-purple-500/30 text-purple-300 hover:bg-purple-900/60"
+          }`}
+        >
+          <span>{showComingSoon ? "🙈" : "👀"}</span>
+          <span>{showComingSoon ? "준비중 숨기기" : "준비중 보기"}</span>
+        </button>
+      </div>
+
       {categories.map((category) => {
-        const categoryFortunes = fortunes.filter((f) => f.category === category.id);
+        const categoryFortunes = fortunes
+          .filter((f) => f.category === category.id)
+          .filter((f) => showComingSoon || f.ready === true);
         if (categoryFortunes.length === 0) return null;
 
         return (
