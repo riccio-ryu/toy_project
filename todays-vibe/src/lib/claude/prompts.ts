@@ -10,6 +10,7 @@ import {
   RuneInput,
   NameFortuneInput,
   GeneralFortuneInput,
+  TojeongInput,
   FortuneInput,
 } from "@/types/fortune";
 
@@ -37,6 +38,8 @@ export function buildPrompt(type: FortuneType, input: FortuneInput): string {
       return buildRunePrompt(input as RuneInput);
     case "name-fortune":
       return buildNameFortunePrompt(input as NameFortuneInput);
+    case "tojeong":
+      return buildTojeongPrompt(input as TojeongInput);
     case "love-fortune":
       return buildGeneralFortunePrompt("love", input as GeneralFortuneInput);
     case "wealth-fortune":
@@ -546,4 +549,68 @@ function buildNameFortunePrompt(input: NameFortuneInput): string {
 이름 전체에 대한 종합 평가와 응원 메시지로 마무리해 주세요.
 
 한국어로, 전문적이면서도 따뜻하고 긍정적인 톤으로 작성해 주세요.`;
+}
+
+// ─── 토정비결 ─────────────────────────────────────────────────────────────────
+
+function calcTojeongNumbers(lunarYear: number, lunarMonth: number, lunarDay: number) {
+  // 상책수: 천간(天干) 기준 — 갑/을=1, 병/정=2, 무/기=3, 경/신=4, 임/계=5
+  const stemIdx = ((lunarYear - 4) % 10 + 10) % 10;
+  const upper = Math.floor(stemIdx / 2) + 1; // 1-5
+
+  // 중책수: 생월 그대로
+  const middle = lunarMonth; // 1-12
+
+  // 하책수: 생일을 5일 단위로 구분
+  const lower = Math.min(Math.ceil(lunarDay / 5), 6); // 1-6
+
+  return { upper, middle, lower };
+}
+
+function tojeongUpperLabel(n: number): string {
+  return ["一", "二", "三", "四", "五"][n - 1] ?? String(n);
+}
+
+function buildTojeongPrompt(input: TojeongInput): string {
+  const calType = input.isLunar ? "음력" : "양력(음력으로 환산하여 해석)";
+  const genderKo = input.gender === "male" ? "남성" : "여성";
+  const { upper, middle, lower } = calcTojeongNumbers(input.lunarYear, input.lunarMonth, input.lunarDay);
+  const hexCode = `${tojeongUpperLabel(upper)}-${tojeongUpperLabel(middle)}-${tojeongUpperLabel(lower)}`;
+
+  return `당신은 조선 시대 토정비결의 전통을 이은 역술 전문가입니다. 이토정(李土亭) 선생의 토정비결을 현대적으로 해석하여, 생년월일의 음양오행과 괘상(卦象)으로 한 해의 운세를 풀이합니다.
+
+사용자 정보:
+생년월일(${calType}): ${input.lunarYear}년 ${input.lunarMonth}월 ${input.lunarDay}일
+성별: ${genderKo}
+괘수(卦數): ${hexCode} (상책 ${upper} · 중책 ${middle} · 하책 ${lower})
+운세 년도: ${input.targetYear}년
+
+위 정보를 바탕으로 ${input.targetYear}년 토정비결을 아래 형식으로 풀이해 주세요.
+
+## 📿 ${input.targetYear}년 총운(總運)
+이 해 전체의 기운, 대세(大勢), 주의할 점과 기회를 고전적인 운세 문체로 풀이해 주세요. 2~3문단 분량으로 작성해 주세요.
+
+## 🌸 월별 운세
+각 월의 운세를 아래 형식으로 작성해 주세요:
+
+**1월** — (길흉 한 줄 요약) + 세부 내용 1~2문장
+**2월** — (길흉 한 줄 요약) + 세부 내용 1~2문장
+**3월** — (길흉 한 줄 요약) + 세부 내용 1~2문장
+**4월** — (길흉 한 줄 요약) + 세부 내용 1~2문장
+**5월** — (길흉 한 줄 요약) + 세부 내용 1~2문장
+**6월** — (길흉 한 줄 요약) + 세부 내용 1~2문장
+**7월** — (길흉 한 줄 요약) + 세부 내용 1~2문장
+**8월** — (길흉 한 줄 요약) + 세부 내용 1~2문장
+**9월** — (길흉 한 줄 요약) + 세부 내용 1~2문장
+**10월** — (길흉 한 줄 요약) + 세부 내용 1~2문장
+**11월** — (길흉 한 줄 요약) + 세부 내용 1~2문장
+**12월** — (길흉 한 줄 요약) + 세부 내용 1~2문장
+
+## 🔑 올해의 핵심 키워드
+이 해를 대표하는 키워드 3가지를 선정하고 간략히 설명해 주세요.
+
+## 💡 토정 선생의 조언
+이 해 가장 중요한 교훈 또는 주의사항을 고전적인 어투로 한 문단 작성해 주세요.
+
+문체는 고전적이고 신비로운 느낌을 살리되, 현대인이 이해할 수 있는 한국어로 작성해 주세요. 간간이 한자어를 사용해 격식을 높여 주세요. 전체적으로 희망과 지혜를 전하는 톤을 유지해 주세요.`;
 }

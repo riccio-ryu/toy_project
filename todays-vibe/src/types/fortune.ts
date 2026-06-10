@@ -25,7 +25,8 @@ export type FortuneType =
   | "zodiac-compatibility"
   | "business-compatibility"
   | "rune"
-  | "name-fortune";
+  | "name-fortune"
+  | "tojeong";
 
 // ─── Input Types (fortune별 입력 스키마) ──────────────────────────────────────
 
@@ -94,6 +95,15 @@ export interface GeneralFortuneInput {
   question?: string;
 }
 
+export interface TojeongInput {
+  lunarYear: number;
+  lunarMonth: number;
+  lunarDay: number;
+  isLunar: boolean;
+  gender: "male" | "female";
+  targetYear: number; // 올해 운세를 볼 년도
+}
+
 export type FortuneInput =
   | DreamInput
   | SajuInput
@@ -105,7 +115,8 @@ export type FortuneInput =
   | ZodiacCompatibilityInput
   | RuneInput
   | NameFortuneInput
-  | GeneralFortuneInput;
+  | GeneralFortuneInput
+  | TojeongInput;
 
 // ─── API Request / Response ───────────────────────────────────────────────────
 

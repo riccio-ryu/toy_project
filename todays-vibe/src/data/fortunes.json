@@ -93,8 +93,8 @@
       "description": "음력 생년월일 기반 연간/월간 운세 — 전통 384괘",
       "path": "/tojeong",
       "difficulty": "medium",
-      "isAI": false,
-      "ready": false,
+      "isAI": true,
+      "ready": true,
       "tags": [
         "전통",
         "정통"
