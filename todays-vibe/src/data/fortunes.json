@@ -78,7 +78,7 @@
       "difficulty": "hard",
       "isAI": true,
       "isPremium": true,
-      "ready": false,
+      "ready": true,
       "tags": [
         "프리미엄"
       ],

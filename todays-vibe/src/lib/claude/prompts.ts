@@ -11,6 +11,7 @@ import {
   NameFortuneInput,
   GeneralFortuneInput,
   TojeongInput,
+  LifeFortuneInput,
   FortuneInput,
 } from "@/types/fortune";
 
@@ -40,6 +41,8 @@ export function buildPrompt(type: FortuneType, input: FortuneInput): string {
       return buildNameFortunePrompt(input as NameFortuneInput);
     case "tojeong":
       return buildTojeongPrompt(input as TojeongInput);
+    case "life-fortune":
+      return buildLifeFortunePrompt(input as LifeFortuneInput);
     case "love-fortune":
       return buildGeneralFortunePrompt("love", input as GeneralFortuneInput);
     case "wealth-fortune":
@@ -613,4 +616,49 @@ function buildTojeongPrompt(input: TojeongInput): string {
 이 해 가장 중요한 교훈 또는 주의사항을 고전적인 어투로 한 문단 작성해 주세요.
 
 문체는 고전적이고 신비로운 느낌을 살리되, 현대인이 이해할 수 있는 한국어로 작성해 주세요. 간간이 한자어를 사용해 격식을 높여 주세요. 전체적으로 희망과 지혜를 전하는 톤을 유지해 주세요.`;
+}
+
+// ─── 평생운세 ─────────────────────────────────────────────────────────────────
+
+function buildLifeFortunePrompt(input: LifeFortuneInput): string {
+  const genderKo = input.gender === "male" ? "남성" : "여성";
+  const currentYear = new Date().getFullYear();
+  const age = currentYear - input.birthYear + 1;
+
+  return `당신은 한국의 사주명리학 및 운명학 전문가입니다. 생년월일과 성별을 바탕으로 한 사람의 타고난 기질, 인생의 흐름, 운명적 특성을 깊이 있게 풀이합니다.
+
+사용자 정보:
+생년월일: ${input.birthYear}년 ${input.birthMonth}월 ${input.birthDay}일
+성별: ${genderKo}
+현재 나이: 만 ${age - 1}세 (${currentYear}년 기준)
+
+이 분의 평생운세를 아래 형식으로 풀이해 주세요.
+
+## 🌟 타고난 기질과 본성
+이 생년월일이 지닌 근본적인 에너지와 타고난 성격, 기질을 분석해 주세요. 강점과 약점을 균형 있게 서술해 주세요.
+
+## 🔥 핵심 재능과 적성
+타고난 재능, 빛나는 분야, 어울리는 직업군과 역할을 구체적으로 설명해 주세요.
+
+## 💕 인연과 관계의 패턴
+이 사람이 맺는 인연의 특성, 사랑의 방식, 대인 관계에서 반복되는 패턴을 풀이해 주세요.
+
+## 💰 재물과 성공의 흐름
+평생에 걸친 재물운의 특성, 돈을 버는 방식, 성공에 이르는 경로를 설명해 주세요.
+
+## 🌊 인생의 큰 흐름 (연대별)
+- **20~30대:** 이 시기의 주요 과제와 기회
+- **40~50대:** 전환점과 성숙의 시기
+- **60대 이후:** 완성과 지혜의 시기
+
+## ⚠️ 인생의 주요 과제
+이 운명이 반드시 극복하고 성장해야 할 과제나 반복되는 시련의 패턴을 솔직하게 알려주세요.
+
+## 🎯 운명을 빛내는 열쇠
+이 사람이 자신의 잠재력을 최대한 발휘하고 행복한 삶을 살기 위한 핵심 조언 3가지를 알려주세요.
+
+## ✨ 이 생애의 사명
+이 생년월일을 가진 사람이 이 세상에서 이루어야 할 사명이나 삶의 테마를 따뜻하게 마무리해 주세요.
+
+전문적이면서도 따뜻하고 통찰력 있는 한국어로 작성해 주세요. 부정적인 내용도 성장의 관점에서 희망적으로 마무리해 주세요.`;
 }

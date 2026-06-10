@@ -22,7 +22,8 @@ export type ReadingType =
   | "business-compatibility"
   | "rune"
   | "name-fortune"
-  | "tojeong";
+  | "tojeong"
+  | "life-fortune";
 
 export async function saveAiReading(
   userId: string,

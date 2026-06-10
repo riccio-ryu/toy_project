@@ -26,7 +26,8 @@ export type FortuneType =
   | "business-compatibility"
   | "rune"
   | "name-fortune"
-  | "tojeong";
+  | "tojeong"
+  | "life-fortune";
 
 // ─── Input Types (fortune별 입력 스키마) ──────────────────────────────────────
 
@@ -95,6 +96,13 @@ export interface GeneralFortuneInput {
   question?: string;
 }
 
+export interface LifeFortuneInput {
+  birthYear: number;
+  birthMonth: number;
+  birthDay: number;
+  gender: "male" | "female";
+}
+
 export interface TojeongInput {
   lunarYear: number;
   lunarMonth: number;
@@ -116,7 +124,8 @@ export type FortuneInput =
   | RuneInput
   | NameFortuneInput
   | GeneralFortuneInput
-  | TojeongInput;
+  | TojeongInput
+  | LifeFortuneInput;
 
 // ─── API Request / Response ───────────────────────────────────────────────────
 
