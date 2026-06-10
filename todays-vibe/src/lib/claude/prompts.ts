@@ -10,6 +10,11 @@ import {
   RuneInput,
   NameFortuneInput,
   GeneralFortuneInput,
+  TojeongInput,
+  LifeFortuneInput,
+  MovingFortuneInput,
+  IChingInput,
+  SangajiInput,
   FortuneInput,
 } from "@/types/fortune";
 
@@ -37,6 +42,16 @@ export function buildPrompt(type: FortuneType, input: FortuneInput): string {
       return buildRunePrompt(input as RuneInput);
     case "name-fortune":
       return buildNameFortunePrompt(input as NameFortuneInput);
+    case "tojeong":
+      return buildTojeongPrompt(input as TojeongInput);
+    case "life-fortune":
+      return buildLifeFortunePrompt(input as LifeFortuneInput);
+    case "moving-fortune":
+      return buildMovingFortunePrompt(input as MovingFortuneInput);
+    case "iching":
+      return buildIChingPrompt(input as IChingInput);
+    case "sangaji":
+      return buildSangajiPrompt(input as SangajiInput);
     case "love-fortune":
       return buildGeneralFortunePrompt("love", input as GeneralFortuneInput);
     case "wealth-fortune":
@@ -546,4 +561,231 @@ function buildNameFortunePrompt(input: NameFortuneInput): string {
 이름 전체에 대한 종합 평가와 응원 메시지로 마무리해 주세요.
 
 한국어로, 전문적이면서도 따뜻하고 긍정적인 톤으로 작성해 주세요.`;
+}
+
+// ─── 토정비결 ─────────────────────────────────────────────────────────────────
+
+function calcTojeongNumbers(lunarYear: number, lunarMonth: number, lunarDay: number) {
+  // 상책수: 천간(天干) 기준 — 갑/을=1, 병/정=2, 무/기=3, 경/신=4, 임/계=5
+  const stemIdx = ((lunarYear - 4) % 10 + 10) % 10;
+  const upper = Math.floor(stemIdx / 2) + 1; // 1-5
+
+  // 중책수: 생월 그대로
+  const middle = lunarMonth; // 1-12
+
+  // 하책수: 생일을 5일 단위로 구분
+  const lower = Math.min(Math.ceil(lunarDay / 5), 6); // 1-6
+
+  return { upper, middle, lower };
+}
+
+function tojeongUpperLabel(n: number): string {
+  return ["一", "二", "三", "四", "五"][n - 1] ?? String(n);
+}
+
+function buildTojeongPrompt(input: TojeongInput): string {
+  const calType = input.isLunar ? "음력" : "양력(음력으로 환산하여 해석)";
+  const genderKo = input.gender === "male" ? "남성" : "여성";
+  const { upper, middle, lower } = calcTojeongNumbers(input.lunarYear, input.lunarMonth, input.lunarDay);
+  const hexCode = `${tojeongUpperLabel(upper)}-${tojeongUpperLabel(middle)}-${tojeongUpperLabel(lower)}`;
+
+  return `당신은 조선 시대 토정비결의 전통을 이은 역술 전문가입니다. 이토정(李土亭) 선생의 토정비결을 현대적으로 해석하여, 생년월일의 음양오행과 괘상(卦象)으로 한 해의 운세를 풀이합니다.
+
+사용자 정보:
+생년월일(${calType}): ${input.lunarYear}년 ${input.lunarMonth}월 ${input.lunarDay}일
+성별: ${genderKo}
+괘수(卦數): ${hexCode} (상책 ${upper} · 중책 ${middle} · 하책 ${lower})
+운세 년도: ${input.targetYear}년
+
+위 정보를 바탕으로 ${input.targetYear}년 토정비결을 아래 형식으로 풀이해 주세요.
+
+## 📿 ${input.targetYear}년 총운(總運)
+이 해 전체의 기운, 대세(大勢), 주의할 점과 기회를 고전적인 운세 문체로 풀이해 주세요. 2~3문단 분량으로 작성해 주세요.
+
+## 🌸 월별 운세
+각 월의 운세를 아래 형식으로 작성해 주세요:
+
+**1월** — (길흉 한 줄 요약) + 세부 내용 1~2문장
+**2월** — (길흉 한 줄 요약) + 세부 내용 1~2문장
+**3월** — (길흉 한 줄 요약) + 세부 내용 1~2문장
+**4월** — (길흉 한 줄 요약) + 세부 내용 1~2문장
+**5월** — (길흉 한 줄 요약) + 세부 내용 1~2문장
+**6월** — (길흉 한 줄 요약) + 세부 내용 1~2문장
+**7월** — (길흉 한 줄 요약) + 세부 내용 1~2문장
+**8월** — (길흉 한 줄 요약) + 세부 내용 1~2문장
+**9월** — (길흉 한 줄 요약) + 세부 내용 1~2문장
+**10월** — (길흉 한 줄 요약) + 세부 내용 1~2문장
+**11월** — (길흉 한 줄 요약) + 세부 내용 1~2문장
+**12월** — (길흉 한 줄 요약) + 세부 내용 1~2문장
+
+## 🔑 올해의 핵심 키워드
+이 해를 대표하는 키워드 3가지를 선정하고 간략히 설명해 주세요.
+
+## 💡 토정 선생의 조언
+이 해 가장 중요한 교훈 또는 주의사항을 고전적인 어투로 한 문단 작성해 주세요.
+
+문체는 고전적이고 신비로운 느낌을 살리되, 현대인이 이해할 수 있는 한국어로 작성해 주세요. 간간이 한자어를 사용해 격식을 높여 주세요. 전체적으로 희망과 지혜를 전하는 톤을 유지해 주세요.`;
+}
+
+// ─── 평생운세 ─────────────────────────────────────────────────────────────────
+
+function buildLifeFortunePrompt(input: LifeFortuneInput): string {
+  const genderKo = input.gender === "male" ? "남성" : "여성";
+  const currentYear = new Date().getFullYear();
+  const age = currentYear - input.birthYear + 1;
+
+  return `당신은 한국의 사주명리학 및 운명학 전문가입니다. 생년월일과 성별을 바탕으로 한 사람의 타고난 기질, 인생의 흐름, 운명적 특성을 깊이 있게 풀이합니다.
+
+사용자 정보:
+생년월일: ${input.birthYear}년 ${input.birthMonth}월 ${input.birthDay}일
+성별: ${genderKo}
+현재 나이: 만 ${age - 1}세 (${currentYear}년 기준)
+
+이 분의 평생운세를 아래 형식으로 풀이해 주세요.
+
+## 🌟 타고난 기질과 본성
+이 생년월일이 지닌 근본적인 에너지와 타고난 성격, 기질을 분석해 주세요. 강점과 약점을 균형 있게 서술해 주세요.
+
+## 🔥 핵심 재능과 적성
+타고난 재능, 빛나는 분야, 어울리는 직업군과 역할을 구체적으로 설명해 주세요.
+
+## 💕 인연과 관계의 패턴
+이 사람이 맺는 인연의 특성, 사랑의 방식, 대인 관계에서 반복되는 패턴을 풀이해 주세요.
+
+## 💰 재물과 성공의 흐름
+평생에 걸친 재물운의 특성, 돈을 버는 방식, 성공에 이르는 경로를 설명해 주세요.
+
+## 🌊 인생의 큰 흐름 (연대별)
+- **20~30대:** 이 시기의 주요 과제와 기회
+- **40~50대:** 전환점과 성숙의 시기
+- **60대 이후:** 완성과 지혜의 시기
+
+## ⚠️ 인생의 주요 과제
+이 운명이 반드시 극복하고 성장해야 할 과제나 반복되는 시련의 패턴을 솔직하게 알려주세요.
+
+## 🎯 운명을 빛내는 열쇠
+이 사람이 자신의 잠재력을 최대한 발휘하고 행복한 삶을 살기 위한 핵심 조언 3가지를 알려주세요.
+
+## ✨ 이 생애의 사명
+이 생년월일을 가진 사람이 이 세상에서 이루어야 할 사명이나 삶의 테마를 따뜻하게 마무리해 주세요.
+
+전문적이면서도 따뜻하고 통찰력 있는 한국어로 작성해 주세요. 부정적인 내용도 성장의 관점에서 희망적으로 마무리해 주세요.`;
+}
+
+// ─── 이사/방위 길흉 ──────────────────────────────────────────────────────────
+
+function buildMovingFortunePrompt(input: MovingFortuneInput): string {
+  const { birthYear, birthMonth, birthDay, gender, direction, movingYear, movingMonth, question } = input;
+  const genderKo = gender === "male" ? "남성" : "여성";
+  const timingLine = movingYear
+    ? `이사 예정 시기: ${movingYear}년${movingMonth ? ` ${movingMonth}월` : ""}`
+    : "이사 시기: 미정";
+  const questionLine = question ? `\n추가 궁금한 사항: ${question}` : "";
+
+  return `당신은 한국 전통 풍수지리와 사주명리를 겸비한 이사·방위 전문가입니다. 오행(五行), 구성기학(九星氣學), 풍수(風水) 이론을 바탕으로 실질적이고 구체적인 조언을 드립니다.
+
+다음 정보를 바탕으로 이사 방위 길흉을 분석해 주세요.
+
+생년월일: ${birthYear}년 ${birthMonth}월 ${birthDay}일
+성별: ${genderKo}
+이사 방향: ${direction}방
+${timingLine}${questionLine}
+
+아래 형식으로 상세히 분석해 주세요:
+
+## 🧭 이사 방향 총평
+**${direction}방** 이사에 대한 전체적인 길흉 판단을 먼저 명확하게 알려주세요. (길(吉) / 흉(凶) / 보통)
+
+## 🔥 사주로 본 나의 방위 기운
+이 분의 생년월일과 성별을 기반으로 오행(목·화·토·금·수) 구성을 분석하고, 어떤 방위가 본명(本命)에 유리한지 설명해 주세요.
+
+## 🏡 ${direction}방 풍수 분석
+- **풍수적 의미**: ${direction}방이 가진 기운과 에너지 특성
+- **이 분에게 미치는 영향**: 건강·재물·인간관계·사업 측면에서의 길흉
+- **주의할 점**: 이 방향으로 이사할 때 특히 유의해야 할 사항
+
+## 📅 이사 시기 조언
+${movingYear ? `${movingYear}년${movingMonth ? ` ${movingMonth}월` : ""}` : "이사를 계획 중인 시기"}에 대한 길흉 분석과 최적의 이사 날짜(길일) 선택 기준을 알려주세요.
+
+## ✅ 실용 조언
+이사 전후로 해두면 좋은 행동 3가지와, 이사 후 집 내부 배치(침실 방향, 현관 방향 등)에 대한 풍수 팁을 알려주세요.
+
+## 🌟 종합 권고
+${direction}방 이사를 진행해야 한다면 어떻게 준비하면 좋을지, 혹은 다른 방위를 고려할 경우 추천 방위를 알려주세요.
+
+전통 동양 지식을 바탕으로 하되 현대적이고 실용적인 관점에서 한국어로 작성해 주세요.`;
+}
+
+// ─── 주역 괘 ──────────────────────────────────────────────────────────────────
+
+function buildIChingPrompt(input: IChingInput): string {
+  const { hexagramNo, hexagramName, hexagramNameZh, upperTrigram, lowerTrigram, keyword, question } = input;
+  const questionLine = question ? `\n점괘를 친 이유 / 질문: ${question}` : "";
+
+  return `당신은 주역(周易) 역경(易經) 전문가입니다. 동양 고전 철학과 64괘의 깊은 지혜를 바탕으로 따뜻하고 통찰력 있는 해석을 드립니다.
+
+동전을 6번 던져 다음 괘가 뽑혔습니다.
+
+**제${hexagramNo}괘 ${hexagramNameZh} ${hexagramName}괘**
+- 상괘(上卦): ${upperTrigram}
+- 하괘(下卦): ${lowerTrigram}
+- 핵심 키워드: ${keyword}${questionLine}
+
+아래 형식으로 풀이해 주세요:
+
+## ☯️ 괘의 형상
+제${hexagramNo}괘 **${hexagramNameZh}(${hexagramName})**의 상괘(${upperTrigram})와 하괘(${lowerTrigram})가 만들어내는 자연의 상(象)을 설명하고, 이 괘가 담고 있는 핵심 에너지를 소개해 주세요.
+
+## 📖 괘의 뜻 (卦辭)
+이 괘의 전통적인 의미와 역경에서 전하는 가르침을 현대적인 언어로 풀어 설명해 주세요.
+
+## 🌊 현재 상황 해석
+${question ? `"${question}"라는 질문에 대해 이 괘가 전하는 답을 구체적으로 해석해 주세요.` : "현재 뽑은 이의 상황에 이 괘가 전하는 메시지를 해석해 주세요."}
+
+## 💡 효의 가르침
+이 괘의 여섯 효(爻)가 단계적으로 전하는 흐름과 핵심 교훈을 요약해 주세요.
+
+## 🎯 실천 조언
+이 괘의 지혜를 바탕으로 지금 취해야 할 행동, 피해야 할 행동, 마음가짐 3가지를 알려주세요.
+
+## ✨ 종합 메시지
+이 괘가 최종적으로 전하는 희망과 지혜의 말씀으로 마무리해 주세요.
+
+동양 고전의 깊이를 담되 현대인이 일상에서 실천할 수 있는 통찰로 한국어로 작성해 주세요.`;
+}
+
+// ─── 산가지 점 ────────────────────────────────────────────────────────────────
+
+function buildSangajiPrompt(input: SangajiInput): string {
+  const questionLine = input.question
+    ? `\n질문: ${input.question}`
+    : "";
+
+  return `당신은 한국 전통 산가지 점의 전문가입니다. 대나무 막대(산가지)를 뽑아 나온 괘의 뜻을 풀이합니다.
+
+뽑힌 산가지 번호: ${input.no}번
+괘 등급: ${input.grade}
+괘 이름: ${input.title}${questionLine}
+
+아래 형식으로 깊이 있는 풀이를 작성해 주세요:
+
+## 🎋 괘의 의미
+이 산가지 괘가 전하는 핵심 메시지와 상징적 의미를 설명해 주세요.
+
+## 📖 상황 해석
+지금 이 괘가 나온 이유와 현재 상황에 대한 통찰을 제시해 주세요.${input.question ? "\n질문에 직접 연결 지어 해석해 주세요." : ""}
+
+## 🌱 앞날의 흐름
+가까운 미래의 흐름과 변화의 방향을 알려주세요.
+
+## 💡 지혜의 말씀
+이 괘가 주는 삶의 교훈과 마음가짐을 전통적 관점에서 풀어주세요.
+
+## 🎯 실천 조언
+지금 당장 할 수 있는 행동과 피해야 할 것 2~3가지를 알려주세요.
+
+## ✨ 오늘의 메시지
+이 괘가 전하는 따뜻한 응원의 말로 마무리해 주세요.
+
+한국 전통 점술의 지혜를 담되 현대적이고 실용적인 언어로 한국어로 작성해 주세요.`;
 }

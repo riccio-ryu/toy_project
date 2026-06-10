@@ -25,7 +25,12 @@ export type FortuneType =
   | "zodiac-compatibility"
   | "business-compatibility"
   | "rune"
-  | "name-fortune";
+  | "name-fortune"
+  | "tojeong"
+  | "life-fortune"
+  | "moving-fortune"
+  | "iching"
+  | "sangaji";
 
 // ─── Input Types (fortune별 입력 스키마) ──────────────────────────────────────
 
@@ -94,6 +99,54 @@ export interface GeneralFortuneInput {
   question?: string;
 }
 
+export interface LifeFortuneInput {
+  birthYear: number;
+  birthMonth: number;
+  birthDay: number;
+  gender: "male" | "female";
+}
+
+export interface TojeongInput {
+  lunarYear: number;
+  lunarMonth: number;
+  lunarDay: number;
+  isLunar: boolean;
+  gender: "male" | "female";
+  targetYear: number; // 올해 운세를 볼 년도
+}
+
+export type Direction =
+  | "북" | "북동" | "동" | "동남"
+  | "남" | "남서" | "서" | "북서";
+
+export interface MovingFortuneInput {
+  birthYear: number;
+  birthMonth: number;
+  birthDay: number;
+  gender: "male" | "female";
+  direction: Direction;
+  movingYear?: number;
+  movingMonth?: number;
+  question?: string;
+}
+
+export interface IChingInput {
+  hexagramNo: number;
+  hexagramName: string;
+  hexagramNameZh: string;
+  upperTrigram: string;
+  lowerTrigram: string;
+  keyword: string;
+  question?: string;
+}
+
+export interface SangajiInput {
+  no: number;
+  grade: string;
+  title: string;
+  question?: string;
+}
+
 export type FortuneInput =
   | DreamInput
   | SajuInput
@@ -105,7 +158,12 @@ export type FortuneInput =
   | ZodiacCompatibilityInput
   | RuneInput
   | NameFortuneInput
-  | GeneralFortuneInput;
+  | GeneralFortuneInput
+  | TojeongInput
+  | LifeFortuneInput
+  | MovingFortuneInput
+  | IChingInput
+  | SangajiInput;
 
 // ─── API Request / Response ───────────────────────────────────────────────────
 

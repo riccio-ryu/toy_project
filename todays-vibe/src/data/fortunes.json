@@ -78,7 +78,7 @@
       "difficulty": "hard",
       "isAI": true,
       "isPremium": true,
-      "ready": false,
+      "ready": true,
       "tags": [
         "프리미엄"
       ],
@@ -93,8 +93,8 @@
       "description": "음력 생년월일 기반 연간/월간 운세 — 전통 384괘",
       "path": "/tojeong",
       "difficulty": "medium",
-      "isAI": false,
-      "ready": false,
+      "isAI": true,
+      "ready": true,
       "tags": [
         "전통",
         "정통"
@@ -342,12 +342,12 @@
       "nameKo": "주역 괘",
       "name": "주역 괘",
       "category": "cards",
-      "icon": "📯",
-      "description": "동전/산가지로 64괘 중 1개 — 고전 易經 해석",
+      "icon": "☯️",
+      "description": "동전 6번 던져 64괘 뽑기 — 고전 易經 AI 해석",
       "path": "/iching",
       "difficulty": "hard",
       "isAI": true,
-      "ready": false,
+      "ready": true,
       "tags": [
         "전통",
         "동양"
@@ -363,8 +363,8 @@
       "description": "대나무 막대 흔들기 → 한국 전통 간단 길흉 판단",
       "path": "/sangaji",
       "difficulty": "easy",
-      "isAI": false,
-      "ready": false,
+      "isAI": true,
+      "ready": true,
       "tags": [
         "전통",
         "한국"
@@ -462,7 +462,7 @@
       "path": "/moving-fortune",
       "difficulty": "medium",
       "isAI": true,
-      "ready": false,
+      "ready": true,
       "tags": [
         "실용",
         "풍수"

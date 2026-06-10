@@ -21,7 +21,12 @@ export type ReadingType =
   | "zodiac-compatibility"
   | "business-compatibility"
   | "rune"
-  | "name-fortune";
+  | "name-fortune"
+  | "tojeong"
+  | "life-fortune"
+  | "moving-fortune"
+  | "iching"
+  | "sangaji";
 
 export async function saveAiReading(
   userId: string,
