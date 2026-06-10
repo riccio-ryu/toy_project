@@ -12,6 +12,7 @@ import {
   GeneralFortuneInput,
   TojeongInput,
   LifeFortuneInput,
+  MovingFortuneInput,
   FortuneInput,
 } from "@/types/fortune";
 
@@ -43,6 +44,8 @@ export function buildPrompt(type: FortuneType, input: FortuneInput): string {
       return buildTojeongPrompt(input as TojeongInput);
     case "life-fortune":
       return buildLifeFortunePrompt(input as LifeFortuneInput);
+    case "moving-fortune":
+      return buildMovingFortunePrompt(input as MovingFortuneInput);
     case "love-fortune":
       return buildGeneralFortunePrompt("love", input as GeneralFortuneInput);
     case "wealth-fortune":
@@ -661,4 +664,48 @@ function buildLifeFortunePrompt(input: LifeFortuneInput): string {
 이 생년월일을 가진 사람이 이 세상에서 이루어야 할 사명이나 삶의 테마를 따뜻하게 마무리해 주세요.
 
 전문적이면서도 따뜻하고 통찰력 있는 한국어로 작성해 주세요. 부정적인 내용도 성장의 관점에서 희망적으로 마무리해 주세요.`;
+}
+
+// ─── 이사/방위 길흉 ──────────────────────────────────────────────────────────
+
+function buildMovingFortunePrompt(input: MovingFortuneInput): string {
+  const { birthYear, birthMonth, birthDay, gender, direction, movingYear, movingMonth, question } = input;
+  const genderKo = gender === "male" ? "남성" : "여성";
+  const timingLine = movingYear
+    ? `이사 예정 시기: ${movingYear}년${movingMonth ? ` ${movingMonth}월` : ""}`
+    : "이사 시기: 미정";
+  const questionLine = question ? `\n추가 궁금한 사항: ${question}` : "";
+
+  return `당신은 한국 전통 풍수지리와 사주명리를 겸비한 이사·방위 전문가입니다. 오행(五行), 구성기학(九星氣學), 풍수(風水) 이론을 바탕으로 실질적이고 구체적인 조언을 드립니다.
+
+다음 정보를 바탕으로 이사 방위 길흉을 분석해 주세요.
+
+생년월일: ${birthYear}년 ${birthMonth}월 ${birthDay}일
+성별: ${genderKo}
+이사 방향: ${direction}방
+${timingLine}${questionLine}
+
+아래 형식으로 상세히 분석해 주세요:
+
+## 🧭 이사 방향 총평
+**${direction}방** 이사에 대한 전체적인 길흉 판단을 먼저 명확하게 알려주세요. (길(吉) / 흉(凶) / 보통)
+
+## 🔥 사주로 본 나의 방위 기운
+이 분의 생년월일과 성별을 기반으로 오행(목·화·토·금·수) 구성을 분석하고, 어떤 방위가 본명(本命)에 유리한지 설명해 주세요.
+
+## 🏡 ${direction}방 풍수 분석
+- **풍수적 의미**: ${direction}방이 가진 기운과 에너지 특성
+- **이 분에게 미치는 영향**: 건강·재물·인간관계·사업 측면에서의 길흉
+- **주의할 점**: 이 방향으로 이사할 때 특히 유의해야 할 사항
+
+## 📅 이사 시기 조언
+${movingYear ? `${movingYear}년${movingMonth ? ` ${movingMonth}월` : ""}` : "이사를 계획 중인 시기"}에 대한 길흉 분석과 최적의 이사 날짜(길일) 선택 기준을 알려주세요.
+
+## ✅ 실용 조언
+이사 전후로 해두면 좋은 행동 3가지와, 이사 후 집 내부 배치(침실 방향, 현관 방향 등)에 대한 풍수 팁을 알려주세요.
+
+## 🌟 종합 권고
+${direction}방 이사를 진행해야 한다면 어떻게 준비하면 좋을지, 혹은 다른 방위를 고려할 경우 추천 방위를 알려주세요.
+
+전통 동양 지식을 바탕으로 하되 현대적이고 실용적인 관점에서 한국어로 작성해 주세요.`;
 }

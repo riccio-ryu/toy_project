@@ -27,7 +27,8 @@ export type FortuneType =
   | "rune"
   | "name-fortune"
   | "tojeong"
-  | "life-fortune";
+  | "life-fortune"
+  | "moving-fortune";
 
 // ─── Input Types (fortune별 입력 스키마) ──────────────────────────────────────
 
@@ -112,6 +113,21 @@ export interface TojeongInput {
   targetYear: number; // 올해 운세를 볼 년도
 }
 
+export type Direction =
+  | "북" | "북동" | "동" | "동남"
+  | "남" | "남서" | "서" | "북서";
+
+export interface MovingFortuneInput {
+  birthYear: number;
+  birthMonth: number;
+  birthDay: number;
+  gender: "male" | "female";
+  direction: Direction;
+  movingYear?: number;
+  movingMonth?: number;
+  question?: string;
+}
+
 export type FortuneInput =
   | DreamInput
   | SajuInput
@@ -125,7 +141,8 @@ export type FortuneInput =
   | NameFortuneInput
   | GeneralFortuneInput
   | TojeongInput
-  | LifeFortuneInput;
+  | LifeFortuneInput
+  | MovingFortuneInput;
 
 // ─── API Request / Response ───────────────────────────────────────────────────
 
