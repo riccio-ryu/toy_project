@@ -2,6 +2,17 @@
 
 ---
 
+## 2026-06-10
+
+- 산가지 점 페이지 구현 (`src/app/(user)/sangaji/page.tsx`) — 50개 산가지 Framer Motion 개별 스틱 애니메이션, 2단계(흔들기→뽑기) 플로우, 상하 움직임 + 통 경계 벗어남 방지, 흔들 때마다 다른 배열(layoutOffsets 상태), 마우스 hover 스틱 들림 + 클릭 뽑기 UI, AI 해석 스트리밍 연동
+- `src/data/sangaji.ts` 신규 생성 — 50가지 산가지 데이터(no, grade, title, description), GRADE_INFO 색상 맵, drawSangaji() 랜덤 추출 함수
+- `src/lib/claude/prompts.ts` — `buildSangajiPrompt()` 추가
+- `src/types/fortune.ts`, `src/lib/firebase/readings.ts` — `"sangaji"` 타입 추가
+- `src/data/fortunes.json` — sangaji, iching, moving-fortune `ready: true` 활성화
+- `README.md` 메뉴 목록 업데이트 — 완료 24종 → 27종, 주역 괘·산가지 점·이사/방위 길흉 ✅ 처리, 준비 중 9종 → 6종
+
+---
+
 ## 2026-06-09
 
 - `src/lib/gemini/stream-response.ts` 스트림 에러 처리 수정 — `controller.error(err)` → `controller.close()`로 변경, 룬 문자 페이지 `ERR_INCOMPLETE_CHUNKED_ENCODING` 오류 해결
