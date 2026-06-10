@@ -363,8 +363,8 @@
       "description": "대나무 막대 흔들기 → 한국 전통 간단 길흉 판단",
       "path": "/sangaji",
       "difficulty": "easy",
-      "isAI": false,
-      "ready": false,
+      "isAI": true,
+      "ready": true,
       "tags": [
         "전통",
         "한국"

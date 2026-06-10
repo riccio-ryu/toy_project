@@ -29,7 +29,8 @@ export type FortuneType =
   | "tojeong"
   | "life-fortune"
   | "moving-fortune"
-  | "iching";
+  | "iching"
+  | "sangaji";
 
 // ─── Input Types (fortune별 입력 스키마) ──────────────────────────────────────
 
@@ -139,6 +140,13 @@ export interface IChingInput {
   question?: string;
 }
 
+export interface SangajiInput {
+  no: number;
+  grade: string;
+  title: string;
+  question?: string;
+}
+
 export type FortuneInput =
   | DreamInput
   | SajuInput
@@ -154,7 +162,8 @@ export type FortuneInput =
   | TojeongInput
   | LifeFortuneInput
   | MovingFortuneInput
-  | IChingInput;
+  | IChingInput
+  | SangajiInput;
 
 // ─── API Request / Response ───────────────────────────────────────────────────
 
