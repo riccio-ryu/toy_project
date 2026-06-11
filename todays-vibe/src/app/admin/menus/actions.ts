@@ -50,6 +50,38 @@ export async function deleteCategoryById(id: string): Promise<void> {
   await db().collection(CAT_COL).doc(id).delete();
 }
 
+// ─── Quick Menu settings ─────────────────────────────────────────────────────
+
+export async function getQuickMenu(): Promise<string[]> {
+  const snap = await db().collection("settings").doc("quickMenu").get();
+  return (snap.data()?.menuIds as string[]) ?? [];
+}
+
+export async function saveQuickMenu(menuIds: string[]): Promise<void> {
+  await db().collection("settings").doc("quickMenu").set({ menuIds, updatedAt: new Date() });
+}
+
+// ─── Hero Card settings ───────────────────────────────────────────────────────
+
+export interface HeroCardSettings {
+  notLoggedInText: string;
+  noBirthInfoText: string;
+}
+
+const DEFAULT_HERO_SETTINGS: HeroCardSettings = {
+  notLoggedInText: "로그인하면 오늘의 운세 점수를 확인할 수 있어요",
+  noBirthInfoText: "생년월일을 저장하면 AI가 맞춤 운세를 드려요",
+};
+
+export async function getHeroCardSettings(): Promise<HeroCardSettings> {
+  const snap = await db().collection("settings").doc("heroCard").get();
+  return { ...DEFAULT_HERO_SETTINGS, ...(snap.data() ?? {}) };
+}
+
+export async function saveHeroCardSettings(settings: HeroCardSettings): Promise<void> {
+  await db().collection("settings").doc("heroCard").set({ ...settings, updatedAt: new Date() });
+}
+
 // ─── Batch order update ───────────────────────────────────────────────────────
 
 export async function batchUpdateOrders(

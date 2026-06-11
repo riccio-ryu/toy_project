@@ -7,8 +7,8 @@ function rng(s: number): number { return ((s * 1_664_525 + 1_013_904_223) >>> 0)
 
 
 function getTimeBasedPhase(date: Date): number {
-  const hour = date.getHours() + date.getMinutes() / 60
-  return (0.5 + hour / 24) % 1
+  // 0분 → 삭(0), 30분 → 보름달(0.5), 59분 → 그믐달(≈1)
+  return date.getMinutes() / 60
 }
 
 const STARS = Array.from({ length: 80 }, (_, i) => {
@@ -387,7 +387,8 @@ export default function SkyLayer() {
   }, [])
 
   const starVis = 0.7 + nightFactor * 0.3
-  const moonVis = 0.15 + nightFactor * 0.45
+  // 사인 곡선: 0분(삭)=0, 30분(보름달)=max, 59분(그믐달)≈0
+  const moonVis = phase !== null ? Math.sin(Math.PI * phase) * 0.7 : 0
 
   return (
     <div className="fixed inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 1 }} aria-hidden="true">

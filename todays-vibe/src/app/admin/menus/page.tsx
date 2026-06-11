@@ -12,6 +12,11 @@ import {
   saveCategory,
   deleteCategoryById,
   batchUpdateOrders,
+  getQuickMenu,
+  saveQuickMenu,
+  getHeroCardSettings,
+  saveHeroCardSettings,
+  type HeroCardSettings,
 } from "./actions";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -590,6 +595,236 @@ function ColModal({
   );
 }
 
+// ─── Quick Menu modal ─────────────────────────────────────────────────────────
+
+const QUICK_MAX = 6;
+
+function QuickMenuModal({
+  menus,
+  initialIds,
+  onSave,
+  onClose,
+}: {
+  menus: MenuItem[];
+  initialIds: string[];
+  onSave: (ids: string[]) => void;
+  onClose: () => void;
+}) {
+  const [selectedIds, setSelectedIds] = useState<string[]>(initialIds);
+
+  const readyMenus = menus.filter((m) => m.ready);
+  const selectedMenus = selectedIds
+    .map((id) => readyMenus.find((m) => m.id === id))
+    .filter(Boolean) as MenuItem[];
+  const unselected = readyMenus.filter((m) => !selectedIds.includes(m.id));
+
+  function add(id: string) {
+    if (selectedIds.length >= QUICK_MAX) return;
+    setSelectedIds((prev) => [...prev, id]);
+  }
+
+  function remove(id: string) {
+    setSelectedIds((prev) => prev.filter((i) => i !== id));
+  }
+
+  function move(idx: number, dir: -1 | 1) {
+    const next = [...selectedIds];
+    const target = idx + dir;
+    if (target < 0 || target >= next.length) return;
+    [next[idx], next[target]] = [next[target], next[idx]];
+    setSelectedIds(next);
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+      <div className="bg-gray-900 border border-white/10 rounded-2xl w-full max-w-lg shadow-2xl flex flex-col max-h-[85vh]">
+        {/* Header */}
+        <div className="px-6 pt-6 pb-4 border-b border-white/10 flex items-center justify-between shrink-0">
+          <div>
+            <h3 className="text-white font-semibold">⚡ Quick Menu 설정</h3>
+            <p className="text-white/40 text-xs mt-0.5">
+              홈 상단에 노출할 메뉴를 선택하고 순서를 정하세요 (최대 {QUICK_MAX}개)
+            </p>
+          </div>
+          <button onClick={onClose} className="text-white/40 hover:text-white text-xl leading-none">✕</button>
+        </div>
+
+        <div className="flex-1 overflow-y-auto px-6 py-4 space-y-5">
+          {/* 선택된 메뉴 */}
+          <div>
+            <p className="text-white/40 text-xs mb-2">
+              선택된 메뉴{" "}
+              <span className="text-purple-400 font-medium">{selectedIds.length}</span>
+              <span className="text-white/20">/{QUICK_MAX}</span>
+            </p>
+            {selectedMenus.length === 0 ? (
+              <div className="text-white/20 text-sm text-center py-5 border border-dashed border-white/10 rounded-xl">
+                아래에서 메뉴를 추가하세요
+              </div>
+            ) : (
+              <div className="space-y-1.5">
+                {selectedMenus.map((m, idx) => (
+                  <div
+                    key={m.id}
+                    className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-purple-900/20 border border-purple-700/30"
+                  >
+                    <span className="text-xl w-7 text-center">{m.icon}</span>
+                    <span className="flex-1 text-white text-sm font-medium">{m.nameKo}</span>
+                    <div className="flex items-center gap-0.5">
+                      <button
+                        onClick={() => move(idx, -1)}
+                        disabled={idx === 0}
+                        className="w-7 h-7 flex items-center justify-center rounded text-white/30 hover:text-white/70 hover:bg-white/5 disabled:opacity-20 text-xs transition-colors"
+                      >
+                        ▲
+                      </button>
+                      <button
+                        onClick={() => move(idx, 1)}
+                        disabled={idx === selectedMenus.length - 1}
+                        className="w-7 h-7 flex items-center justify-center rounded text-white/30 hover:text-white/70 hover:bg-white/5 disabled:opacity-20 text-xs transition-colors"
+                      >
+                        ▼
+                      </button>
+                      <button
+                        onClick={() => remove(m.id)}
+                        className="w-7 h-7 flex items-center justify-center rounded text-red-400/50 hover:text-red-400 hover:bg-red-900/20 text-sm transition-colors"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* 추가 가능한 메뉴 */}
+          {unselected.length > 0 && (
+            <div>
+              <p className="text-white/40 text-xs mb-2">추가 가능한 메뉴</p>
+              <div className="space-y-1">
+                {unselected.map((m) => (
+                  <button
+                    key={m.id}
+                    onClick={() => add(m.id)}
+                    disabled={selectedIds.length >= QUICK_MAX}
+                    className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 hover:border-white/15 transition-all text-left disabled:opacity-30 disabled:cursor-not-allowed"
+                  >
+                    <span className="text-xl w-7 text-center">{m.icon}</span>
+                    <span className="flex-1 text-white/70 text-sm">{m.nameKo}</span>
+                    <span className="text-purple-400/60 text-xs">+ 추가</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div className="px-6 py-4 border-t border-white/10 flex items-center justify-end gap-2 shrink-0">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 rounded-lg text-sm text-white/50 border border-white/10 hover:bg-white/5 transition-colors"
+          >
+            취소
+          </button>
+          <button
+            onClick={() => onSave(selectedIds)}
+            className="px-4 py-2 rounded-lg text-sm bg-purple-600 text-white font-semibold hover:bg-purple-500 transition-colors"
+          >
+            저장
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Hero Card settings modal ─────────────────────────────────────────────────
+
+function HeroCardModal({
+  initial,
+  onSave,
+  onClose,
+}: {
+  initial: HeroCardSettings;
+  onSave: (settings: HeroCardSettings) => void;
+  onClose: () => void;
+}) {
+  const [form, setForm] = useState<HeroCardSettings>(initial);
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+      <div className="bg-gray-900 border border-white/10 rounded-2xl w-full max-w-md shadow-2xl flex flex-col">
+        {/* Header */}
+        <div className="px-6 pt-6 pb-4 border-b border-white/10 flex items-center justify-between shrink-0">
+          <div>
+            <h3 className="text-white font-semibold">✨ 오늘의 운세 Hero 설정</h3>
+            <p className="text-white/40 text-xs mt-0.5">홈 상단 운세 카드의 안내 문구를 수정합니다</p>
+          </div>
+          <button onClick={onClose} className="text-white/40 hover:text-white text-xl">✕</button>
+        </div>
+
+        <div className="px-6 py-5 space-y-5">
+          {/* State: not logged in */}
+          <div>
+            <p className="text-white/40 text-xs mb-1.5">
+              미로그인 상태 안내 문구
+              <span className="ml-1.5 text-white/20">(블러 처리된 점수 아래 표시)</span>
+            </p>
+            <textarea
+              value={form.notLoggedInText}
+              onChange={(e) => setForm((f) => ({ ...f, notLoggedInText: e.target.value }))}
+              rows={2}
+              className={CLS_INPUT + " resize-none"}
+              placeholder="로그인하면 오늘의 운세 점수를 확인할 수 있어요"
+            />
+          </div>
+
+          {/* State: no birth info */}
+          <div>
+            <p className="text-white/40 text-xs mb-1.5">
+              생년월일 미등록 안내 문구
+              <span className="ml-1.5 text-white/20">(운세 아래 표시)</span>
+            </p>
+            <textarea
+              value={form.noBirthInfoText}
+              onChange={(e) => setForm((f) => ({ ...f, noBirthInfoText: e.target.value }))}
+              rows={2}
+              className={CLS_INPUT + " resize-none"}
+              placeholder="생년월일을 저장하면 AI가 맞춤 운세를 드려요"
+            />
+          </div>
+
+          {/* State examples */}
+          <div className="rounded-xl border border-white/8 bg-white/3 px-4 py-3 space-y-1.5">
+            <p className="text-white/30 text-[10px] font-semibold uppercase tracking-wider mb-2">상태별 동작</p>
+            <p className="text-white/50 text-xs">• <span className="text-white/30">미로그인</span> → 블러 처리 + 로그인 유도</p>
+            <p className="text-white/50 text-xs">• <span className="text-white/30">생년월일 없음</span> → 개인화 점수(UID 기반) + 생년월일 등록 유도</p>
+            <p className="text-white/50 text-xs">• <span className="text-white/30">생년월일 있음</span> → AI 맞춤 점수 (하루 1회 갱신, 캐시됨)</p>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="px-6 pb-6 pt-2 flex gap-2 justify-end">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 rounded-lg text-sm text-white/60 border border-white/10 hover:bg-white/5 transition-colors"
+          >
+            취소
+          </button>
+          <button
+            onClick={() => onSave(form)}
+            className="px-4 py-2 rounded-lg text-sm bg-purple-600 text-white font-semibold hover:bg-purple-500 transition-colors"
+          >
+            저장
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── Reorder modal ────────────────────────────────────────────────────────────
 
 const CAT_TAB = "__categories__";
@@ -846,6 +1081,13 @@ export default function AdminMenusPage() {
   const [showColModal, setShowColModal] = useState(false);
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [showReorderModal, setShowReorderModal] = useState(false);
+  const [showQuickMenuModal, setShowQuickMenuModal] = useState(false);
+  const [quickMenuIds, setQuickMenuIds] = useState<string[]>([]);
+  const [showHeroCardModal, setShowHeroCardModal] = useState(false);
+  const [heroCardSettings, setHeroCardSettings] = useState<HeroCardSettings>({
+    notLoggedInText: "로그인하면 오늘의 운세 점수를 확인할 수 있어요",
+    noBirthInfoText: "생년월일을 저장하면 AI가 맞춤 운세를 드려요",
+  });
   const [bulkCategory, setBulkCategory] = useState("");
 
   // 카테고리: JSON 기본값 + Firestore 추가분 병합
@@ -860,9 +1102,13 @@ export default function AdminMenusPage() {
     Promise.all([
       getMenus(),
       getExtraCategories(),
+      getQuickMenu(),
+      getHeroCardSettings(),
     ])
-      .then(([menus, extra]) => {
+      .then(([menus, extra, quickIds, heroSettings]) => {
         setRows(menus);
+        setQuickMenuIds(quickIds);
+        setHeroCardSettings(heroSettings);
         if (extra.length > 0) {
           setCategories((prev) => {
             const firestoreMap = new Map(extra.map((c) => [c.id, c]));
@@ -1088,6 +1334,25 @@ export default function AdminMenusPage() {
           className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs text-purple-300 border border-purple-800/60 hover:bg-purple-900/20 transition-colors"
         >
           ＋ 메뉴 추가
+        </button>
+
+        <button
+          onClick={() => setShowQuickMenuModal(true)}
+          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs text-yellow-300 border border-yellow-800/60 hover:bg-yellow-900/20 transition-colors"
+        >
+          ⚡ Quick Menu
+          {quickMenuIds.length > 0 && (
+            <span className="bg-yellow-700/50 text-yellow-200 rounded-full px-1.5 text-[10px]">
+              {quickMenuIds.length}
+            </span>
+          )}
+        </button>
+
+        <button
+          onClick={() => setShowHeroCardModal(true)}
+          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs text-purple-300 border border-purple-800/60 hover:bg-purple-900/20 transition-colors"
+        >
+          ✨ Hero 설정
         </button>
 
         {hasSelection && (
@@ -1320,6 +1585,24 @@ export default function AdminMenusPage() {
           onClose={() => setShowCategoryModal(false)}
         />
       )}
+      {showQuickMenuModal && (
+        <QuickMenuModal
+          menus={rows}
+          initialIds={quickMenuIds}
+          onSave={(ids) => {
+            setQuickMenuIds(ids);
+            setShowQuickMenuModal(false);
+            startTransition(async () => {
+              try {
+                await saveQuickMenu(ids);
+              } catch {
+                setError("Quick Menu 저장에 실패했습니다.");
+              }
+            });
+          }}
+          onClose={() => setShowQuickMenuModal(false)}
+        />
+      )}
       {editRow !== null && (
         <FortuneModal
           initial={editRow === "new" ? null : editRow}
@@ -1327,6 +1610,23 @@ export default function AdminMenusPage() {
           categories={categories}
           onSave={handleSave}
           onClose={() => setEditRow(null)}
+        />
+      )}
+      {showHeroCardModal && (
+        <HeroCardModal
+          initial={heroCardSettings}
+          onSave={(settings) => {
+            setHeroCardSettings(settings);
+            setShowHeroCardModal(false);
+            startTransition(async () => {
+              try {
+                await saveHeroCardSettings(settings);
+              } catch {
+                setError("Hero 설정 저장에 실패했습니다.");
+              }
+            });
+          }}
+          onClose={() => setShowHeroCardModal(false)}
         />
       )}
     </div>

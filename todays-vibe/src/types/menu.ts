@@ -30,4 +30,5 @@ export interface MenuItem {
   color: string;
   order: number;
   usageLimits?: UsageLimits;
+  popular?: boolean;
 }
