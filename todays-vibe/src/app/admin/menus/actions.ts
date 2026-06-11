@@ -11,12 +11,16 @@ function db() {
 }
 
 export async function getMenus(): Promise<MenuItem[]> {
-  const snap = await db().collection(COL).orderBy("order").get();
-  return snap.docs.map((d) => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { createdAt, updatedAt, ...data } = d.data();
-    return { id: d.id, ...data } as MenuItem;
-  });
+  try {
+    const snap = await db().collection(COL).orderBy("order").get();
+    return snap.docs.map((d) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { createdAt, updatedAt, ...data } = d.data();
+      return { id: d.id, ...data } as MenuItem;
+    });
+  } catch {
+    return [];
+  }
 }
 
 export async function saveMenu(item: MenuItem): Promise<void> {
@@ -37,8 +41,12 @@ export async function deleteMenusByIds(ids: string[]): Promise<void> {
 // ─── Category actions ─────────────────────────────────────────────────────────
 
 export async function getExtraCategories(): Promise<Category[]> {
-  const snap = await db().collection(CAT_COL).orderBy("order").get();
-  return snap.docs.map((d) => ({ id: d.id, ...d.data() } as Category));
+  try {
+    const snap = await db().collection(CAT_COL).orderBy("order").get();
+    return snap.docs.map((d) => ({ id: d.id, ...d.data() } as Category));
+  } catch {
+    return [];
+  }
 }
 
 export async function saveCategory(cat: Category): Promise<void> {
@@ -74,8 +82,12 @@ const DEFAULT_HERO_SETTINGS: HeroCardSettings = {
 };
 
 export async function getHeroCardSettings(): Promise<HeroCardSettings> {
-  const snap = await db().collection("settings").doc("heroCard").get();
-  return { ...DEFAULT_HERO_SETTINGS, ...(snap.data() ?? {}) };
+  try {
+    const snap = await db().collection("settings").doc("heroCard").get();
+    return { ...DEFAULT_HERO_SETTINGS, ...(snap.data() ?? {}) };
+  } catch {
+    return DEFAULT_HERO_SETTINGS;
+  }
 }
 
 export async function saveHeroCardSettings(settings: HeroCardSettings): Promise<void> {
