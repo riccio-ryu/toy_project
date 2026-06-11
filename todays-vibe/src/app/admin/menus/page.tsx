@@ -14,6 +14,9 @@ import {
   batchUpdateOrders,
   getQuickMenu,
   saveQuickMenu,
+  getHeroCardSettings,
+  saveHeroCardSettings,
+  type HeroCardSettings,
 } from "./actions";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -737,6 +740,91 @@ function QuickMenuModal({
   );
 }
 
+// ─── Hero Card settings modal ─────────────────────────────────────────────────
+
+function HeroCardModal({
+  initial,
+  onSave,
+  onClose,
+}: {
+  initial: HeroCardSettings;
+  onSave: (settings: HeroCardSettings) => void;
+  onClose: () => void;
+}) {
+  const [form, setForm] = useState<HeroCardSettings>(initial);
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+      <div className="bg-gray-900 border border-white/10 rounded-2xl w-full max-w-md shadow-2xl flex flex-col">
+        {/* Header */}
+        <div className="px-6 pt-6 pb-4 border-b border-white/10 flex items-center justify-between shrink-0">
+          <div>
+            <h3 className="text-white font-semibold">✨ 오늘의 운세 Hero 설정</h3>
+            <p className="text-white/40 text-xs mt-0.5">홈 상단 운세 카드의 안내 문구를 수정합니다</p>
+          </div>
+          <button onClick={onClose} className="text-white/40 hover:text-white text-xl">✕</button>
+        </div>
+
+        <div className="px-6 py-5 space-y-5">
+          {/* State: not logged in */}
+          <div>
+            <p className="text-white/40 text-xs mb-1.5">
+              미로그인 상태 안내 문구
+              <span className="ml-1.5 text-white/20">(블러 처리된 점수 아래 표시)</span>
+            </p>
+            <textarea
+              value={form.notLoggedInText}
+              onChange={(e) => setForm((f) => ({ ...f, notLoggedInText: e.target.value }))}
+              rows={2}
+              className={CLS_INPUT + " resize-none"}
+              placeholder="로그인하면 오늘의 운세 점수를 확인할 수 있어요"
+            />
+          </div>
+
+          {/* State: no birth info */}
+          <div>
+            <p className="text-white/40 text-xs mb-1.5">
+              생년월일 미등록 안내 문구
+              <span className="ml-1.5 text-white/20">(운세 아래 표시)</span>
+            </p>
+            <textarea
+              value={form.noBirthInfoText}
+              onChange={(e) => setForm((f) => ({ ...f, noBirthInfoText: e.target.value }))}
+              rows={2}
+              className={CLS_INPUT + " resize-none"}
+              placeholder="생년월일을 저장하면 AI가 맞춤 운세를 드려요"
+            />
+          </div>
+
+          {/* State examples */}
+          <div className="rounded-xl border border-white/8 bg-white/3 px-4 py-3 space-y-1.5">
+            <p className="text-white/30 text-[10px] font-semibold uppercase tracking-wider mb-2">상태별 동작</p>
+            <p className="text-white/50 text-xs">• <span className="text-white/30">미로그인</span> → 블러 처리 + 로그인 유도</p>
+            <p className="text-white/50 text-xs">• <span className="text-white/30">생년월일 없음</span> → 개인화 점수(UID 기반) + 생년월일 등록 유도</p>
+            <p className="text-white/50 text-xs">• <span className="text-white/30">생년월일 있음</span> → AI 맞춤 점수 (하루 1회 갱신, 캐시됨)</p>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="px-6 pb-6 pt-2 flex gap-2 justify-end">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 rounded-lg text-sm text-white/60 border border-white/10 hover:bg-white/5 transition-colors"
+          >
+            취소
+          </button>
+          <button
+            onClick={() => onSave(form)}
+            className="px-4 py-2 rounded-lg text-sm bg-purple-600 text-white font-semibold hover:bg-purple-500 transition-colors"
+          >
+            저장
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── Reorder modal ────────────────────────────────────────────────────────────
 
 const CAT_TAB = "__categories__";
@@ -995,6 +1083,11 @@ export default function AdminMenusPage() {
   const [showReorderModal, setShowReorderModal] = useState(false);
   const [showQuickMenuModal, setShowQuickMenuModal] = useState(false);
   const [quickMenuIds, setQuickMenuIds] = useState<string[]>([]);
+  const [showHeroCardModal, setShowHeroCardModal] = useState(false);
+  const [heroCardSettings, setHeroCardSettings] = useState<HeroCardSettings>({
+    notLoggedInText: "로그인하면 오늘의 운세 점수를 확인할 수 있어요",
+    noBirthInfoText: "생년월일을 저장하면 AI가 맞춤 운세를 드려요",
+  });
   const [bulkCategory, setBulkCategory] = useState("");
 
   // 카테고리: JSON 기본값 + Firestore 추가분 병합
@@ -1010,10 +1103,12 @@ export default function AdminMenusPage() {
       getMenus(),
       getExtraCategories(),
       getQuickMenu(),
+      getHeroCardSettings(),
     ])
-      .then(([menus, extra, quickIds]) => {
+      .then(([menus, extra, quickIds, heroSettings]) => {
         setRows(menus);
         setQuickMenuIds(quickIds);
+        setHeroCardSettings(heroSettings);
         if (extra.length > 0) {
           setCategories((prev) => {
             const firestoreMap = new Map(extra.map((c) => [c.id, c]));
@@ -1251,6 +1346,13 @@ export default function AdminMenusPage() {
               {quickMenuIds.length}
             </span>
           )}
+        </button>
+
+        <button
+          onClick={() => setShowHeroCardModal(true)}
+          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs text-purple-300 border border-purple-800/60 hover:bg-purple-900/20 transition-colors"
+        >
+          ✨ Hero 설정
         </button>
 
         {hasSelection && (
@@ -1508,6 +1610,23 @@ export default function AdminMenusPage() {
           categories={categories}
           onSave={handleSave}
           onClose={() => setEditRow(null)}
+        />
+      )}
+      {showHeroCardModal && (
+        <HeroCardModal
+          initial={heroCardSettings}
+          onSave={(settings) => {
+            setHeroCardSettings(settings);
+            setShowHeroCardModal(false);
+            startTransition(async () => {
+              try {
+                await saveHeroCardSettings(settings);
+              } catch {
+                setError("Hero 설정 저장에 실패했습니다.");
+              }
+            });
+          }}
+          onClose={() => setShowHeroCardModal(false)}
         />
       )}
     </div>

@@ -140,9 +140,15 @@ export default function FortuneGrid({ categories, fortunes }: Props) {
                                     : "bg-white/4 border-white/4 cursor-not-allowed opacity-40 grayscale"
                                 }`}
                             >
+                              {/* Premium 뱃지 */}
                               {fortune.accessLevel === "premium" && isReady && (
-                                <span className="absolute top-2 right-2 text-[10px] font-bold text-amber-300 bg-amber-900/50 px-1.5 py-0.5 rounded-full">
-                                  PRO
+                                <span className="absolute top-2 right-2 text-[10px] font-bold px-1.5 py-0.5 rounded-full"
+                                  style={{
+                                    background: "linear-gradient(to right, #92400e, #d97706)",
+                                    color: "#fef3c7",
+                                  }}
+                                >
+                                  ✨ Premium
                                 </span>
                               )}
                               {!isReady && (
@@ -154,14 +160,22 @@ export default function FortuneGrid({ categories, fortunes }: Props) {
                               <h3 className="text-white font-semibold text-sm mb-1 leading-tight">
                                 {fortune.nameKo}
                               </h3>
-                              <p className="text-white/50 text-xs leading-snug line-clamp-2">
+                              <p className="text-white/50 text-xs leading-snug line-clamp-2 flex-1">
                                 {fortune.description}
                               </p>
-                              {fortune.isAI && isReady && (
-                                <span className="inline-block mt-2 w-fit text-[10px] font-medium text-purple-300 bg-purple-900/50 px-1.5 py-0.5 rounded-full">
-                                  AI
-                                </span>
-                              )}
+                              {/* 하단 행: AI 뱃지 + 시작하기 */}
+                              <div className="flex items-center justify-between mt-2.5">
+                                {fortune.isAI && isReady ? (
+                                  <span className="text-[10px] font-medium text-purple-300 bg-purple-900/50 px-1.5 py-0.5 rounded-full">
+                                    AI
+                                  </span>
+                                ) : <span />}
+                                {isReady && (
+                                  <span className="text-white/30 text-[10px] group-hover:text-white/60 transition-colors">
+                                    시작하기 →
+                                  </span>
+                                )}
+                              </div>
                             </div>
                           );
 
