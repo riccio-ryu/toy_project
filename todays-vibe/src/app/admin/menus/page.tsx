@@ -1099,27 +1099,28 @@ export default function AdminMenusPage() {
 
   // 초기 데이터 로드
   useEffect(() => {
-    Promise.all([
+    Promise.allSettled([
       getMenus(),
       getExtraCategories(),
       getQuickMenu(),
       getHeroCardSettings(),
-    ])
-      .then(([menus, extra, quickIds, heroSettings]) => {
-        setRows(menus);
-        setQuickMenuIds(quickIds);
-        setHeroCardSettings(heroSettings);
-        if (extra.length > 0) {
-          setCategories((prev) => {
-            const firestoreMap = new Map(extra.map((c) => [c.id, c]));
-            const merged = prev.map((c) => firestoreMap.has(c.id) ? firestoreMap.get(c.id)! : c);
-            const newOnes = extra.filter((c) => !prev.some((p) => p.id === c.id));
-            return [...merged, ...newOnes];
-          });
-        }
-      })
-      .catch(() => setError("데이터를 불러오지 못했습니다."))
-      .finally(() => setLoading(false));
+    ]).then(([menusResult, extraResult, quickResult, heroResult]) => {
+      if (menusResult.status === "fulfilled") {
+        setRows(menusResult.value);
+      } else {
+        setError("메뉴를 불러오지 못했습니다.");
+      }
+      if (quickResult.status === "fulfilled") setQuickMenuIds(quickResult.value);
+      if (heroResult.status === "fulfilled") setHeroCardSettings(heroResult.value);
+      if (extraResult.status === "fulfilled" && extraResult.value.length > 0) {
+        setCategories((prev) => {
+          const firestoreMap = new Map(extraResult.value.map((c) => [c.id, c]));
+          const merged = prev.map((c) => firestoreMap.has(c.id) ? firestoreMap.get(c.id)! : c);
+          const newOnes = extraResult.value.filter((c) => !prev.some((p) => p.id === c.id));
+          return [...merged, ...newOnes];
+        });
+      }
+    }).finally(() => setLoading(false));
   }, []);
 
   // 정렬
