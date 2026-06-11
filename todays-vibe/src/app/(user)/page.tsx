@@ -67,7 +67,26 @@ export default async function Home() {
   const popularItems = fortunes.filter((f) => f.popular && f.ready);
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-12">
+    <div className="relative max-w-4xl mx-auto px-4 py-12">
+      {/* 콘텐츠 영역 배경 파티클 */}
+      <div className="absolute inset-0 pointer-events-none select-none overflow-hidden" aria-hidden>
+        {[
+          { x: "3%",  y: "8%",  c: "text-yellow-400/[0.06]" },
+          { x: "95%", y: "5%",  c: "text-purple-400/[0.07]" },
+          { x: "1%",  y: "35%", c: "text-white/[0.04]" },
+          { x: "97%", y: "28%", c: "text-yellow-300/[0.05]" },
+          { x: "2%",  y: "65%", c: "text-purple-300/[0.05]" },
+          { x: "96%", y: "55%", c: "text-white/[0.04]" },
+          { x: "4%",  y: "88%", c: "text-yellow-400/[0.04]" },
+          { x: "94%", y: "82%", c: "text-purple-400/[0.05]" },
+          { x: "50%", y: "2%",  c: "text-white/[0.03]" },
+        ].map((p, i) => (
+          <span key={i} className={`absolute text-lg ${p.c}`} style={{ left: p.x, top: p.y }}>
+            {i % 3 === 0 ? "✦" : i % 3 === 1 ? "✧" : "⋆"}
+          </span>
+        ))}
+      </div>
+
       {/* Header */}
       <div className="text-center mb-12">
         <h1 className="text-4xl font-bold text-white mb-3">당신만을 위한 오늘의 운세</h1>
