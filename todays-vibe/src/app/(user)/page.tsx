@@ -47,8 +47,8 @@ export default async function Home() {
     <div className="max-w-4xl mx-auto px-4 py-12">
       {/* Header */}
       <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold text-white mb-3">오늘 운</h1>
-        <p className="text-purple-300 text-lg">AI가 풀어주는 나만의 운세</p>
+        <h1 className="text-4xl font-bold text-white mb-3">당신만을 위한 오늘의 운세</h1>
+        <p className="text-purple-300 text-lg">사주·타로·꿈해몽 — 당신의 오늘을 가장 깊이 읽어드립니다</p>
       </div>
 
       {/* Category sections */}

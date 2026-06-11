@@ -1,8 +1,8 @@
 # 🔮 todays-vibe
 
-**오늘운을 AI가 읽어드립니다**
+**당신만을 위한 오늘의 운세**
 
-타로, 사주, 별자리 등 33가지 운세를 AI와 함께 확인하는 현대적인 운세 플랫폼입니다.
+사주·타로·꿈해몽 — 33가지 운세로 당신의 오늘을 가장 깊이 읽어드립니다.
 
 [![Next.js](https://img.shields.io/badge/Next.js-16-black?style=flat-square&logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
