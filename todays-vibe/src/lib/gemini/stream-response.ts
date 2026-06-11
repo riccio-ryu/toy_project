@@ -1,6 +1,7 @@
 import type { ContentListUnion } from "@google/genai";
 import { generateStreamWithRetry, DEFAULT_MODEL } from "./client";
 import { saveAiReading, type ReadingType } from "@/lib/firebase/readings";
+import { recordTokenUsage } from "@/lib/firebase/token-usage";
 
 const STREAM_HEADERS = {
   "Content-Type": "text/plain; charset=utf-8",
@@ -9,8 +10,7 @@ const STREAM_HEADERS = {
 } as const;
 
 /**
- * Gemini 스트리밍 호출 → ReadableStream 생성 → ai_readings 저장까지 처리하는 공통 헬퍼.
- * 각 fortune API route의 반복 보일러플레이트를 대체한다.
+ * Gemini 스트리밍 호출 → ReadableStream 생성 → ai_readings + token_usage 저장까지 처리하는 공통 헬퍼.
  */
 export async function createFortuneStreamResponse(opts: {
   contents: ContentListUnion;
@@ -27,6 +27,9 @@ export async function createFortuneStreamResponse(opts: {
     async start(controller) {
       const enc = new TextEncoder();
       const chunks: string[] = [];
+      let inputTokens = 0;
+      let outputTokens = 0;
+
       try {
         for await (const chunk of result) {
           const text = chunk.text ?? "";
@@ -34,10 +37,26 @@ export async function createFortuneStreamResponse(opts: {
             chunks.push(text);
             controller.enqueue(enc.encode(text));
           }
+          // 마지막 청크에 최종 usageMetadata가 들어있음
+          if (chunk.usageMetadata) {
+            inputTokens  = chunk.usageMetadata.promptTokenCount    ?? inputTokens;
+            outputTokens = chunk.usageMetadata.candidatesTokenCount ?? outputTokens;
+          }
         }
+
         if (opts.userId) {
-          await saveAiReading(opts.userId, opts.readingType, opts.input, chunks.join(""))
-            .catch((err) => console.error("[ai_readings]", err));
+          const fullText = chunks.join("");
+          await Promise.allSettled([
+            saveAiReading(opts.userId, opts.readingType, opts.input, fullText),
+            inputTokens > 0
+              ? recordTokenUsage({
+                  userId:      opts.userId,
+                  menuId:      opts.readingType,
+                  inputTokens,
+                  outputTokens,
+                })
+              : Promise.resolve(),
+          ]);
         }
       } catch (err) {
         console.error("[stream error]", err);

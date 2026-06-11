@@ -2,6 +2,16 @@
 
 ---
 
+## 2026-06-11
+
+- `admin/menus` 초기 로드 버그 수정 (`src/app/admin/menus/page.tsx`) — `Promise.all` → `Promise.allSettled`로 변경, 개별 서버 액션 실패 시 전체 로드 중단 방지
+- admin AI 사용량 관리 페이지 구현 (`src/app/admin/ai-usage/page.tsx`) — 기간 필터(오늘/7일/30일), 요약 카드, StatBar/TokenBar 시각화 컴포넌트, 기능별 한도 편집 모달, 유저별 상세 펼침(요청 수·토큰 입력/출력 분리 바)
+- AI 사용량 API 신규 생성 (`src/app/api/admin/ai-usage/route.ts`) — `daily_usage` + `token_usage` 병렬 집계, 유저별 토큰 합산, 메뉴 한도 PATCH 저장
+- Gemini 토큰 자동 추적 (`src/lib/gemini/stream-response.ts`, `src/lib/firebase/token-usage.ts`) — 스트림 완료 시 `usageMetadata`에서 입력/출력 토큰 캡처, `token_usage` Firestore 컬렉션에 원자적 누적 저장
+- GCP Cloud Monitoring 연동 (`src/lib/gcp/monitoring.ts`, `src/app/api/admin/gcp-usage/route.ts`) — Firebase 서비스 계정으로 Monitoring API 인증, Gemini 메트릭 후보 순차 시도, 미발견 시 실제 사용 가능 메트릭 목록 안내
+
+---
+
 ## 2026-06-10
 
 - 산가지 점 페이지 구현 (`src/app/(user)/sangaji/page.tsx`) — 50개 산가지 Framer Motion 개별 스틱 애니메이션, 2단계(흔들기→뽑기) 플로우, 상하 움직임 + 통 경계 벗어남 방지, 흔들 때마다 다른 배열(layoutOffsets 상태), 마우스 hover 스틱 들림 + 클릭 뽑기 UI, AI 해석 스트리밍 연동
