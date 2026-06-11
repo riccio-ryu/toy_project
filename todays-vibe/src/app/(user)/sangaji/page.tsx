@@ -235,18 +235,22 @@ export default function SangajiPage() {
           <p className="text-amber-400/60 text-sm mt-1">마음속 질문을 품고 막대를 흔드세요</p>
         </div>
 
-        {/* 질문 */}
-        {(phase === "idle" || phase === "ready") && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-6">
-            <textarea
-              value={question}
-              onChange={(e) => setQuestion(e.target.value)}
-              placeholder="궁금한 것을 적어보세요 (선택)"
-              className="w-full bg-amber-950/40 border border-amber-700/30 rounded-xl px-4 py-3 text-sm text-amber-100 placeholder-amber-700/50 resize-none focus:outline-none focus:border-amber-500/60"
-              rows={2}
-            />
-          </motion.div>
-        )}
+        {/* 질문 — 항상 공간 유지, idle/ready만 활성 */}
+        <div
+          className="mb-6 transition-opacity duration-300"
+          style={{
+            opacity: phase === "idle" || phase === "ready" ? 1 : 0,
+            pointerEvents: phase === "idle" || phase === "ready" ? "auto" : "none",
+          }}
+        >
+          <textarea
+            value={question}
+            onChange={(e) => setQuestion(e.target.value)}
+            placeholder="궁금한 것을 적어보세요 (선택)"
+            className="w-full bg-amber-950/40 border border-amber-700/30 rounded-xl px-4 py-3 text-sm text-amber-100 placeholder-amber-700/50 resize-none focus:outline-none focus:border-amber-500/60"
+            rows={2}
+          />
+        </div>
 
         {/* 통 + 막대 영역 */}
         {phase !== "drawn" && (
@@ -364,18 +368,15 @@ export default function SangajiPage() {
               />
             </div>
 
-            {/* 흔든 횟수 */}
-            {shakeCount > 0 && phase === "ready" && (
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="text-amber-600/55 text-xs mt-2"
-              >
-                {shakeCount}번 흔들었습니다
-              </motion.p>
-            )}
+            {/* 흔든 횟수 — 항상 공간 유지 */}
+            <p
+              className="text-amber-600/55 text-xs mt-2 h-4 transition-opacity duration-300"
+              style={{ opacity: shakeCount > 0 && phase === "ready" ? 1 : 0 }}
+            >
+              {shakeCount}번 흔들었습니다
+            </p>
 
-            {/* 버튼 */}
+            {/* 버튼 — 고정 높이로 레이아웃 시프트 방지 */}
             <div className="mt-4 flex flex-col items-center gap-3 w-full max-w-xs">
               <motion.button
                 whileHover={!isAnimating ? { scale: 1.04 } : {}}
@@ -392,41 +393,36 @@ export default function SangajiPage() {
                   : "🎋 산가지 흔들기"}
               </motion.button>
 
-              <AnimatePresence>
-                {phase === "ready" && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 4 }}
-                    className="w-full flex flex-col gap-2"
-                  >
-                    <motion.button
-                      whileHover={{ scale: 1.04 }}
-                      whileTap={{ scale: 0.96 }}
-                      onClick={() => pickStick(Math.floor(Math.random() * STICK_COUNT))}
-                      className="w-full py-3 rounded-full font-bold text-base text-yellow-100 border border-yellow-600/40"
-                      style={{ background: "linear-gradient(to right, #b45309, #d97706)" }}
-                    >
-                      ✨ 산가지 뽑기
-                    </motion.button>
-                    <p className="text-center text-amber-700/55 text-xs">
-                      또는 위 막대를 직접 터치해서 뽑으세요
-                    </p>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
+              {/* 뽑기 버튼 — 항상 공간 예약, opacity만 전환 */}
+              <div
+                className="w-full flex flex-col gap-2 transition-opacity duration-300"
+                style={{
+                  opacity: phase === "ready" ? 1 : 0,
+                  pointerEvents: phase === "ready" ? "auto" : "none",
+                }}
+              >
+                <motion.button
+                  whileHover={{ scale: 1.04 }}
+                  whileTap={{ scale: 0.96 }}
+                  onClick={() => pickStick(Math.floor(Math.random() * STICK_COUNT))}
+                  className="w-full py-3 rounded-full font-bold text-base text-yellow-100 border border-yellow-600/40"
+                  style={{ background: "linear-gradient(to right, #b45309, #d97706)" }}
+                >
+                  ✨ 산가지 뽑기
+                </motion.button>
+                <p className="text-center text-amber-700/55 text-xs">
+                  또는 위 막대를 직접 터치해서 뽑으세요
+                </p>
+              </div>
 
-            {phase === "idle" && (
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.4 }}
-                className="mt-4 text-xs text-amber-800/55 text-center"
+              {/* 안내 문구 — 항상 공간 예약 */}
+              <p
+                className="text-xs text-amber-800/55 text-center transition-opacity duration-500"
+                style={{ opacity: phase === "idle" ? 1 : 0 }}
               >
                 막대를 원하는 만큼 흔든 뒤 산가지를 뽑으세요
-              </motion.p>
-            )}
+              </p>
+            </div>
           </div>
         )}
 
@@ -473,7 +469,7 @@ export default function SangajiPage() {
                   style={{ background: "linear-gradient(to right, #7c2d0a, #c05008)" }}
                 >
                   ✨ AI 심층 풀이 보기
-                  {fortuneStatus && fortuneStatus.limit !== null && (
+                  {fortuneStatus && fortuneStatus.limit !== null && fortuneStatus.limit !== -1 && (
                     <span className="ml-2 text-amber-300/60 text-xs">
                       ({fortuneStatus.used}/{fortuneStatus.limit})
                     </span>
@@ -484,18 +480,14 @@ export default function SangajiPage() {
           )}
         </AnimatePresence>
 
-        {/* 전통 설명 */}
-        {phase === "idle" && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
-            className="mt-2 rounded-xl bg-amber-950/30 border border-amber-800/20 p-4 text-xs text-amber-800/60 text-center leading-relaxed"
-          >
-            산가지(算가지)는 조선시대부터 전해 내려오는 한국 전통 점술입니다.<br />
-            대나무 막대를 통에 담고 흔들어 나온 괘로 길흉을 판단합니다.
-          </motion.div>
-        )}
+        {/* 전통 설명 — 항상 공간 예약 */}
+        <div
+          className="mt-2 rounded-xl bg-amber-950/30 border border-amber-800/20 p-4 text-xs text-amber-800/60 text-center leading-relaxed transition-opacity duration-500"
+          style={{ opacity: phase === "idle" ? 1 : 0, pointerEvents: "none" }}
+        >
+          산가지(算가지)는 조선시대부터 전해 내려오는 한국 전통 점술입니다.<br />
+          대나무 막대를 통에 담고 흔들어 나온 괘로 길흉을 판단합니다.
+        </div>
       </div>
     </div>
   );
