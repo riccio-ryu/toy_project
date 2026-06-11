@@ -1,8 +1,10 @@
 import fortunesData from "@/data/fortunes.json";
 import { getAdminFirestore } from "@/lib/firebase/admin";
+import { todayKST } from "@/lib/utils/date";
 import type { MenuItem } from "@/types/menu";
 import FortuneGrid from "./FortuneGrid";
 import QuickMenu from "@/components/home/QuickMenu";
+import HeroCard from "@/components/home/HeroCard";
 
 async function getMenuItems(): Promise<MenuItem[]> {
   try {
@@ -36,6 +38,7 @@ export default async function Home() {
   const items = await getMenuItems();
   const { categories } = fortunesData;
   const quickMenuItems = await getQuickMenuItems(items);
+  const today = todayKST();
 
   // Firestore 데이터가 없으면 fortunes.json으로 폴백
   const fortunes: MenuItem[] =
@@ -65,6 +68,9 @@ export default async function Home() {
         <h1 className="text-4xl font-bold text-white mb-3">당신만을 위한 오늘의 운세</h1>
         <p className="text-purple-300 text-lg">사주·타로·꿈해몽 — 당신의 오늘을 가장 깊이 읽어드립니다</p>
       </div>
+
+      {/* Hero — 오늘의 운세 */}
+      <HeroCard today={today} />
 
       {/* Quick Menu */}
       <QuickMenu items={quickMenuItems} />
