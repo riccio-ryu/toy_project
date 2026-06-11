@@ -112,6 +112,7 @@
       "difficulty": "easy",
       "isAI": false,
       "ready": true,
+      "popular": true,
       "tags": [
         "인기",
         "빠른"
@@ -214,6 +215,7 @@
       "difficulty": "easy",
       "isAI": false,
       "ready": true,
+      "popular": true,
       "tags": [
         "인기",
         "빠른"
@@ -382,6 +384,7 @@
       "difficulty": "easy",
       "isAI": true,
       "ready": true,
+      "popular": true,
       "tags": [
         "인기",
         "AI"
@@ -399,6 +402,7 @@
       "difficulty": "medium",
       "isAI": true,
       "ready": true,
+      "popular": true,
       "tags": [
         "인기"
       ],

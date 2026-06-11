@@ -5,6 +5,7 @@ import type { MenuItem } from "@/types/menu";
 import FortuneGrid from "./FortuneGrid";
 import QuickMenu from "@/components/home/QuickMenu";
 import HeroCard from "@/components/home/HeroCard";
+import PopularSection from "@/components/home/PopularSection";
 
 async function getMenuItems(): Promise<MenuItem[]> {
   try {
@@ -59,7 +60,11 @@ export default async function Home() {
           tags: f.tags ?? [],
           color: f.color,
           order: i,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          popular: (f as any).popular as boolean | undefined,
         }));
+
+  const popularItems = fortunes.filter((f) => f.popular && f.ready);
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-12">
@@ -74,6 +79,9 @@ export default async function Home() {
 
       {/* Quick Menu */}
       <QuickMenu items={quickMenuItems} />
+
+      {/* 인기 운세 */}
+      <PopularSection items={popularItems} />
 
       {/* Category sections */}
       <FortuneGrid categories={categories} fortunes={fortunes} />
