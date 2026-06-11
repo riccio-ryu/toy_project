@@ -2,6 +2,7 @@ import fortunesData from "@/data/fortunes.json";
 import { getAdminFirestore } from "@/lib/firebase/admin";
 import type { MenuItem } from "@/types/menu";
 import FortuneGrid from "./FortuneGrid";
+import QuickMenu from "@/components/home/QuickMenu";
 
 async function getMenuItems(): Promise<MenuItem[]> {
   try {
@@ -18,9 +19,23 @@ async function getMenuItems(): Promise<MenuItem[]> {
   }
 }
 
+async function getQuickMenuItems(allMenus: MenuItem[]): Promise<MenuItem[]> {
+  try {
+    const db = getAdminFirestore();
+    const snap = await db.collection("settings").doc("quickMenu").get();
+    const ids: string[] = (snap.data()?.menuIds as string[]) ?? [];
+    return ids
+      .map((id) => allMenus.find((m) => m.id === id && m.ready))
+      .filter(Boolean) as MenuItem[];
+  } catch {
+    return [];
+  }
+}
+
 export default async function Home() {
   const items = await getMenuItems();
   const { categories } = fortunesData;
+  const quickMenuItems = await getQuickMenuItems(items);
 
   // Firestore 데이터가 없으면 fortunes.json으로 폴백
   const fortunes: MenuItem[] =
@@ -50,6 +65,9 @@ export default async function Home() {
         <h1 className="text-4xl font-bold text-white mb-3">당신만을 위한 오늘의 운세</h1>
         <p className="text-purple-300 text-lg">사주·타로·꿈해몽 — 당신의 오늘을 가장 깊이 읽어드립니다</p>
       </div>
+
+      {/* Quick Menu */}
+      <QuickMenu items={quickMenuItems} />
 
       {/* Category sections */}
       <FortuneGrid categories={categories} fortunes={fortunes} />

@@ -50,6 +50,17 @@ export async function deleteCategoryById(id: string): Promise<void> {
   await db().collection(CAT_COL).doc(id).delete();
 }
 
+// ─── Quick Menu settings ─────────────────────────────────────────────────────
+
+export async function getQuickMenu(): Promise<string[]> {
+  const snap = await db().collection("settings").doc("quickMenu").get();
+  return (snap.data()?.menuIds as string[]) ?? [];
+}
+
+export async function saveQuickMenu(menuIds: string[]): Promise<void> {
+  await db().collection("settings").doc("quickMenu").set({ menuIds, updatedAt: new Date() });
+}
+
 // ─── Batch order update ───────────────────────────────────────────────────────
 
 export async function batchUpdateOrders(
