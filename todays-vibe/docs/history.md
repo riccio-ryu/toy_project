@@ -12,6 +12,12 @@
 - HeroCard 생년월일 등록 버튼 딥링크 연동 (`src/components/home/HeroCard.tsx`, `src/app/(user)/mypage/page.tsx`) — 링크 `/mypage` → `/mypage?focus=birth` 변경, mypage에서 `focus=birth` 쿼리 감지 시 출생정보 섹션 자동 스크롤·편집 모드 오픈·보라색 glow 하이라이트 2초 표시
 - `auth/complete` 로딩 UI 개선 (`src/app/auth/complete/page.tsx`) — 수정구 이모지 `🔮 animate-spin` → `loading.svg` (w-40 h-40, SVG 자체 애니메이션 사용)
 - lucide-react 도입 및 전체 UI 텍스트 심볼 아이콘 교체 — `←` → `ArrowLeft`, `→` → `ArrowRight`, `▼` → `ChevronDown`, `→` 리스트 항목 → `ChevronRight`, `✏️` → `Pencil`, `▶` 토글 → `ChevronRight` (13개 파일 전면 적용)
+- `mypage` 빌드 오류 수정 (`src/app/(user)/mypage/page.tsx`) — `useSearchParams` 사용 시 Suspense 래핑 필요 → `MyPageInner` 분리 후 `<Suspense>` 감싸기
+- 카카오 로그인 활성화 (`src/app/(auth)/login/page.tsx`) — `disabled` 제거, `handleKakao()` 핸들러 연결, `.env.local` 및 `.env.prd`에 `KAKAO_CLIENT_ID` / `KAKAO_CLIENT_SECRET` 추가
+- 네이버 로그인 활성화 — `handleNaver()` 핸들러 연결, `NAVER_CLIENT_ID` / `NAVER_CLIENT_SECRET` 환경변수 추가, 네이버 개발자 센터 OAuth 앱 등록 및 Redirect URI 설정
+- `.env.prd` 신규 생성 — 로컬(`.env.local`)과 운영(`.env.prd`) 환경변수 파일 분리, 두 파일의 유일한 차이는 `NEXT_PUBLIC_BASE_URL` (localhost vs todays-vibe.com)
+- Hero 운세 카드 상태별 UI 개선 — ① 생년월일 미등록(`no_birth_info`) 시 점수·메시지·별점 블러 처리로 통일, ② 생년월일 있어도 AI 실패 시 `state: "no_birth_info"` 반환하던 버그 → `"ready"` 로 수정, ③ 메인 타이틀 `text-4xl` → `text-2xl sm:text-4xl` 모바일 줄바꿈 수정, ④ HeroCard 패딩/간격 반응형 조정
+- 비밀번호 찾기 기능 구현 (`src/lib/firebase/auth.ts`, `src/app/(auth)/login/page.tsx`) — `sendPasswordReset()` 함수 추가, 로그인 폼 하단 "비밀번호를 잊으셨나요?" 링크 → 이메일 입력 → Firebase 재설정 메일 발송 → 성공/실패 피드백 UI
 
 ---
 
