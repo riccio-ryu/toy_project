@@ -47,6 +47,10 @@ function LoginForm() {
     window.location.href = "/api/auth/kakao";
   }
 
+  function handleNaver() {
+    window.location.href = "/api/auth/naver";
+  }
+
   return (
     <div className="w-full max-w-sm">
       {/* Logo */}
@@ -113,14 +117,13 @@ function LoginForm() {
         <div className="space-y-3">
           {/* Naver */}
           <button
-            disabled
-            className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg bg-[#03C75A] text-white text-sm font-semibold opacity-40 cursor-not-allowed relative"
+            onClick={handleNaver}
+            className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg bg-[#03C75A] text-white text-sm font-semibold hover:bg-[#02b350] transition-colors"
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
               <path d="M16.273 12.845L7.376 0H0v24h7.727V11.155L16.624 24H24V0h-7.727z" />
             </svg>
             네이버로 로그인
-            <span className="ml-auto text-[10px] font-normal opacity-80">준비 중</span>
           </button>
 
           {/* Kakao */}
