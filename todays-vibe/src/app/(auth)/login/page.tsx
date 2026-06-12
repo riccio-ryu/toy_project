@@ -70,7 +70,7 @@ function LoginForm() {
       {/* Logo */}
       <div className="text-center mb-8">
         <Link href="/" className="inline-block">
-          <Image src="/brand/logo.svg" alt="오늘운" width={200} height={67} priority />
+          <Image src="/brand/logo.svg" alt="오늘운" width={120} height={40} priority />
         </Link>
         <p className="text-white/50 text-sm mt-2">AI가 풀어주는 나만의 운세</p>
       </div>
