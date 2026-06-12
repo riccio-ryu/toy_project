@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import chineseData from "@/data/chinese-zodiac.json";
 import SpriteCard from "@/components/common/SpriteCard";
 import FortuneCard from "@/components/common/FortuneCard";
@@ -139,7 +140,7 @@ export default function ChineseZodiacAnimalPage() {
           href="/chinese-zodiac"
           className="inline-flex items-center gap-1 text-white/40 text-sm hover:text-white/70 mb-6 transition-colors"
         >
-          ← 띠 목록
+          <ArrowLeft className="w-4 h-4" /> 띠 목록
         </Link>
 
         {/* 띠 헤더 카드 */}
@@ -337,7 +338,7 @@ export default function ChineseZodiacAnimalPage() {
             href="/chinese-zodiac"
             className="text-white/30 text-sm hover:text-white/60 transition-colors"
           >
-            다른 띠 보기 →
+            <span className="inline-flex items-center gap-1.5">다른 띠 보기 <ArrowRight className="w-4 h-4" /></span>
           </Link>
         </div>
       </div>

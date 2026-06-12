@@ -2,6 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import TarotCard from "@/components/tarot/TarotCard";
 import TarotFanSpread from "@/components/tarot/TarotFanSpread";
 import TarotShufflingAnimation from "@/components/tarot/TarotShufflingAnimation";
@@ -47,7 +48,7 @@ export default function TarotCelticPage() {
   return (
     <div className="max-w-lg mx-auto px-4 py-10">
       <div className="flex items-center gap-3 mb-8">
-        <Link href="/" className="text-white/40 hover:text-white/70 text-sm transition-colors">← 홈</Link>
+        <Link href="/" className="text-white/40 hover:text-white/70 text-sm transition-colors"><ArrowLeft className="w-4 h-4" /> 홈</Link>
         <span className="text-white/20">|</span>
         <h1 className="text-white font-semibold text-lg">켈틱 크로스 타로</h1>
         <span className="ml-auto text-[10px] text-purple-300 bg-purple-900/40 px-2 py-0.5 rounded-full border border-purple-500/20">AI</span>
@@ -152,7 +153,7 @@ export default function TarotCelticPage() {
                   onClick={handleConfirmSelection}
                   className="w-full py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-semibold text-sm transition-colors shadow-lg shadow-purple-900/40"
                 >
-                  선택 완료 →
+                  선택 완료 <ArrowRight className="w-4 h-4" />
                 </motion.button>
               )}
             </AnimatePresence>

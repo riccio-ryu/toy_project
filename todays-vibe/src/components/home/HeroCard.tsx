@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 
 // ─── 달 위상 계산 ──────────────────────────────────────────────────────────────
 
@@ -229,7 +230,7 @@ export default function HeroCard({ today }: { today: string }) {
               href="/login"
               className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-purple-600/40 border border-purple-500/30 text-purple-200 text-xs font-medium hover:bg-purple-600/60 transition-colors"
             >
-              로그인하기 →
+              로그인하기 <ArrowRight className="w-3.5 h-3.5" />
             </Link>
             <LuckyStrip today={today} />
           </>
@@ -274,10 +275,11 @@ export default function HeroCard({ today }: { today: string }) {
             )}
 
             <Link
-              href={state === "no_birth_info" ? "/mypage" : "/saju"}
+              href={state === "no_birth_info" ? "/mypage?focus=birth" : "/saju"}
               className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-purple-600/40 border border-purple-500/30 text-purple-200 text-xs font-medium hover:bg-purple-600/60 transition-colors"
             >
-              {state === "no_birth_info" ? "생년월일 등록하기 →" : "사주로 자세히 보기 →"}
+              {state === "no_birth_info" ? "생년월일 등록하기" : "사주로 자세히 보기"}
+              <ArrowRight className="w-3.5 h-3.5" />
             </Link>
 
             <LuckyStrip today={today} />

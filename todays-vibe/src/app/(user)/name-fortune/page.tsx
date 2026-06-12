@@ -6,6 +6,7 @@ import { useFortuneStream } from "@/lib/hooks/useFortuneStream";
 import { useFortuneStatus } from "@/lib/hooks/useFortuneStatus";
 import { type NameFortuneInput } from "@/types/fortune";
 import FortuneResult from "@/components/fortune/FortuneResult";
+import { ChevronRight } from "lucide-react";
 
 export default function NameFortunePage() {
   const { user } = useAuth();
@@ -96,7 +97,7 @@ export default function NameFortunePage() {
               onClick={() => setShowBirth((v) => !v)}
               className="flex items-center gap-2 text-white/50 text-xs hover:text-white/70 transition-colors"
             >
-              <span className={`text-base transition-transform ${showBirth ? "rotate-90" : ""}`}>▶</span>
+              <ChevronRight className={`w-4 h-4 transition-transform ${showBirth ? "rotate-90" : ""}`} />
               생년월일 추가 <span className="text-white/30">(선택 — 더 정확한 분석)</span>
             </button>
 

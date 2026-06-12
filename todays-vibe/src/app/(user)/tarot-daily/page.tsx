@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import TarotCard from "@/components/tarot/TarotCard";
 import { drawCards, getCardMeaning, getSuitLabel, type DrawnCard } from "@/lib/tarot/utils";
 
@@ -30,7 +31,7 @@ export default function TarotDailyPage() {
       {/* 헤더 */}
       <div className="flex items-center gap-3 mb-8">
         <Link href="/" className="text-white/40 hover:text-white/70 text-sm transition-colors">
-          ← 홈
+          <ArrowLeft className="w-4 h-4" /> 홈
         </Link>
         <span className="text-white/20">|</span>
         <h1 className="text-white font-semibold text-lg">타로 원카드</h1>

@@ -3,13 +3,11 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { signOut } from "@/lib/firebase/auth";
 
 export default function Header() {
   const { user, loading, isAdmin } = useAuth();
-  const router = useRouter();
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -27,7 +25,7 @@ export default function Header() {
   async function handleSignOut() {
     setOpen(false);
     await signOut();
-    router.push("/");
+    window.location.href = "/";
   }
 
   return (
