@@ -4,7 +4,7 @@ import { useState, FormEvent, Suspense } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
-import { signInWithEmail, createSession } from "@/lib/firebase/auth";
+import { signInWithEmail, createSession, sendPasswordReset } from "@/lib/firebase/auth";
 
 function LoginForm() {
   const router = useRouter();
@@ -15,6 +15,9 @@ function LoginForm() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showReset, setShowReset] = useState(false);
+  const [resetEmail, setResetEmail] = useState("");
+  const [resetStatus, setResetStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
 
   function getDestination(isAdmin: boolean) {
     return isAdmin ? "/admin" : redirectTo;
@@ -32,6 +35,17 @@ function LoginForm() {
       setError("이메일 또는 비밀번호가 올바르지 않습니다.");
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function handlePasswordReset(e: FormEvent) {
+    e.preventDefault();
+    setResetStatus("sending");
+    try {
+      await sendPasswordReset(resetEmail);
+      setResetStatus("sent");
+    } catch {
+      setResetStatus("error");
     }
   }
 
@@ -105,6 +119,66 @@ function LoginForm() {
             ) : "로그인"}
           </button>
         </form>
+
+        {/* 비밀번호 찾기 */}
+        <div className="mt-4">
+          {!showReset ? (
+            <button
+              onClick={() => { setShowReset(true); setResetEmail(email); }}
+              className="w-full text-center text-white/30 text-xs hover:text-white/60 transition-colors"
+            >
+              비밀번호를 잊으셨나요?
+            </button>
+          ) : (
+            <div className="rounded-xl bg-white/5 border border-white/10 p-4">
+              <p className="text-white/60 text-xs mb-3">
+                가입한 이메일로 재설정 링크를 보내드려요.
+              </p>
+              {resetStatus === "sent" ? (
+                <div className="text-center">
+                  <p className="text-emerald-400 text-sm font-medium mb-1">이메일을 보냈어요 ✓</p>
+                  <p className="text-white/40 text-xs mb-3">받은 편지함을 확인해 주세요.</p>
+                  <button
+                    onClick={() => { setShowReset(false); setResetStatus("idle"); }}
+                    className="text-purple-400 text-xs hover:text-purple-300 transition-colors"
+                  >
+                    로그인으로 돌아가기
+                  </button>
+                </div>
+              ) : (
+                <form onSubmit={handlePasswordReset} className="space-y-3">
+                  <input
+                    type="email"
+                    value={resetEmail}
+                    onChange={(e) => setResetEmail(e.target.value)}
+                    required
+                    placeholder="가입한 이메일 입력"
+                    className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/15 text-white placeholder-white/30 text-sm focus:outline-none focus:border-purple-400 transition-colors"
+                  />
+                  {resetStatus === "error" && (
+                    <p className="text-red-400 text-xs">이메일을 다시 확인해 주세요.</p>
+                  )}
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => { setShowReset(false); setResetStatus("idle"); }}
+                      className="flex-1 py-2 rounded-lg bg-white/5 text-white/50 text-xs hover:bg-white/10 transition-colors"
+                    >
+                      취소
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={resetStatus === "sending"}
+                      className="flex-1 py-2 rounded-lg bg-purple-600 text-white text-xs font-semibold hover:bg-purple-500 disabled:opacity-50 transition-colors"
+                    >
+                      {resetStatus === "sending" ? "전송 중..." : "재설정 링크 보내기"}
+                    </button>
+                  </div>
+                </form>
+              )}
+            </div>
+          )}
+        </div>
 
         {/* Divider */}
         <div className="flex items-center gap-3 my-6">
