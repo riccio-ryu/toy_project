@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Noto_Sans_KR, Roboto } from "next/font/google";
 import Script from "next/script";
 import { AuthProvider } from "@/contexts/AuthContext";
@@ -15,6 +15,12 @@ const roboto = Roboto({
   subsets: ["latin"],
   weight: ["300", "400", "500", "700"],
 });
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  minimumScale: 1,
+};
 
 export const metadata: Metadata = {
   title: "오늘운 | 당신만을 위한 오늘의 운세",

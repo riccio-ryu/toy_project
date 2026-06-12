@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import AILoadingIndicator from "@/components/common/AILoadingIndicator";
 
 interface FortuneResultProps {
@@ -79,8 +80,15 @@ export default function FortuneResult({
   icon,
   fortuneType = "default",
 }: FortuneResultProps) {
+  const topRef = useRef<HTMLDivElement>(null);
+
+  // 결과 컴포넌트 마운트 시 맨 위로 스크롤 (폼 → 결과 전환 시 스크롤 점프 방지)
+  useEffect(() => {
+    topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, []);
+
   return (
-    <div className="max-w-xl mx-auto px-4 py-8">
+    <div ref={topRef} className="max-w-xl mx-auto px-4 py-8">
       {/* 헤더 */}
       <div className="text-center mb-6">
         <div className="text-5xl mb-2">{icon}</div>

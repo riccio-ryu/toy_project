@@ -29,6 +29,13 @@ body {
   to   { transform: translateX(110vw); }
 }
 
+/* iOS Safari 입력창 자동 줌 방지 — font-size < 16px 이면 탭 시 확대됨 */
+@supports (-webkit-touch-callout: none) {
+  input, select, textarea {
+    font-size: 16px;
+  }
+}
+
 @keyframes twinkle {
   0%, 100% { opacity: 1;    }
   50%       { opacity: 0.45; }
