@@ -2,6 +2,19 @@
 
 ---
 
+## 2026-06-12
+
+- Hero 운세 seed 버그 2종 수정 (`src/app/api/user/daily-hero/route.ts`) — ① `uidDateSeed` djb2 해시의 연속 날짜 seed+1 문제 → splitmix32 finalizer 추가로 avalanche 효과 적용, ② `lcg(seed+k)` 방식 별점 계산 시 k=1,2,3이 LCG step 0.0004 차이로 동일값 출력 → `subRand(seed, slot)` 독립 해시 함수로 교체
+- Hero 운세 점수 분포 개선 — 범위 60~95 균등 → 60~100 가중 분포 (80점대 23%로 집중, 100점 1%), `weightedScore()` 함수 신규
+- Hero 별점 분포 개선 — 균등(20%) → 3·4★ 28%, 2★ 20%, 5★ 16%, 1★ 8% 가중 분포, `weightedStar()` 함수 신규
+- Hero 운세 메시지 12개 → 100개 확장 + 월별 중복 방지 — Fisher-Yates 셔플 기반 `monthlyMsgIndex()` 도입, uid+YYYYMM 시드로 매월 순열 생성 → 한 달 30일 내 중복 0건 보장
+- 로그아웃 후 Hero 이전 로그인 데이터 잔존 버그 수정 (`src/components/Header.tsx`) — `router.push("/")` 클라이언트 이동 시 HeroCard 언마운트 없이 state 유지되는 문제 → `window.location.href = "/"` 풀 리로드로 교체, 미사용 `useRouter` 제거
+- HeroCard 생년월일 등록 버튼 딥링크 연동 (`src/components/home/HeroCard.tsx`, `src/app/(user)/mypage/page.tsx`) — 링크 `/mypage` → `/mypage?focus=birth` 변경, mypage에서 `focus=birth` 쿼리 감지 시 출생정보 섹션 자동 스크롤·편집 모드 오픈·보라색 glow 하이라이트 2초 표시
+- `auth/complete` 로딩 UI 개선 (`src/app/auth/complete/page.tsx`) — 수정구 이모지 `🔮 animate-spin` → `loading.svg` (w-40 h-40, SVG 자체 애니메이션 사용)
+- lucide-react 도입 및 전체 UI 텍스트 심볼 아이콘 교체 — `←` → `ArrowLeft`, `→` → `ArrowRight`, `▼` → `ChevronDown`, `→` 리스트 항목 → `ChevronRight`, `✏️` → `Pencil`, `▶` 토글 → `ChevronRight` (13개 파일 전면 적용)
+
+---
+
 ## 2026-06-11
 
 - `admin/menus` 초기 로드 버그 수정 (`src/app/admin/menus/page.tsx`) — `Promise.all` → `Promise.allSettled`로 변경, 개별 서버 액션 실패 시 전체 로드 중단 방지

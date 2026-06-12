@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import { ChevronDown, ArrowRight } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import LoginRequiredModal from "@/components/common/LoginRequiredModal";
 import type { MenuItem } from "@/types/menu";
@@ -110,7 +111,7 @@ export default function FortuneGrid({ categories, fortunes }: Props) {
                   transition={{ duration: 0.25, ease: "easeInOut" }}
                   className="text-white/30 text-xs leading-none"
                 >
-                  ▼
+                  <ChevronDown className="w-4 h-4" />
                 </motion.span>
               </button>
 
@@ -172,7 +173,7 @@ export default function FortuneGrid({ categories, fortunes }: Props) {
                                 ) : <span />}
                                 {isReady && (
                                   <span className="text-white/30 text-[10px] group-hover:text-white/60 transition-colors">
-                                    시작하기 →
+                                    시작하기 <ArrowRight className="w-3 h-3" />
                                   </span>
                                 )}
                               </div>

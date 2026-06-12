@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import type { MenuItem } from "@/types/menu";
 
 export default function PopularSection({ items }: { items: MenuItem[] }) {
@@ -39,7 +40,7 @@ export default function PopularSection({ items }: { items: MenuItem[] }) {
                   )}
                 </div>
                 <span className="text-white/40 text-xs group-hover:text-white/70 transition-colors">
-                  시작하기 →
+                  시작하기 <ArrowRight className="w-3 h-3" />
                 </span>
               </div>
             </div>

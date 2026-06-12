@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useEffect, useRef, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { ArrowLeft, ChevronRight, ChevronDown, Pencil } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { updateProfile } from "firebase/auth";
@@ -71,9 +72,10 @@ const PLAN_LIMIT: Record<PlanType, string> = {
 };
 
 // ─── 컴포넌트 ─────────────────────────────────────────────────────
-export default function MyPage() {
+function MyPageInner() {
   const { user, loading } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [nickname, setNickname] = useState("");
   const [nickError, setNickError] = useState<string | null>(null);
@@ -104,6 +106,8 @@ export default function MyPage() {
   });
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const birthSectionRef = useRef<HTMLDivElement>(null);
+  const [birthHighlight, setBirthHighlight] = useState(false);
 
   // 비로그인 → 로그인 페이지
   useEffect(() => {
@@ -155,6 +159,17 @@ export default function MyPage() {
       .catch(() => {})
       .finally(() => setBirthLoading(false));
   }, [user]);
+
+  // ?focus=birth 감지 — 출생 정보 섹션으로 스크롤 + 편집 모드 오픈 + 하이라이트
+  useEffect(() => {
+    if (birthLoading || searchParams.get("focus") !== "birth") return;
+    setEditingBirth(true);
+    setBirthHighlight(true);
+    setTimeout(() => {
+      birthSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 100);
+    setTimeout(() => setBirthHighlight(false), 2000);
+  }, [birthLoading, searchParams]);
 
   // 세션에서 실제 role 조회
   useEffect(() => {
@@ -275,7 +290,7 @@ export default function MyPage() {
           href="/"
           className="inline-flex items-center gap-1 text-white/40 text-sm hover:text-white/70 transition-colors mb-2"
         >
-          ← 홈
+          <ArrowLeft className="w-4 h-4" /> 홈
         </Link>
 
         {/* ── 프로필 카드 ─────────────────────────────────────── */}
@@ -378,7 +393,7 @@ export default function MyPage() {
                     className="text-white/30 hover:text-white/60 transition-colors"
                     title="닉네임 변경"
                   >
-                    ✏️
+                    <Pencil className="w-3.5 h-3.5" />
                   </button>
                 </div>
               )}
@@ -514,7 +529,14 @@ export default function MyPage() {
         </div>
 
         {/* ── 출생 정보 ───────────────────────────────────────── */}
-        <div className="rounded-2xl bg-white/5 border border-white/10 p-5">
+        <div
+          ref={birthSectionRef}
+          className={`rounded-2xl bg-white/5 border p-5 transition-all duration-500 ${
+            birthHighlight
+              ? "border-purple-400 shadow-[0_0_20px_rgba(168,85,247,0.4)]"
+              : "border-white/10"
+          }`}
+        >
           <div className="flex items-center justify-between mb-3">
             <p className="text-white/40 text-xs">출생 정보</p>
             {!birthLoading && !editingBirth && (
@@ -686,7 +708,7 @@ export default function MyPage() {
                           <p className="text-white/30 text-xs">{dateStr}</p>
                         </div>
                         <span className={`text-white/30 text-xs transition-transform ${isExpanded ? "rotate-180" : ""}`}>
-                          ▼
+                          <ChevronDown className="w-4 h-4" />
                         </span>
                       </button>
                       {isExpanded && (
@@ -739,7 +761,7 @@ export default function MyPage() {
               className="w-full text-left px-5 py-3 text-sm text-white/70 hover:bg-white/5 transition-colors flex items-center justify-between"
             >
               <span>닉네임 변경</span>
-              <span className="text-white/30 text-xs">→</span>
+              <ChevronRight className="w-4 h-4 text-white/30" />
             </button>
             {/* 이메일 로그인 사용자만 비밀번호 변경 노출 */}
             {user.providerData.some((p) => p.providerId === "password") ? (
@@ -775,5 +797,13 @@ export default function MyPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function MyPage() {
+  return (
+    <Suspense>
+      <MyPageInner />
+    </Suspense>
   );
 }

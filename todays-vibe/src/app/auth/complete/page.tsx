@@ -33,7 +33,7 @@ function AuthCompleteInner() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-950 via-slate-900 to-black flex items-center justify-center">
       <div className="text-center">
-        <div className="text-5xl mb-4 animate-spin">🔮</div>
+        <img src="/brand/loading.svg" alt="loading" className="w-40 h-40 mb-4 mx-auto" />
         <p className="text-white/60 text-sm">로그인 중...</p>
       </div>
     </div>
