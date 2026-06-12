@@ -6,6 +6,7 @@ import {
   createUserWithEmailAndPassword,
   signOut as firebaseSignOut,
   signInWithCustomToken,
+  sendPasswordResetEmail,
   updateProfile,
   User,
 } from "firebase/auth";
@@ -48,6 +49,11 @@ export async function createSession(user: User): Promise<boolean> {
   }
   const data = await res.json();
   return data.isAdmin === true;
+}
+
+/** 비밀번호 재설정 이메일 발송 */
+export async function sendPasswordReset(email: string): Promise<void> {
+  return sendPasswordResetEmail(auth(), email);
 }
 
 /** 로그아웃 시 Firebase Auth + 세션 쿠키 동시 제거 */
