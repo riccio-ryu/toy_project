@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft, ChevronRight, ChevronDown, Pencil } from "lucide-react";
 import Image from "next/image";
@@ -72,7 +72,7 @@ const PLAN_LIMIT: Record<PlanType, string> = {
 };
 
 // ─── 컴포넌트 ─────────────────────────────────────────────────────
-export default function MyPage() {
+function MyPageInner() {
   const { user, loading } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -797,5 +797,13 @@ export default function MyPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function MyPage() {
+  return (
+    <Suspense>
+      <MyPageInner />
+    </Suspense>
   );
 }
