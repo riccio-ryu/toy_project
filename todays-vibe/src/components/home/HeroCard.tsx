@@ -177,8 +177,8 @@ export default function HeroCard({ today }: { today: string }) {
     return (
       <div className="relative mb-8 rounded-2xl border border-white/10 bg-gradient-to-br from-purple-900/40 via-indigo-900/25 to-blue-900/20 overflow-hidden">
         <BgDecorations />
-        <div className="relative px-5 py-6">
-          <p className="text-purple-300/60 text-xs font-semibold uppercase tracking-widest mb-4">
+        <div className="relative px-4 py-4 sm:px-5 sm:py-6">
+          <p className="text-purple-300/60 text-xs font-semibold uppercase tracking-widest mb-3 sm:mb-4">
             ✨ 오늘의 운세
           </p>
           <div className="animate-pulse space-y-3">
@@ -198,8 +198,8 @@ export default function HeroCard({ today }: { today: string }) {
     <div className="relative mb-8 rounded-2xl border border-white/10 bg-gradient-to-br from-purple-900/40 via-indigo-900/25 to-blue-900/20 overflow-hidden">
       <BgDecorations />
 
-      <div className="relative px-5 py-6">
-        <p className="text-purple-300/60 text-xs font-semibold uppercase tracking-widest mb-4">
+      <div className="relative px-4 py-4 sm:px-5 sm:py-6">
+        <p className="text-purple-300/60 text-xs font-semibold uppercase tracking-widest mb-3 sm:mb-4">
           ✨ 오늘의 운세
         </p>
 
@@ -207,13 +207,13 @@ export default function HeroCard({ today }: { today: string }) {
         {state === "not_logged_in" && (
           <>
             <div className="flex items-end gap-1.5 mb-2">
-              <span className="text-5xl font-bold leading-none text-white/70 blur-sm select-none">82</span>
-              <span className="text-white/35 text-lg mb-1 blur-sm select-none">점</span>
+              <span className="text-4xl sm:text-5xl font-bold leading-none text-white/70 blur-sm select-none">82</span>
+              <span className="text-white/35 text-base sm:text-lg mb-1 blur-sm select-none">점</span>
             </div>
-            <p className="text-white/60 text-sm mb-5 leading-relaxed blur-sm select-none">
+            <p className="text-white/60 text-sm mb-4 sm:mb-5 leading-relaxed blur-sm select-none">
               오늘은 새로운 기회가 찾아오는 날입니다.
             </p>
-            <div className="space-y-2.5 mb-5">
+            <div className="space-y-2 sm:space-y-2.5 mb-4 sm:mb-5">
               {FORTUNE_ROWS.map(({ label }) => (
                 <div key={label} className="flex items-center gap-3">
                   <span className="text-white/40 text-xs w-12 blur-sm select-none">{label}</span>
@@ -236,15 +236,45 @@ export default function HeroCard({ today }: { today: string }) {
           </>
         )}
 
-        {/* ── 로그인 상태 ──────────────────────────────────────────────────── */}
-        {(state === "no_birth_info" || state === "ready") &&
-          score !== undefined && stars && message && (
+        {/* ── 생년월일 미등록 ───────────────────────────────────────────── */}
+        {state === "no_birth_info" && (
           <>
             <div className="flex items-end gap-1.5 mb-2">
-              <span className={`text-5xl font-bold leading-none ${scoreColor(score)}`}>
+              <span className="text-4xl sm:text-5xl font-bold leading-none text-white/70 blur-sm select-none">82</span>
+              <span className="text-white/35 text-base sm:text-lg mb-1 blur-sm select-none">점</span>
+            </div>
+            <p className="text-white/60 text-sm mb-4 sm:mb-5 leading-relaxed blur-sm select-none">
+              생년월일을 등록하면 오늘의 운세를 확인할 수 있어요.
+            </p>
+            <div className="space-y-2 sm:space-y-2.5 mb-4 sm:mb-5">
+              {FORTUNE_ROWS.map(({ label }) => (
+                <div key={label} className="flex items-center gap-3">
+                  <span className="text-white/40 text-xs w-12 blur-sm select-none">{label}</span>
+                  <span className="text-yellow-400/75 text-sm tracking-widest blur-sm select-none">★★★☆☆</span>
+                </div>
+              ))}
+            </div>
+            <p className="text-white/40 text-xs mb-3 leading-relaxed">
+              {settings.noBirthInfoText}
+            </p>
+            <Link
+              href="/mypage?focus=birth"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-purple-600/40 border border-purple-500/30 text-purple-200 text-xs font-medium hover:bg-purple-600/60 transition-colors"
+            >
+              생년월일 등록하기 <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+            <LuckyStrip today={today} />
+          </>
+        )}
+
+        {/* ── 운세 결과 ────────────────────────────────────────────────── */}
+        {state === "ready" && score !== undefined && stars && message && (
+          <>
+            <div className="flex items-end gap-1.5 mb-2">
+              <span className={`text-4xl sm:text-5xl font-bold leading-none ${scoreColor(score)}`}>
                 {score}
               </span>
-              <span className="text-white/35 text-lg mb-1">점</span>
+              <span className="text-white/35 text-base sm:text-lg mb-1">점</span>
               {isAI && (
                 <span className="ml-1.5 mb-1.5 text-[10px] font-medium text-purple-300 bg-purple-900/50 px-1.5 py-0.5 rounded-full">
                   AI
@@ -252,9 +282,9 @@ export default function HeroCard({ today }: { today: string }) {
               )}
             </div>
 
-            <p className="text-white/60 text-sm mb-5 leading-relaxed">{message}</p>
+            <p className="text-white/60 text-sm mb-4 sm:mb-5 leading-relaxed">{message}</p>
 
-            <div className="space-y-2.5 mb-5">
+            <div className="space-y-2 sm:space-y-2.5 mb-4 sm:mb-5">
               {FORTUNE_ROWS.map(({ label, href }, i) => (
                 <div key={label} className="flex items-center gap-3">
                   <span className="text-white/40 text-xs w-12">{label}</span>
@@ -268,18 +298,11 @@ export default function HeroCard({ today }: { today: string }) {
               ))}
             </div>
 
-            {state === "no_birth_info" && (
-              <p className="text-white/40 text-xs mb-3 leading-relaxed">
-                {settings.noBirthInfoText}
-              </p>
-            )}
-
             <Link
-              href={state === "no_birth_info" ? "/mypage?focus=birth" : "/saju"}
+              href="/saju"
               className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-purple-600/40 border border-purple-500/30 text-purple-200 text-xs font-medium hover:bg-purple-600/60 transition-colors"
             >
-              {state === "no_birth_info" ? "생년월일 등록하기" : "사주로 자세히 보기"}
-              <ArrowRight className="w-3.5 h-3.5" />
+              사주로 자세히 보기 <ArrowRight className="w-3.5 h-3.5" />
             </Link>
 
             <LuckyStrip today={today} />

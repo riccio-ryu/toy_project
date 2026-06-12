@@ -335,6 +335,6 @@ export async function GET(req: NextRequest) {
     return Response.json({ state: "ready", ...data, settings });
   } catch {
     const data = generateSeedBased(uid, date);
-    return Response.json({ state: "no_birth_info", ...data, settings });
+    return Response.json({ state: "ready", ...data, settings });
   }
 }
