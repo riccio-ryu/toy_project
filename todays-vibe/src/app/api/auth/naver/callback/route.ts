@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createCustomToken } from "@/lib/firebase/admin";
+import { createCustomToken, upsertOAuthUser } from "@/lib/firebase/admin";
 
 interface NaverTokenResponse {
   access_token: string;
@@ -54,10 +54,20 @@ export async function GET(req: NextRequest) {
 
     // 3. Firebase Custom Token 생성
     const uid = `naver:${naverUser.id}`;
+    const email = naverUser.email ?? "";
+    if (!email) {
+      return NextResponse.redirect(new URL("/login?error=email_required", req.url));
+    }
+    const displayName = naverUser.nickname ?? naverUser.name ?? "";
+    const photoURL = naverUser.profile_image ?? "";
+
+    await upsertOAuthUser(uid, { email, displayName, photoURL });
+
     const customToken = await createCustomToken(uid, {
       provider: "naver",
-      email: naverUser.email ?? "",
-      displayName: naverUser.nickname ?? naverUser.name ?? "",
+      email,
+      displayName,
+      photoURL,
     });
 
     // 4. 완료 페이지로 리다이렉트 (custom token 전달)

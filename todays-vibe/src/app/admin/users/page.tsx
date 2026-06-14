@@ -531,7 +531,7 @@ export default function AdminUsersPage() {
                           <img src={user.photoURL} alt="" className="w-7 h-7 rounded-full object-cover" />
                         ) : (
                           <div className="w-7 h-7 rounded-full bg-purple-700 flex items-center justify-center text-white text-xs font-bold">
-                            {(user.nickname || user.email)[0].toUpperCase()}
+                            {((user.nickname || user.email || "?")[0] ?? "?").toUpperCase()}
                           </div>
                         )}
                         <span className="text-white font-medium">{user.nickname || "-"}</span>

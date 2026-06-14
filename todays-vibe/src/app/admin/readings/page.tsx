@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, Fragment } from "react";
 
 type Reading = {
   id: string;
@@ -183,9 +183,8 @@ export default function AdminReadingsPage() {
                 const meta = TYPE_META[r.type] ?? { emoji: "🔮", label: r.type };
                 const isExpanded = expandedId === r.id;
                 return (
-                  <>
+                  <Fragment key={r.id}>
                     <tr
-                      key={r.id}
                       onClick={() => setExpandedId(isExpanded ? null : r.id)}
                       className="hover:bg-white/[0.03] cursor-pointer transition-colors"
                     >
@@ -223,7 +222,7 @@ export default function AdminReadingsPage() {
                       </td>
                     </tr>
                     {isExpanded && (
-                      <tr key={`${r.id}-expanded`} className="bg-white/[0.02]">
+                      <tr className="bg-white/[0.02]">
                         <td colSpan={4} className="px-6 py-4">
                           <div className="mb-2 flex gap-3 text-xs text-white/30">
                             <span>ID: <span className="font-mono text-white/40">{r.id}</span></span>
@@ -236,7 +235,7 @@ export default function AdminReadingsPage() {
                         </td>
                       </tr>
                     )}
-                  </>
+                  </Fragment>
                 );
               })
             )}

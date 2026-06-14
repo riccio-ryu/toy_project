@@ -11,9 +11,21 @@ function LoginForm() {
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get("redirect") ?? "/";
 
+  const ERROR_MESSAGES: Record<string, string> = {
+    email_required: "이메일 제공에 동의해야 로그인할 수 있습니다.",
+    oauth: "소셜 로그인 중 오류가 발생했습니다.",
+    kakao_failed: "카카오 로그인에 실패했습니다.",
+    naver_failed: "네이버 로그인에 실패했습니다.",
+    google_failed: "구글 로그인에 실패했습니다.",
+    token_failed: "인증 토큰 처리에 실패했습니다.",
+    missing_token: "인증 정보가 누락되었습니다.",
+  };
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [error, setError] = useState(
+    ERROR_MESSAGES[searchParams.get("error") ?? ""] ?? ""
+  );
   const [loading, setLoading] = useState(false);
   const [showReset, setShowReset] = useState(false);
   const [resetEmail, setResetEmail] = useState("");

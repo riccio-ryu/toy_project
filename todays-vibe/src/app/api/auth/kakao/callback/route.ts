@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createCustomToken } from "@/lib/firebase/admin";
+import { createCustomToken, upsertOAuthUser } from "@/lib/firebase/admin";
 
 interface KakaoTokenResponse {
   access_token: string;
@@ -55,10 +55,20 @@ export async function GET(req: NextRequest) {
 
     // 3. Firebase Custom Token 생성
     const uid = `kakao:${userData.id}`;
+    const email = userData.kakao_account?.email ?? "";
+    if (!email) {
+      return NextResponse.redirect(new URL("/login?error=email_required", req.url));
+    }
+    const displayName = userData.kakao_account?.profile?.nickname ?? "";
+    const photoURL = userData.kakao_account?.profile?.profile_image_url ?? "";
+
+    await upsertOAuthUser(uid, { email, displayName, photoURL });
+
     const customToken = await createCustomToken(uid, {
       provider: "kakao",
-      email: userData.kakao_account?.email ?? "",
-      displayName: userData.kakao_account?.profile?.nickname ?? "",
+      email,
+      displayName,
+      photoURL,
     });
 
     // 4. 완료 페이지로 리다이렉트
