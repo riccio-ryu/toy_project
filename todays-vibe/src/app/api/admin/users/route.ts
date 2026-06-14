@@ -1,19 +1,13 @@
 import { NextRequest } from "next/server";
 import { getAdminFirestore } from "@/lib/firebase/admin";
-import { SESSION_COOKIE, verifySessionToken } from "@/lib/session";
 import type { UserRecord, AllStats, UserProvider } from "@/types/user";
+import { requireAdmin } from "@/lib/api/require-admin";
 
 function deriveProvider(uid: string, stored?: string): UserProvider {
   if (stored && stored !== "unknown") return stored as UserProvider;
   if (uid.startsWith("kakao:")) return "kakao";
   if (uid.startsWith("naver:")) return "naver";
   return "unknown";
-}
-
-async function requireAdmin(request: NextRequest) {
-  const token = request.cookies.get(SESSION_COOKIE)?.value;
-  const payload = token ? await verifySessionToken(token) : null;
-  return payload?.isAdmin ? payload : null;
 }
 
 // ─── GET: 회원 목록 조회 (관리자 전용) ───────────────────────────

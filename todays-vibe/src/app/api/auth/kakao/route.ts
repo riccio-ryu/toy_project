@@ -11,6 +11,7 @@ export function GET() {
   url.searchParams.set("client_id", clientId);
   url.searchParams.set("redirect_uri", redirectUri);
   url.searchParams.set("state", state);
+  url.searchParams.set("scope", "profile_nickname profile_image account_email");
 
   const res = NextResponse.redirect(url.toString());
   res.cookies.set("kakao_oauth_state", state, {

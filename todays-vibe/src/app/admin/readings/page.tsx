@@ -1,6 +1,9 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, Fragment } from "react";
+import { formatDateTime } from "@/lib/utils/format";
+import AdminStatCards from "@/components/admin/AdminStatCards";
+import AdminTableSkeleton from "@/components/admin/AdminTableSkeleton";
 
 type Reading = {
   id: string;
@@ -31,15 +34,6 @@ const TYPE_OPTIONS = [
   })),
 ];
 
-function formatDateTime(iso: string | null) {
-  if (!iso) return "-";
-  return new Date(iso).toLocaleString("ko-KR", {
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
 
 export default function AdminReadingsPage() {
   const [readings, setReadings] = useState<Reading[]>([]);
@@ -92,19 +86,12 @@ export default function AdminReadingsPage() {
       </div>
 
       {/* 통계 카드 */}
-      <div className="grid grid-cols-4 gap-4 mb-6">
-        {[
-          { label: "전체 기록", value: loading ? "-" : total },
-          { label: "사주팔자",  value: loading ? "-" : (typeCounts["saju"] ?? 0) },
-          { label: "타로 (전체)", value: loading ? "-" : Object.entries(typeCounts).filter(([k]) => k.startsWith("tarot")).reduce((s, [, v]) => s + v, 0) },
-          { label: "꿈해몽",   value: loading ? "-" : (typeCounts["dream"] ?? 0) },
-        ].map((s) => (
-          <div key={s.label} className="rounded-xl bg-white/5 border border-white/10 px-5 py-4">
-            <p className="text-white/40 text-xs mb-1">{s.label}</p>
-            <p className="text-white text-2xl font-bold">{s.value}</p>
-          </div>
-        ))}
-      </div>
+      <AdminStatCards cards={[
+        { label: "전체 기록",    value: loading ? "-" : total },
+        { label: "사주팔자",     value: loading ? "-" : (typeCounts["saju"] ?? 0) },
+        { label: "타로 (전체)", value: loading ? "-" : Object.entries(typeCounts).filter(([k]) => k.startsWith("tarot")).reduce((s, [, v]) => s + v, 0) },
+        { label: "꿈해몽",      value: loading ? "-" : (typeCounts["dream"] ?? 0) },
+      ]} />
 
       {/* 필터 바 */}
       <div className="flex gap-3 mb-5">
@@ -157,15 +144,7 @@ export default function AdminReadingsPage() {
           </thead>
           <tbody className="divide-y divide-white/5">
             {loading ? (
-              Array.from({ length: 6 }).map((_, i) => (
-                <tr key={i}>
-                  {Array.from({ length: 4 }).map((__, j) => (
-                    <td key={j} className="px-4 py-3">
-                      <div className="h-3 bg-white/10 rounded animate-pulse" />
-                    </td>
-                  ))}
-                </tr>
-              ))
+              <AdminTableSkeleton rows={6} cols={4} />
             ) : error ? (
               <tr>
                 <td colSpan={4} className="px-4 py-10 text-center text-red-400 text-sm">
@@ -183,9 +162,8 @@ export default function AdminReadingsPage() {
                 const meta = TYPE_META[r.type] ?? { emoji: "🔮", label: r.type };
                 const isExpanded = expandedId === r.id;
                 return (
-                  <>
+                  <Fragment key={r.id}>
                     <tr
-                      key={r.id}
                       onClick={() => setExpandedId(isExpanded ? null : r.id)}
                       className="hover:bg-white/[0.03] cursor-pointer transition-colors"
                     >
@@ -223,7 +201,7 @@ export default function AdminReadingsPage() {
                       </td>
                     </tr>
                     {isExpanded && (
-                      <tr key={`${r.id}-expanded`} className="bg-white/[0.02]">
+                      <tr className="bg-white/[0.02]">
                         <td colSpan={4} className="px-6 py-4">
                           <div className="mb-2 flex gap-3 text-xs text-white/30">
                             <span>ID: <span className="font-mono text-white/40">{r.id}</span></span>
@@ -236,7 +214,7 @@ export default function AdminReadingsPage() {
                         </td>
                       </tr>
                     )}
-                  </>
+                  </Fragment>
                 );
               })
             )}

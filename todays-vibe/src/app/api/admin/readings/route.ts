@@ -1,11 +1,9 @@
 import { NextRequest } from "next/server";
 import { getAdminFirestore } from "@/lib/firebase/admin";
-import { SESSION_COOKIE, verifySessionToken } from "@/lib/session";
+import { requireAdmin } from "@/lib/api/require-admin";
 
 export async function GET(request: NextRequest) {
-  const token = request.cookies.get(SESSION_COOKIE)?.value;
-  const payload = token ? await verifySessionToken(token) : null;
-  if (!payload?.isAdmin) {
+  if (!(await requireAdmin(request))) {
     return Response.json({ error: "권한이 없습니다." }, { status: 403 });
   }
 
