@@ -5,6 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { calculateSaju, HOUR_OPTIONS, type BirthInput, type SajuResult } from "@/lib/saju/calculator";
 import { useFortuneStatus } from "@/lib/hooks/useFortuneStatus";
 import AILoadingIndicator from "@/components/common/AILoadingIndicator";
+import { boldHighlight } from "@/lib/utils/format";
 
 // ─── 사주 원국 테이블 ──────────────────────────────────────────────────
 function SajuTable({ result }: { result: SajuResult }) {
@@ -406,7 +407,7 @@ export default function SajuPage() {
             </div>
             <div
               className="text-white/80 text-sm leading-relaxed whitespace-pre-wrap"
-              dangerouslySetInnerHTML={{ __html: fortuneStatus.todayReading.result.replace(/\*\*(.*?)\*\*/g, '<strong class="text-amber-300">$1</strong>') }}
+              dangerouslySetInnerHTML={{ __html: boldHighlight(fortuneStatus.todayReading.result, "text-amber-300") }}
             />
           </div>
         </div>
@@ -444,7 +445,7 @@ export default function SajuPage() {
               <div
                 ref={interpRef}
                 className="text-white/80 text-sm leading-relaxed whitespace-pre-wrap"
-                dangerouslySetInnerHTML={{ __html: interpretation.replace(/\*\*(.*?)\*\*/g, '<strong class="text-amber-300">$1</strong>') }}
+                dangerouslySetInnerHTML={{ __html: boldHighlight(interpretation, "text-amber-300") }}
               />
             )}
           </div>

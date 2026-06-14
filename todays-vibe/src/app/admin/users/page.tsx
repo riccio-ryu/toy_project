@@ -3,6 +3,9 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
 import type { UserRecord, PlanConfig, AllStats, UserProvider } from "@/types/user";
 import { UserDetailDrawer } from "./UserDetailDrawer";
+import { formatDate, formatDateTime } from "@/lib/utils/format";
+import AdminStatCards from "@/components/admin/AdminStatCards";
+import AdminTableSkeleton from "@/components/admin/AdminTableSkeleton";
 
 // ── 내장 플랜 스타일 ─────────────────────────────────────────────
 const BUILTIN_PLAN_STYLE: Record<string, { label: string; color: string; bg: string }> = {
@@ -36,16 +39,6 @@ const PROVIDER_OPTIONS: { value: UserProvider | ""; label: string }[] = [
   { value: "kakao",   label: "카카오" },
   { value: "naver",   label: "네이버" },
 ];
-
-// ── 날짜 포맷 ────────────────────────────────────────────────────
-function formatDate(iso?: string) {
-  if (!iso) return "-";
-  return new Date(iso).toLocaleDateString("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit" });
-}
-function formatDateTime(iso?: string) {
-  if (!iso) return "-";
-  return new Date(iso).toLocaleString("ko-KR", { month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" });
-}
 
 // ── 정렬 ─────────────────────────────────────────────────────────
 type SortKey = "nickname" | "email" | "createdAt" | "lastLoginAt" | "plan" | "provider";
@@ -396,16 +389,9 @@ export default function AdminUsersPage() {
       </div>
 
       {/* 통계 카드 — 전체 통계 고정 */}
-      <div className="grid grid-cols-4 gap-4 mb-6">
-        {statsCards.map((s) => (
-          <div key={s.label} className="rounded-xl bg-white/5 border border-white/10 px-5 py-4">
-            <p className="text-white/40 text-xs mb-1">{s.label}</p>
-            <p className="text-white text-2xl font-bold">
-              {allStats === null ? "-" : s.value}
-            </p>
-          </div>
-        ))}
-      </div>
+      <AdminStatCards
+        cards={statsCards.map((s) => ({ label: s.label, value: allStats === null ? "-" : s.value }))}
+      />
 
       {/* 커스텀 플랜 목록 */}
       {customPlans.length > 0 && (
@@ -495,15 +481,7 @@ export default function AdminUsersPage() {
           </thead>
           <tbody className="divide-y divide-white/5">
             {loading ? (
-              Array.from({ length: 5 }).map((_, i) => (
-                <tr key={i}>
-                  {Array.from({ length: 7 }).map((__, j) => (
-                    <td key={j} className="px-4 py-3">
-                      <div className="h-3 bg-white/10 rounded animate-pulse w-3/4" />
-                    </td>
-                  ))}
-                </tr>
-              ))
+              <AdminTableSkeleton rows={5} cols={7} />
             ) : error ? (
               <tr>
                 <td colSpan={7} className="px-4 py-10 text-center text-red-400 text-sm">{error}</td>
