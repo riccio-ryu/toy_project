@@ -1,13 +1,7 @@
 import { NextRequest } from "next/server";
 import { getAdminFirestore } from "@/lib/firebase/admin";
-import { SESSION_COOKIE, verifySessionToken } from "@/lib/session";
 import { todayKST } from "@/lib/utils/date";
-
-async function requireAdmin(request: NextRequest) {
-  const token = request.cookies.get(SESSION_COOKIE)?.value;
-  const payload = token ? await verifySessionToken(token) : null;
-  return payload?.isAdmin ? payload : null;
-}
+import { requireAdmin } from "@/lib/api/require-admin";
 
 export async function GET(
   request: NextRequest,

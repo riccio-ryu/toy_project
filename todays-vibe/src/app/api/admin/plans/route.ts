@@ -1,14 +1,8 @@
 import { NextRequest } from "next/server";
 import { getAdminFirestore } from "@/lib/firebase/admin";
-import { SESSION_COOKIE, verifySessionToken } from "@/lib/session";
 import type { PlanConfig } from "@/types/user";
 import { FieldValue } from "firebase-admin/firestore";
-
-async function requireAdmin(request: NextRequest) {
-  const token = request.cookies.get(SESSION_COOKIE)?.value;
-  const payload = token ? await verifySessionToken(token) : null;
-  return payload?.isAdmin ? payload : null;
-}
+import { requireAdmin } from "@/lib/api/require-admin";
 
 // ─── GET: 커스텀 플랜 목록 ─────────────────────────────────────
 export async function GET(request: NextRequest) {

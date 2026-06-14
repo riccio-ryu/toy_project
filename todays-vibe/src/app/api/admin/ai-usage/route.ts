@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 import { getAdminFirestore } from "@/lib/firebase/admin";
-import { SESSION_COOKIE, verifySessionToken } from "@/lib/session";
 import { todayKST, kstDateOffset } from "@/lib/utils/date";
+import { requireAdmin } from "@/lib/api/require-admin";
 
 type Period = "today" | "7d" | "30d";
 
@@ -41,9 +41,7 @@ export interface AiUsageResponse {
 const DEFAULT_DAILY_TOKEN_LIMIT = 50_000;
 
 export async function GET(req: NextRequest) {
-  const token = req.cookies.get(SESSION_COOKIE)?.value;
-  const payload = token ? await verifySessionToken(token) : null;
-  if (!payload?.isAdmin) {
+  if (!(await requireAdmin(req))) {
     return Response.json({ error: "권한이 없습니다." }, { status: 403 });
   }
 
@@ -200,9 +198,7 @@ export async function GET(req: NextRequest) {
 // ─── PATCH: 메뉴 한도 저장 ────────────────────────────────────────────────────
 
 export async function PATCH(req: NextRequest) {
-  const token = req.cookies.get(SESSION_COOKIE)?.value;
-  const payload = token ? await verifySessionToken(token) : null;
-  if (!payload?.isAdmin) {
+  if (!(await requireAdmin(req))) {
     return Response.json({ error: "권한이 없습니다." }, { status: 403 });
   }
 

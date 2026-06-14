@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { formatDateTime } from "@/lib/utils/format";
 
 // ── 컬렉션 메타 ────────────────────────────────────────────────────
 const COLLECTIONS = [
@@ -46,13 +47,6 @@ function docLabel(id: string): string {
   return id;
 }
 
-function formatDate(iso: string | null) {
-  if (!iso) return "-";
-  return new Date(iso).toLocaleString("ko-KR", {
-    month: "2-digit", day: "2-digit",
-    hour: "2-digit", minute: "2-digit",
-  });
-}
 
 // ── 단일 컬렉션 패널 ──────────────────────────────────────────────
 function CollectionPanel({ colId, label, icon }: { colId: CollectionId; label: string; icon: string }) {
@@ -165,7 +159,7 @@ function CollectionPanel({ colId, label, icon }: { colId: CollectionId; label: s
                     </div>
                     <div className="ml-auto flex items-center gap-4 mr-2">
                       <span className="text-white/30 text-xs">{doc.signCount}개 사인</span>
-                      <span className="text-white/20 text-xs">{formatDate(doc.generatedAt)}</span>
+                      <span className="text-white/20 text-xs">{formatDateTime(doc.generatedAt)}</span>
                     </div>
                   </button>
                   <button

@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import { getAdminFirestore } from "@/lib/firebase/admin";
-import { SESSION_COOKIE, verifySessionToken } from "@/lib/session";
+import { requireAdmin } from "@/lib/api/require-admin";
 
 const ALLOWED_COLLECTIONS = [
   "zodiac_weekly",
@@ -12,12 +12,6 @@ const ALLOWED_COLLECTIONS = [
 ] as const;
 
 type AllowedCollection = (typeof ALLOWED_COLLECTIONS)[number];
-
-async function requireAdmin(request: NextRequest) {
-  const token = request.cookies.get(SESSION_COOKIE)?.value;
-  const payload = token ? await verifySessionToken(token) : null;
-  return payload?.isAdmin ? payload : null;
-}
 
 function isAllowed(col: string): col is AllowedCollection {
   return ALLOWED_COLLECTIONS.includes(col as AllowedCollection);
