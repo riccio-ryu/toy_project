@@ -19,9 +19,6 @@ import {
   getNextYear,
   toWeekDocKey,
   toMonthDocKey,
-  getPrevWeekDocKey,
-  getPrevMonthDocKey,
-  getPrevYearKey,
 } from "./date-utils";
 import { BatchResult } from "@/types/scheduled-fortune";
 
@@ -41,20 +38,6 @@ async function callGeminiJson<T>(prompt: string): Promise<T> {
   return JSON.parse(text) as T;
 }
 
-// ─── 이전 문서 삭제 (silent) ──────────────────────────────────────────────────
-
-async function deleteSilent(
-  db: FirebaseFirestore.Firestore,
-  collection: string,
-  docId: string
-) {
-  try {
-    await db.collection(collection).doc(docId).delete();
-  } catch {
-    // 없는 문서 삭제 시 무시
-  }
-}
-
 // ─── 주간 운세 ────────────────────────────────────────────────────────────────
 
 export async function generateWeeklyZodiacFortunes(now: Date, forceCurrentPeriod = false): Promise<BatchResult> {
@@ -64,7 +47,6 @@ export async function generateWeeklyZodiacFortunes(now: Date, forceCurrentPeriod
     : getNextWeekRange(now);
   const weekKey = getWeekKey(new Date(weekStart));
   const weekDocKey = toWeekDocKey(weekKey);
-  const prevWeekDocKey = getPrevWeekDocKey(weekDocKey);
 
   const result: BatchResult = { period: "주간 (별자리)", total: 1, succeeded: 0, failed: 0, errors: [] };
 
@@ -80,7 +62,6 @@ export async function generateWeeklyZodiacFortunes(now: Date, forceCurrentPeriod
     }
 
     await db.collection("zodiac_weekly").doc(`zw_${weekDocKey}`).set(doc);
-    await deleteSilent(db, "zodiac_weekly", `zw_${prevWeekDocKey}`);
     result.succeeded++;
   } catch (err) {
     result.failed++;
@@ -97,7 +78,6 @@ export async function generateWeeklyChineseFortunes(now: Date, forceCurrentPerio
     : getNextWeekRange(now);
   const weekKey = getWeekKey(new Date(weekStart));
   const weekDocKey = toWeekDocKey(weekKey);
-  const prevWeekDocKey = getPrevWeekDocKey(weekDocKey);
 
   const result: BatchResult = { period: "주간 (띠)", total: 1, succeeded: 0, failed: 0, errors: [] };
 
@@ -113,7 +93,6 @@ export async function generateWeeklyChineseFortunes(now: Date, forceCurrentPerio
     }
 
     await db.collection("chinese_zodiac_weekly").doc(`czw_${weekDocKey}`).set(doc);
-    await deleteSilent(db, "chinese_zodiac_weekly", `czw_${prevWeekDocKey}`);
     result.succeeded++;
   } catch (err) {
     result.failed++;
@@ -141,7 +120,6 @@ export async function generateMonthlyZodiacFortunes(now: Date, forceCurrentPerio
   const db = getAdminFirestore();
   const monthKey = forceCurrentPeriod ? getCurrentMonthKey(now) : getNextMonthKey(now);
   const monthDocKey = toMonthDocKey(monthKey);
-  const prevMonthDocKey = getPrevMonthDocKey(monthDocKey);
 
   const result: BatchResult = { period: "월간 (별자리)", total: 1, succeeded: 0, failed: 0, errors: [] };
 
@@ -157,7 +135,6 @@ export async function generateMonthlyZodiacFortunes(now: Date, forceCurrentPerio
     }
 
     await db.collection("zodiac_monthly").doc(`zm_${monthDocKey}`).set(doc);
-    await deleteSilent(db, "zodiac_monthly", `zm_${prevMonthDocKey}`);
     result.succeeded++;
   } catch (err) {
     result.failed++;
@@ -171,7 +148,6 @@ export async function generateMonthlyChineseFortunes(now: Date, forceCurrentPeri
   const db = getAdminFirestore();
   const monthKey = forceCurrentPeriod ? getCurrentMonthKey(now) : getNextMonthKey(now);
   const monthDocKey = toMonthDocKey(monthKey);
-  const prevMonthDocKey = getPrevMonthDocKey(monthDocKey);
 
   const result: BatchResult = { period: "월간 (띠)", total: 1, succeeded: 0, failed: 0, errors: [] };
 
@@ -187,7 +163,6 @@ export async function generateMonthlyChineseFortunes(now: Date, forceCurrentPeri
     }
 
     await db.collection("chinese_zodiac_monthly").doc(`czm_${monthDocKey}`).set(doc);
-    await deleteSilent(db, "chinese_zodiac_monthly", `czm_${prevMonthDocKey}`);
     result.succeeded++;
   } catch (err) {
     result.failed++;
@@ -215,7 +190,6 @@ export async function generateYearlyZodiacFortunes(now: Date, forceCurrentPeriod
   const db = getAdminFirestore();
   const year = forceCurrentPeriod ? now.getFullYear() : getNextYear(now);
   const yearKey = String(year);
-  const prevYearKey = getPrevYearKey(yearKey);
 
   const result: BatchResult = { period: "연간 (별자리)", total: 1, succeeded: 0, failed: 0, errors: [] };
 
@@ -231,7 +205,6 @@ export async function generateYearlyZodiacFortunes(now: Date, forceCurrentPeriod
     }
 
     await db.collection("zodiac_yearly").doc(`zy_${yearKey}`).set(doc);
-    await deleteSilent(db, "zodiac_yearly", `zy_${prevYearKey}`);
     result.succeeded++;
   } catch (err) {
     result.failed++;
@@ -245,7 +218,6 @@ export async function generateYearlyChineseFortunes(now: Date, forceCurrentPerio
   const db = getAdminFirestore();
   const year = forceCurrentPeriod ? now.getFullYear() : getNextYear(now);
   const yearKey = String(year);
-  const prevYearKey = getPrevYearKey(yearKey);
 
   const result: BatchResult = { period: "연간 (띠)", total: 1, succeeded: 0, failed: 0, errors: [] };
 
@@ -261,7 +233,6 @@ export async function generateYearlyChineseFortunes(now: Date, forceCurrentPerio
     }
 
     await db.collection("chinese_zodiac_yearly").doc(`czy_${yearKey}`).set(doc);
-    await deleteSilent(db, "chinese_zodiac_yearly", `czy_${prevYearKey}`);
     result.succeeded++;
   } catch (err) {
     result.failed++;
