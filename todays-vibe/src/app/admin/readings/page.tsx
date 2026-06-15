@@ -76,10 +76,10 @@ export default function AdminReadingsPage() {
   }, {});
 
   return (
-    <div className="p-8">
+    <div className="p-4 md:p-8">
       {/* 헤더 */}
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-white">운세 기록</h2>
+        <h2 className="text-xl sm:text-2xl font-bold text-white">운세 기록</h2>
         <p className="text-white/40 text-sm mt-1">
           저장된 AI 운세 결과를 조회합니다. 유저가 결과를 못 봤을 때 여기서 확인하세요.
         </p>

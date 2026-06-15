@@ -34,7 +34,7 @@ export default function AdminSidebar() {
     <aside
       className={`${
         collapsed ? "w-16" : "w-56"
-      } bg-gray-900 border-r border-white/10 flex flex-col shrink-0 transition-all duration-200`}
+      } h-screen sticky top-0 bg-gray-900 border-r border-white/10 flex flex-col shrink-0 transition-all duration-200`}
     >
       {/* 헤더 */}
       <div className={`py-5 border-b border-white/10 flex items-center ${collapsed ? "justify-center px-0" : "px-4 gap-3"}`}>
