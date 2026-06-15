@@ -301,7 +301,7 @@ function GcpUsagePanel() {
 
       {/* 데이터 */}
       {(loading || data) && (
-        <div className="grid grid-cols-3 gap-6 divide-x divide-white/6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 md:divide-x divide-white/6">
           {[
             { label: "입력 토큰",  value: data?.inputTokens,  denom: data ? data.inputTokens + data.outputTokens : 0, color: "text-blue-300",    bar: "bg-blue-500" },
             { label: "출력 토큰",  value: data?.outputTokens, denom: data ? data.inputTokens + data.outputTokens : 0, color: "text-emerald-300", bar: "bg-emerald-500" },
@@ -407,7 +407,7 @@ export default function AdminAiUsagePage() {
     <div className="p-6 md:p-8 max-w-6xl">
       {/* 헤더 */}
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-white">AI 사용량 관리</h2>
+        <h2 className="text-xl sm:text-2xl font-bold text-white">AI 사용량 관리</h2>
         <p className="text-white/40 text-sm mt-1">기능별 이용 횟수 및 유저별 한도를 관리합니다.</p>
       </div>
 
@@ -510,12 +510,12 @@ export default function AdminAiUsagePage() {
 
         {/* 3개 바 카드 */}
         {loading ? (
-          <div className="grid grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
             {[...Array(3)].map((_, i) => <div key={i} className="h-20 bg-white/5 rounded-lg animate-pulse" />)}
           </div>
         ) : (
-          <div className="grid grid-cols-3 gap-6 divide-x divide-white/6">
-            <div className="pr-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 md:divide-x divide-white/6">
+            <div className="md:pr-6">
               <StatBar
                 label="입력 토큰"
                 value={summary?.totalInputTokens ?? 0}

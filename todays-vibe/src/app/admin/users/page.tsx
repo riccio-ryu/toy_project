@@ -360,7 +360,7 @@ export default function AdminUsersPage() {
   ];
 
   return (
-    <div className="p-8">
+    <div className="p-4 md:p-8">
       <UserDetailDrawer uid={detailUid} onClose={() => setDetailUid(null)} />
 
       {showCreateModal && (
@@ -377,7 +377,7 @@ export default function AdminUsersPage() {
       {/* 헤더 */}
       <div className="flex items-start justify-between mb-6">
         <div>
-          <h2 className="text-2xl font-bold text-white">회원 관리</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-white">회원 관리</h2>
           <p className="text-white/40 text-sm mt-1">가입 회원 조회, 플랜 변경을 관리합니다.</p>
         </div>
         <button
@@ -407,7 +407,7 @@ export default function AdminUsersPage() {
       )}
 
       {/* 필터 바 */}
-      <div className="flex gap-3 mb-4">
+      <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mb-4">
         <input
           type="text"
           value={search}

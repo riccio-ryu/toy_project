@@ -1284,7 +1284,7 @@ export default function AdminMenusPage() {
 
   if (loading) {
     return (
-      <div className="p-8 flex items-center gap-3 text-white/40">
+      <div className="p-4 md:p-8 flex items-center gap-3 text-white/40">
         <span className="animate-spin">⏳</span> 메뉴를 불러오는 중...
       </div>
     );
@@ -1293,7 +1293,7 @@ export default function AdminMenusPage() {
   // ── 렌더 ───────────────────────────────────────────────────────────────────
 
   return (
-    <div className="p-8">
+    <div className="p-4 md:p-8">
       <div className="mb-6 flex items-start justify-between">
         <div>
           <h2 className="text-2xl font-bold text-white">메뉴 관리</h2>

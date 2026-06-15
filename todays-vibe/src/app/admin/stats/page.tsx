@@ -127,10 +127,10 @@ export default function AdminStatsPage() {
   const maxMenu  = data?.menuRanking[0]?.count ?? 1;
 
   return (
-    <div className="p-8">
+    <div className="p-4 md:p-8">
       {/* 헤더 */}
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-white">사용 통계</h2>
+        <h2 className="text-xl sm:text-2xl font-bold text-white">사용 통계</h2>
         <p className="text-white/40 text-sm mt-1">일별 · 운세별 이용 현황을 확인합니다.</p>
       </div>
 
