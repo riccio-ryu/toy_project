@@ -6,6 +6,7 @@ import FortuneGrid from "./FortuneGrid";
 import QuickMenu from "@/components/home/QuickMenu";
 import HeroCard from "@/components/home/HeroCard";
 import PopularSection from "@/components/home/PopularSection";
+import OracleHeader from "@/components/home/OracleHeader";
 
 async function getMenuItems(): Promise<MenuItem[]> {
   try {
@@ -88,10 +89,7 @@ export default async function Home() {
       </div>
 
       {/* Header */}
-      <div className="text-center mb-8 sm:mb-12">
-        <h1 className="text-2xl sm:text-4xl font-bold text-white mb-2 sm:mb-3">당신만을 위한 오늘의 운세</h1>
-        <p className="text-purple-300 text-sm sm:text-lg">사주·타로·꿈해몽 — 당신의 오늘을 가장 깊이 읽어드립니다</p>
-      </div>
+      <OracleHeader />
 
       {/* Hero — 오늘의 운세 */}
       <HeroCard today={today} />

@@ -270,7 +270,7 @@ export default function HeroCard({ today }: { today: string }) {
         {/* 메시지 */}
         {message && (
           <p className="text-white/60 text-sm text-center leading-relaxed mb-4 px-2">
-            "{message}"
+            &ldquo;{message}&rdquo;
           </p>
         )}
 
@@ -286,27 +286,29 @@ export default function HeroCard({ today }: { today: string }) {
           </div>
         )}
 
-        {/* 더 깊이 읽기 */}
-        <div className="border-t border-white/8 pt-4">
-          <p className="text-white/30 text-xs text-center mb-3">이 기운을 더 깊이 읽어볼까요?</p>
-          <div className="grid grid-cols-3 gap-2">
-            {[
-              { href: "/saju",        label: "사주",   emoji: "📜" },
-              { href: "/tarot-3cards",label: "타로",   emoji: "🃏" },
-              { href: "/zodiac",      label: "별자리", emoji: "✨" },
-            ].map((item) => (
-              <Link key={item.href} href={item.href}
-                className="flex flex-col items-center gap-1 py-2.5 rounded-xl bg-white/5 border border-white/8 hover:bg-white/10 transition-colors">
-                <span className="text-lg">{item.emoji}</span>
-                <span className="text-white/55 text-xs">{item.label}</span>
-              </Link>
-            ))}
+        {/* 더 깊이 읽기 — 로그인/생년월일 없는 상태에선 숨김 */}
+        {state === "ready" && (
+          <div className="border-t border-white/8 pt-4">
+            <p className="text-white/30 text-xs text-center mb-3">이 기운을 더 깊이 읽어볼까요?</p>
+            <div className="grid grid-cols-3 gap-2">
+              {[
+                { href: "/saju",        label: "사주",   emoji: "📜" },
+                { href: "/tarot-3cards",label: "타로",   emoji: "🃏" },
+                { href: "/zodiac",      label: "별자리", emoji: "✨" },
+              ].map((item) => (
+                <Link key={item.href} href={item.href}
+                  className="flex flex-col items-center gap-1 py-2.5 rounded-xl bg-white/5 border border-white/8 hover:bg-white/10 transition-colors">
+                  <span className="text-lg">{item.emoji}</span>
+                  <span className="text-white/55 text-xs">{item.label}</span>
+                </Link>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* 로그인 / 생년월일 CTA */}
         {state === "not_logged_in" && (
-          <div className="mt-4 text-center">
+          <div className="border-t border-white/8 pt-3 mt-1 text-center">
             <p className="text-white/25 text-xs mb-2">{data.settings.notLoggedInText}</p>
             <Link href="/login" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-purple-600/30 border border-purple-500/30 text-purple-200 text-xs hover:bg-purple-600/50 transition-colors">
               로그인하기 <ArrowRight className="w-3 h-3" />
@@ -314,7 +316,7 @@ export default function HeroCard({ today }: { today: string }) {
           </div>
         )}
         {state === "no_birth_info" && (
-          <div className="mt-4 text-center">
+          <div className="border-t border-white/8 pt-3 mt-1 text-center">
             <p className="text-white/25 text-xs mb-2">{data.settings.noBirthInfoText}</p>
             <Link href="/mypage?focus=birth" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-purple-600/30 border border-purple-500/30 text-purple-200 text-xs hover:bg-purple-600/50 transition-colors">
               생년월일 등록하기 <ArrowRight className="w-3 h-3" />
@@ -323,7 +325,7 @@ export default function HeroCard({ today }: { today: string }) {
         )}
 
         {/* 다음 기운 안내 */}
-        <p className="text-white/20 text-xs text-center mt-4">⏰ 다음 기운은 내일 받을 수 있어요</p>
+        <p className="text-white/20 text-xs text-center mt-3">⏰ 다음 기운은 내일 받을 수 있어요</p>
       </div>
     </div>
   );
