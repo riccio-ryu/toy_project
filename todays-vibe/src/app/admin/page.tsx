@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { getAdminFirestore } from "@/lib/firebase/admin";
+import { todayKST } from "@/lib/utils/date";
 
 const CARDS = [
   {
@@ -45,44 +47,97 @@ const CARDS = [
   },
 ];
 
-export default function AdminDashboard() {
+async function getSummary() {
+  try {
+    const db = getAdminFirestore();
+    const today = todayKST();
+
+    const [usersSnap, usageSnap, tokenSnap] = await Promise.allSettled([
+      db.collection("users").count().get(),
+      db.collection("daily_usage").doc(today).get(),
+      db.collection("token_usage").doc(today).get(),
+    ]);
+
+    const totalUsers =
+      usersSnap.status === "fulfilled" ? usersSnap.value.data().count : null;
+
+    const usageData =
+      usageSnap.status === "fulfilled" && usageSnap.value.exists
+        ? (usageSnap.value.data() as Record<string, Record<string, number>>)
+        : null;
+    const todayUse = usageData
+      ? Object.values(usageData).reduce(
+          (sum, u) => sum + Object.values(u).reduce((s, v) => s + v, 0),
+          0
+        )
+      : null;
+
+    const tokenData =
+      tokenSnap.status === "fulfilled" && tokenSnap.value.exists
+        ? (tokenSnap.value.data() as Record<string, Record<string, number>>)
+        : null;
+    const todayTokens = tokenData
+      ? Object.values(tokenData).reduce(
+          (sum, u) =>
+            sum + ((u.input_tokens ?? 0) + (u.output_tokens ?? 0)),
+          0
+        )
+      : null;
+
+    return { totalUsers, todayUse, todayTokens };
+  } catch {
+    return { totalUsers: null, todayUse: null, todayTokens: null };
+  }
+}
+
+function fmt(v: number | null): string {
+  if (v === null) return "—";
+  if (v >= 10000) return (v / 10000).toFixed(1) + "만";
+  return v.toLocaleString();
+}
+
+export default async function AdminDashboard() {
+  const { totalUsers, todayUse, todayTokens } = await getSummary();
+
+  const SUMMARY = [
+    { label: "전체 회원", value: fmt(totalUsers) },
+    { label: "오늘 이용", value: fmt(todayUse) },
+    { label: "오늘 AI 호출", value: fmt(todayUse) },
+    { label: "오늘 소모 토큰", value: fmt(todayTokens) },
+  ];
+
   return (
-    <div className="p-8">
-      <div className="mb-8">
-        <h2 className="text-2xl font-bold text-white">대시보드</h2>
+    <div className="p-4 sm:p-8">
+      <div className="mb-6 sm:mb-8">
+        <h2 className="text-xl sm:text-2xl font-bold text-white">대시보드</h2>
         <p className="text-white/40 text-sm mt-1">서비스 전반을 관리합니다.</p>
       </div>
 
-      {/* Summary row — TODO: 실제 데이터 연동 */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
-        {[
-          { label: "전체 회원", value: "—" },
-          { label: "오늘 이용", value: "—" },
-          { label: "AI 호출 (오늘)", value: "—" },
-          { label: "소모 토큰 (오늘)", value: "—" },
-        ].map((s) => (
+      {/* 요약 카드 */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8 sm:mb-10">
+        {SUMMARY.map((s) => (
           <div
             key={s.label}
-            className="rounded-xl bg-white/5 border border-white/10 p-5"
+            className="rounded-xl bg-white/5 border border-white/10 p-4 sm:p-5"
           >
             <p className="text-white/40 text-xs mb-1">{s.label}</p>
-            <p className="text-white text-2xl font-bold">{s.value}</p>
+            <p className="text-white text-xl sm:text-2xl font-bold">{s.value}</p>
           </div>
         ))}
       </div>
 
-      {/* Nav cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      {/* 메뉴 카드 */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4">
         {CARDS.map((card) => (
           <Link key={card.href} href={card.href}>
             <div
-              className={`rounded-2xl bg-gradient-to-br ${card.color} backdrop-blur-sm border p-6 hover:-translate-y-0.5 transition-all duration-200 hover:shadow-lg`}
+              className={`rounded-2xl bg-gradient-to-br ${card.color} backdrop-blur-sm border p-5 sm:p-6 hover:-translate-y-0.5 transition-all duration-200 hover:shadow-lg`}
             >
-              <div className="text-4xl mb-3">{card.icon}</div>
-              <h3 className="text-white font-semibold text-base mb-1">
+              <div className="text-3xl sm:text-4xl mb-2 sm:mb-3">{card.icon}</div>
+              <h3 className="text-white font-semibold text-sm sm:text-base mb-1">
                 {card.label}
               </h3>
-              <p className="text-white/50 text-sm">{card.desc}</p>
+              <p className="text-white/50 text-xs sm:text-sm">{card.desc}</p>
             </div>
           </Link>
         ))}
