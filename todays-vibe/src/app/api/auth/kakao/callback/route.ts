@@ -56,13 +56,12 @@ export async function GET(req: NextRequest) {
     // 3. Firebase Custom Token 생성
     const uid = `kakao:${userData.id}`;
     const email = userData.kakao_account?.email ?? "";
-    if (!email) {
-      return NextResponse.redirect(new URL("/login?error=email_required", req.url));
-    }
     const displayName = userData.kakao_account?.profile?.nickname ?? "";
     const photoURL = userData.kakao_account?.profile?.profile_image_url ?? "";
 
-    await upsertOAuthUser(uid, { email, displayName, photoURL });
+    if (email) {
+      await upsertOAuthUser(uid, { email, displayName, photoURL });
+    }
 
     const customToken = await createCustomToken(uid, {
       provider: "kakao",
