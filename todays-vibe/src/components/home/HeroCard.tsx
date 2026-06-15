@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
-// ─── 달 위상 계산 ──────────────────────────────────────────────────────────────
+// ─── 달 위상 ──────────────────────────────────────────────────────────────────
 
 function julianDay(year: number, month: number, day: number): number {
   const y = month <= 2 ? year - 1 : year;
@@ -21,7 +21,6 @@ function getMoonPhase(dateStr: string): { emoji: string; name: string } {
   const jd = julianDay(year, month, day);
   const cycle = 29.53058867;
   const age = ((jd - 2451549.5) % cycle + cycle) % cycle;
-
   if (age < 1.85)  return { emoji: "🌑", name: "새달" };
   if (age < 7.38)  return { emoji: "🌒", name: "초승달" };
   if (age < 11.08) return { emoji: "🌓", name: "상현달" };
@@ -32,7 +31,18 @@ function getMoonPhase(dateStr: string): { emoji: string; name: string } {
   return { emoji: "🌘", name: "그믐달" };
 }
 
-// ─── 행운 정보 계산 ────────────────────────────────────────────────────────────
+const MOON_ENERGY: Record<string, string> = {
+  "새달":   "새로운 시작",
+  "초승달": "차오르는 기운",
+  "상현달": "나아가는 기운",
+  "상현망": "무르익는 기운",
+  "보름달": "충만한 기운",
+  "하현망": "내려놓는 기운",
+  "하현달": "정리하는 기운",
+  "그믐달": "마무리의 기운",
+};
+
+// ─── 행운 정보 ────────────────────────────────────────────────────────────────
 
 function lcg(seed: number): number {
   return ((seed * 1664525 + 1013904223) >>> 0) / 4294967295;
@@ -50,20 +60,44 @@ const LUCKY_COLORS = [
   { ko: "흰색", hex: "#e5e7eb" },
 ];
 
-function getLuckyInfo(dateStr: string): { number: number; color: { ko: string; hex: string } } {
+const DIRECTIONS = ["동(東)", "서(西)", "남(南)", "북(北)", "동북(東北)", "동남(東南)", "서북(西北)", "서남(西南)"];
+
+const KEYWORD_POOL = [
+  "시작", "연결", "성장", "치유", "도약", "변화", "창조", "소통",
+  "균형", "집중", "인연", "감사", "용기", "직감", "흐름", "쉼",
+  "기회", "따뜻함", "정돈", "자유", "신뢰", "통찰", "비움", "지혜",
+];
+
+function getLuckyInfo(dateStr: string) {
   const seed = parseInt(dateStr, 10);
-  const number = Math.floor(1 + lcg(seed + 3) * 9);
-  const colorIdx = Math.floor(lcg(seed + 17) * LUCKY_COLORS.length);
-  return { number, color: LUCKY_COLORS[colorIdx] };
+  const number    = Math.floor(1 + lcg(seed + 3)  * 9);
+  const colorIdx  = Math.floor(lcg(seed + 17) * LUCKY_COLORS.length);
+  const dirIdx    = Math.floor(lcg(seed + 31) * DIRECTIONS.length);
+  return { number, color: LUCKY_COLORS[colorIdx], direction: DIRECTIONS[dirIdx] };
 }
 
-// ─── 기타 유틸 ────────────────────────────────────────────────────────────────
+function getKeywords(dateStr: string): [string, string] {
+  const seed = parseInt(dateStr, 10);
+  const n = KEYWORD_POOL.length;
+  const i1 = Math.floor(lcg(seed + 41) * n);
+  const i2 = (Math.floor(lcg(seed + 53) * (n - 1)) + i1 + 1) % n;
+  return [KEYWORD_POOL[i1], KEYWORD_POOL[i2 % n]];
+}
+
+function formatDateKo(dateStr: string): string {
+  const y = dateStr.slice(0, 4);
+  const m = parseInt(dateStr.slice(4, 6));
+  const d = parseInt(dateStr.slice(6, 8));
+  return `${y}년 ${m}월 ${d}일`;
+}
 
 function scoreColor(score: number): string {
   if (score >= 85) return "text-yellow-300";
   if (score >= 75) return "text-emerald-300";
   return "text-blue-300";
 }
+
+// ─── 타입 ─────────────────────────────────────────────────────────────────────
 
 interface HeroCardSettings {
   notLoggedInText: string;
@@ -74,44 +108,8 @@ interface DailyHeroData {
   state: "not_logged_in" | "no_birth_info" | "ready";
   score?: number;
   message?: string;
-  stars?: [number, number, number];
   isAI?: boolean;
   settings: HeroCardSettings;
-}
-
-const FORTUNE_ROWS = [
-  { label: "연애운", href: "/love-fortune" },
-  { label: "재물운", href: "/wealth-fortune" },
-  { label: "건강운", href: "/health-fortune" },
-];
-
-// ─── 달/행운 스트립 ───────────────────────────────────────────────────────────
-
-function LuckyStrip({ today }: { today: string }) {
-  const moon = getMoonPhase(today);
-  const lucky = getLuckyInfo(today);
-
-  return (
-    <div className="mt-5 pt-4 border-t border-white/8 flex items-center gap-3 flex-wrap">
-      <span className="text-white/30 text-xs flex items-center gap-1.5">
-        <span className="text-base leading-none">{moon.emoji}</span>
-        <span>{moon.name}</span>
-      </span>
-      <span className="text-white/15 text-xs">·</span>
-      <span className="text-white/30 text-xs">
-        행운의 숫자{" "}
-        <span className="text-white/55 font-semibold">{lucky.number}</span>
-      </span>
-      <span className="text-white/15 text-xs">·</span>
-      <span className="text-white/30 text-xs flex items-center gap-1">
-        <span
-          className="inline-block w-2.5 h-2.5 rounded-full"
-          style={{ backgroundColor: lucky.color.hex }}
-        />
-        <span>{lucky.color.ko}</span>
-      </span>
-    </div>
-  );
 }
 
 // ─── 배경 장식 ────────────────────────────────────────────────────────────────
@@ -129,32 +127,13 @@ const SPARKLE_POSITIONS = [
 function BgDecorations() {
   return (
     <div className="absolute inset-0 pointer-events-none select-none overflow-hidden" aria-hidden>
-      {/* 별 파티클 */}
       {SPARKLE_POSITIONS.map((pos, i) => (
-        <span
-          key={i}
-          className={`absolute text-white/[0.06] ${pos.size}`}
-          style={{ left: pos.x, top: pos.y }}
-        >
-          ✦
-        </span>
+        <span key={i} className={`absolute text-white/[0.06] ${pos.size}`} style={{ left: pos.x, top: pos.y }}>✦</span>
       ))}
-      {/* 별자리 연결선 암시 — 매우 희미한 점들 */}
-      <svg
-        className="absolute inset-0 w-full h-full"
-        style={{ opacity: 0.04 }}
-        aria-hidden
-      >
+      <svg className="absolute inset-0 w-full h-full" style={{ opacity: 0.04 }} aria-hidden>
         <line x1="8%" y1="18%" x2="25%" y2="82%" stroke="white" strokeWidth="0.5" />
         <line x1="82%" y1="12%" x2="65%" y2="72%" stroke="white" strokeWidth="0.5" />
         <line x1="45%" y1="8%" x2="82%" y2="12%" stroke="white" strokeWidth="0.5" />
-        <circle cx="8%"  cy="18%" r="1.5" fill="white" />
-        <circle cx="82%" cy="12%" r="1.5" fill="white" />
-        <circle cx="65%" cy="72%" r="1"   fill="white" />
-        <circle cx="25%" cy="82%" r="1"   fill="white" />
-        <circle cx="45%" cy="8%"  r="1.5" fill="white" />
-        <circle cx="15%" cy="50%" r="1"   fill="white" />
-        <circle cx="92%" cy="55%" r="1"   fill="white" />
       </svg>
     </div>
   );
@@ -164,7 +143,9 @@ function BgDecorations() {
 
 export default function HeroCard({ today }: { today: string }) {
   const [data, setData] = useState<DailyHeroData | null>(null);
+  const [viewState, setViewState] = useState<"prompt" | "receiving" | "result">("prompt");
 
+  // API 데이터 fetch
   useEffect(() => {
     fetch("/api/user/daily-hero")
       .then((r) => r.json())
@@ -172,142 +153,177 @@ export default function HeroCard({ today }: { today: string }) {
       .catch(() => {});
   }, [today]);
 
-  // ── 로딩 ────────────────────────────────────────────────────────────────────
+  // localStorage로 오늘 이미 받았으면 바로 결과 표시
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      if (localStorage.getItem(`fortune_received_${today}`)) {
+        setViewState("result");
+      }
+    }
+  }, [today]);
+
+  function handleReceive() {
+    setViewState("receiving");
+    localStorage.setItem(`fortune_received_${today}`, "1");
+    setTimeout(() => setViewState("result"), 700);
+  }
+
+  const moon     = getMoonPhase(today);
+  const lucky    = getLuckyInfo(today);
+  const keywords = getKeywords(today);
+  const dateKo   = formatDateKo(today);
+  const state    = data?.state;
+  const message  = data?.message;
+
+  const cardClass = "relative mb-8 rounded-2xl border border-white/10 bg-gradient-to-br from-purple-900/40 via-indigo-900/25 to-blue-900/20 overflow-hidden";
+
+  // ── 로딩 ──────────────────────────────────────────────────────────────────
   if (!data) {
     return (
-      <div className="relative mb-8 rounded-2xl border border-white/10 bg-gradient-to-br from-purple-900/40 via-indigo-900/25 to-blue-900/20 overflow-hidden">
+      <div className={cardClass}>
         <BgDecorations />
-        <div className="relative px-4 py-4 sm:px-5 sm:py-6">
-          <p className="text-purple-300/60 text-xs font-semibold uppercase tracking-widest mb-3 sm:mb-4">
-            ✨ 오늘의 운세
-          </p>
-          <div className="animate-pulse space-y-3">
-            <div className="h-12 w-24 bg-white/10 rounded-lg" />
-            <div className="h-4 w-3/4 bg-white/8 rounded" />
-            <div className="h-4 w-1/2 bg-white/8 rounded" />
+        <div className="relative px-4 py-10 sm:px-5 text-center">
+          <div className="text-5xl mb-4 animate-pulse">{moon.emoji}</div>
+          <div className="animate-pulse space-y-2 max-w-xs mx-auto">
+            <div className="h-5 bg-white/10 rounded w-48 mx-auto" />
+            <div className="h-3 bg-white/6 rounded w-36 mx-auto" />
           </div>
-          <LuckyStrip today={today} />
         </div>
       </div>
     );
   }
 
-  const { state, score, message, stars, isAI, settings } = data;
+  // ── 기운 받기 전 ──────────────────────────────────────────────────────────
+  if (viewState === "prompt") {
+    return (
+      <div className={cardClass}>
+        <BgDecorations />
+        <div className="relative px-4 py-10 sm:px-6 text-center">
+          <div className="text-5xl mb-4">{moon.emoji}</div>
+          <h3 className="text-white font-bold text-xl mb-1">오늘의 기운이 도착했어요</h3>
+          <p className="text-white/40 text-sm mb-7">아직 받지 않았어요 · 하루 한 번 무료</p>
+          <button
+            onClick={handleReceive}
+            className="inline-flex items-center gap-2 px-7 py-3 rounded-full bg-purple-600/50 border border-purple-500/50 text-purple-100 text-sm font-semibold hover:bg-purple-600/70 transition-all active:scale-95"
+          >
+            ✨ 오늘의 기운 받기
+          </button>
+        </div>
+      </div>
+    );
+  }
 
+  // ── 받는 중 애니메이션 ────────────────────────────────────────────────────
+  if (viewState === "receiving") {
+    return (
+      <div className={cardClass}>
+        <BgDecorations />
+        <div className="relative px-4 py-10 text-center">
+          <div className="text-5xl mb-4 animate-pulse">{moon.emoji}</div>
+          <p className="text-white/50 text-sm">기운을 받는 중...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // ── 결과 ──────────────────────────────────────────────────────────────────
   return (
-    <div className="relative mb-8 rounded-2xl border border-white/10 bg-gradient-to-br from-purple-900/40 via-indigo-900/25 to-blue-900/20 overflow-hidden">
+    <div className={cardClass}>
       <BgDecorations />
+      <div className="relative px-4 py-5 sm:px-5 sm:py-6">
 
-      <div className="relative px-4 py-4 sm:px-5 sm:py-6">
-        <p className="text-purple-300/60 text-xs font-semibold uppercase tracking-widest mb-3 sm:mb-4">
-          ✨ 오늘의 운세
-        </p>
+        {/* 달 위상 헤더 */}
+        <div className="text-center mb-5">
+          <div className="text-4xl mb-2">{moon.emoji}</div>
+          <h3 className="text-white font-bold text-base">
+            {moon.name}·{MOON_ENERGY[moon.name] ?? "오늘의 기운"}
+          </h3>
+          <p className="text-white/30 text-xs mt-0.5">{dateKo}</p>
+        </div>
 
-        {/* ── 미로그인 ─────────────────────────────────────────────────────── */}
-        {state === "not_logged_in" && (
-          <>
-            <div className="flex items-end gap-1.5 mb-2">
-              <span className="text-4xl sm:text-5xl font-bold leading-none text-white/70 blur-sm select-none">82</span>
-              <span className="text-white/35 text-base sm:text-lg mb-1 blur-sm select-none">점</span>
-            </div>
-            <p className="text-white/60 text-sm mb-4 sm:mb-5 leading-relaxed blur-sm select-none">
-              오늘은 새로운 기회가 찾아오는 날입니다.
-            </p>
-            <div className="space-y-2 sm:space-y-2.5 mb-4 sm:mb-5">
-              {FORTUNE_ROWS.map(({ label }) => (
-                <div key={label} className="flex items-center gap-3">
-                  <span className="text-white/40 text-xs w-12 blur-sm select-none">{label}</span>
-                  <span className="text-yellow-400/75 text-sm tracking-widest blur-sm select-none">
-                    ★★★★☆
-                  </span>
-                </div>
-              ))}
-            </div>
-            <p className="text-white/40 text-xs mb-3 leading-relaxed">
-              {settings.notLoggedInText}
-            </p>
-            <Link
-              href="/login"
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-purple-600/40 border border-purple-500/30 text-purple-200 text-xs font-medium hover:bg-purple-600/60 transition-colors"
-            >
-              로그인하기 <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
-            <LuckyStrip today={today} />
-          </>
+        {/* 행운 3종 */}
+        <div className="grid grid-cols-3 gap-2 mb-4">
+          <div className="rounded-xl bg-white/5 border border-white/8 p-3 text-center">
+            <p className="text-white/35 text-[10px] mb-2">행운의 색</p>
+            <div className="w-5 h-5 rounded-full mx-auto mb-1.5" style={{ backgroundColor: lucky.color.hex }} />
+            <p className="text-white text-xs font-semibold">{lucky.color.ko}</p>
+          </div>
+          <div className="rounded-xl bg-white/5 border border-white/8 p-3 text-center">
+            <p className="text-white/35 text-[10px] mb-2">행운의 숫자</p>
+            <p className="text-white text-2xl font-bold leading-none mb-1">{lucky.number}</p>
+          </div>
+          <div className="rounded-xl bg-white/5 border border-white/8 p-3 text-center">
+            <p className="text-white/35 text-[10px] mb-2">방위</p>
+            <p className="text-white text-xs font-semibold mt-2">{lucky.direction}</p>
+          </div>
+        </div>
+
+        {/* 키워드 */}
+        <div className="flex gap-2 justify-center mb-4">
+          {keywords.map((k) => (
+            <span key={k} className="px-3 py-1 rounded-full bg-purple-600/20 border border-purple-500/25 text-purple-300 text-xs font-medium">
+              {k}
+            </span>
+          ))}
+        </div>
+
+        {/* 메시지 */}
+        {message && (
+          <p className="text-white/60 text-sm text-center leading-relaxed mb-4 px-2">
+            "{message}"
+          </p>
         )}
 
-        {/* ── 생년월일 미등록 ───────────────────────────────────────────── */}
-        {state === "no_birth_info" && (
-          <>
-            <div className="flex items-end gap-1.5 mb-2">
-              <span className="text-4xl sm:text-5xl font-bold leading-none text-white/70 blur-sm select-none">82</span>
-              <span className="text-white/35 text-base sm:text-lg mb-1 blur-sm select-none">점</span>
-            </div>
-            <p className="text-white/60 text-sm mb-4 sm:mb-5 leading-relaxed blur-sm select-none">
-              생년월일을 등록하면 오늘의 운세를 확인할 수 있어요.
-            </p>
-            <div className="space-y-2 sm:space-y-2.5 mb-4 sm:mb-5">
-              {FORTUNE_ROWS.map(({ label }) => (
-                <div key={label} className="flex items-center gap-3">
-                  <span className="text-white/40 text-xs w-12 blur-sm select-none">{label}</span>
-                  <span className="text-yellow-400/75 text-sm tracking-widest blur-sm select-none">★★★☆☆</span>
-                </div>
-              ))}
-            </div>
-            <p className="text-white/40 text-xs mb-3 leading-relaxed">
-              {settings.noBirthInfoText}
-            </p>
-            <Link
-              href="/mypage?focus=birth"
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-purple-600/40 border border-purple-500/30 text-purple-200 text-xs font-medium hover:bg-purple-600/60 transition-colors"
-            >
-              생년월일 등록하기 <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
-            <LuckyStrip today={today} />
-          </>
-        )}
-
-        {/* ── 운세 결과 ────────────────────────────────────────────────── */}
-        {state === "ready" && score !== undefined && stars && message && (
-          <>
-            <div className="flex items-end gap-1.5 mb-2">
-              <span className={`text-4xl sm:text-5xl font-bold leading-none ${scoreColor(score)}`}>
-                {score}
-              </span>
-              <span className="text-white/35 text-base sm:text-lg mb-1">점</span>
-              {isAI && (
-                <span className="ml-1.5 mb-1.5 text-[10px] font-medium text-purple-300 bg-purple-900/50 px-1.5 py-0.5 rounded-full">
-                  AI
-                </span>
+        {/* AI 점수 뱃지 (생년월일 있는 유저) */}
+        {state === "ready" && data.score !== undefined && (
+          <div className="flex justify-center mb-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10">
+              {data.isAI && (
+                <span className="text-[10px] font-medium text-purple-300 bg-purple-900/50 px-1.5 py-0.5 rounded-full">AI</span>
               )}
+              <span className={`text-sm font-bold ${scoreColor(data.score)}`}>{data.score}점</span>
             </div>
-
-            <p className="text-white/60 text-sm mb-4 sm:mb-5 leading-relaxed">{message}</p>
-
-            <div className="space-y-2 sm:space-y-2.5 mb-4 sm:mb-5">
-              {FORTUNE_ROWS.map(({ label, href }, i) => (
-                <div key={label} className="flex items-center gap-3">
-                  <span className="text-white/40 text-xs w-12">{label}</span>
-                  <Link
-                    href={href}
-                    className="text-yellow-400/75 text-sm hover:text-yellow-300 transition-colors tracking-widest"
-                  >
-                    {"★".repeat(stars[i])}{"☆".repeat(5 - stars[i])}
-                  </Link>
-                </div>
-              ))}
-            </div>
-
-            <Link
-              href="/saju"
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-purple-600/40 border border-purple-500/30 text-purple-200 text-xs font-medium hover:bg-purple-600/60 transition-colors"
-            >
-              사주로 자세히 보기 <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
-
-            <LuckyStrip today={today} />
-          </>
+          </div>
         )}
+
+        {/* 더 깊이 읽기 */}
+        <div className="border-t border-white/8 pt-4">
+          <p className="text-white/30 text-xs text-center mb-3">이 기운을 더 깊이 읽어볼까요?</p>
+          <div className="grid grid-cols-3 gap-2">
+            {[
+              { href: "/saju",        label: "사주",   emoji: "📜" },
+              { href: "/tarot-3cards",label: "타로",   emoji: "🃏" },
+              { href: "/zodiac",      label: "별자리", emoji: "✨" },
+            ].map((item) => (
+              <Link key={item.href} href={item.href}
+                className="flex flex-col items-center gap-1 py-2.5 rounded-xl bg-white/5 border border-white/8 hover:bg-white/10 transition-colors">
+                <span className="text-lg">{item.emoji}</span>
+                <span className="text-white/55 text-xs">{item.label}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        {/* 로그인 / 생년월일 CTA */}
+        {state === "not_logged_in" && (
+          <div className="mt-4 text-center">
+            <p className="text-white/25 text-xs mb-2">{data.settings.notLoggedInText}</p>
+            <Link href="/login" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-purple-600/30 border border-purple-500/30 text-purple-200 text-xs hover:bg-purple-600/50 transition-colors">
+              로그인하기 <ArrowRight className="w-3 h-3" />
+            </Link>
+          </div>
+        )}
+        {state === "no_birth_info" && (
+          <div className="mt-4 text-center">
+            <p className="text-white/25 text-xs mb-2">{data.settings.noBirthInfoText}</p>
+            <Link href="/mypage?focus=birth" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-purple-600/30 border border-purple-500/30 text-purple-200 text-xs hover:bg-purple-600/50 transition-colors">
+              생년월일 등록하기 <ArrowRight className="w-3 h-3" />
+            </Link>
+          </div>
+        )}
+
+        {/* 다음 기운 안내 */}
+        <p className="text-white/20 text-xs text-center mt-4">⏰ 다음 기운은 내일 받을 수 있어요</p>
       </div>
     </div>
   );
