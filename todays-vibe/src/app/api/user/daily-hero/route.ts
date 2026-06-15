@@ -281,9 +281,12 @@ export async function GET(req: NextRequest) {
     // keep defaults
   }
 
-  // Check auth
+  // Check auth — 비로그인도 게스트 seed 데이터 반환 (하루 한 번 기운 받기 무료)
   const cookie = req.cookies.get(SESSION_COOKIE)?.value;
-  if (!cookie) return Response.json({ state: "not_logged_in", settings });
+  if (!cookie) {
+    const data = generateSeedBased("__guest__", date);
+    return Response.json({ state: "not_logged_in", ...data, settings });
+  }
 
   const session = await verifySessionToken(cookie);
   if (!session) return Response.json({ state: "not_logged_in", settings });

@@ -37,7 +37,7 @@ export default function Header() {
           alt="오늘운"
           width={108}
           height={36}
-          style={{ height: "auto" }}
+          style={{ width: "108px", height: "auto" }}
           priority
         />
       </Link>

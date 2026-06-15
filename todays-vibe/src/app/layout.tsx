@@ -23,7 +23,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "오늘운 | 당신만을 위한 오늘의 운세",
+  title: "오늘운 | 오늘, 우주가 당신에게 말을 걸어요",
   description:
     "사주, 타로, 꿈해몽 등 33가지 운세로 당신의 오늘을 가장 깊이 읽어드립니다.",
   other: {
