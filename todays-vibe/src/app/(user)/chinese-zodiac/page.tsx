@@ -15,7 +15,7 @@ export default function ChineseZodiacPage() {
         {/* 헤더 */}
         <div className="text-center mb-10">
           <p className="text-white/40 text-sm mb-2">띠별 운세</p>
-          <h1 className="text-3xl font-bold text-white mb-3">🐉 나의 띠 운세</h1>
+          <h1 className="text-3xl font-bold text-white mb-3">나의 띠 운세</h1>
           <p className="text-white/50 text-sm">태어난 해의 띠를 선택하세요</p>
           {thisYearAnimal && (
             <div className="mt-3 inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-4 py-1.5">

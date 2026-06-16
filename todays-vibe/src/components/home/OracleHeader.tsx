@@ -35,7 +35,7 @@ export default function OracleHeader() {
   return (
     <div className="text-center mb-8 sm:mb-12">
       <p className="text-purple-400/70 text-xs font-semibold tracking-widest uppercase mb-3">✦ Today&apos;s Vibe ✦</p>
-      <h1 className="oracle-breathe text-2xl sm:text-4xl font-bold text-white mb-2 sm:mb-3 leading-snug">
+      <h1 className="oracle-breathe text-lg sm:text-4xl font-bold text-white mb-2 sm:mb-3 leading-snug">
         {set.title}
       </h1>
       <p className="oracle-breathe text-purple-300/80 text-sm sm:text-base" style={{ animationDelay: "0.8s" }}>

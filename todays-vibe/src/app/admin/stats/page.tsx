@@ -150,10 +150,10 @@ export default function AdminStatsPage() {
           </button>
         ))}
 
-        <span className="text-white/20 text-sm px-1">|</span>
+        <span className="text-white/20 text-sm px-1 hidden sm:inline">|</span>
 
         {/* 커스텀 날짜 범위 */}
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <input
             type="date"
             value={customStart}

@@ -56,7 +56,7 @@ export default function NameFortunePage() {
         isLoading={isLoading}
         onReset={reset}
         title="성명학 결과"
-        icon="✍️"
+        icon=""
       />
     );
   }
@@ -66,7 +66,6 @@ export default function NameFortunePage() {
   return (
     <div className="max-w-xl mx-auto px-4 py-10">
       <div className="text-center mb-8">
-        <span className="text-5xl block mb-3">✍️</span>
         <h1 className="text-white font-bold text-2xl">성명학</h1>
         <p className="text-white/50 text-sm mt-2">이름 획수와 음양오행으로 풀어보는 나의 운세</p>
       </div>
@@ -160,7 +159,7 @@ export default function NameFortunePage() {
         >
           {fortuneStatus?.exhausted
             ? "오늘 성명학 분석을 이미 이용했어요"
-            : "✍️ 내 이름 분석하기"}
+            : "내 이름 분석하기"}
         </button>
       </form>
 

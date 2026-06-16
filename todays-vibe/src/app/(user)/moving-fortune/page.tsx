@@ -81,7 +81,7 @@ export default function MovingFortunePage() {
           isLoading={isLoading}
           onReset={() => { reset(); setDirection(""); setQuestion(""); }}
           title="이사/방위 길흉"
-          icon="🏡"
+          icon=""
         />
       </div>
     );
@@ -93,7 +93,6 @@ export default function MovingFortunePage() {
   return (
     <div className="max-w-xl mx-auto px-4 py-10">
       <div className="text-center mb-8">
-        <span className="text-5xl block mb-3">🏡</span>
         <h1 className="text-white font-bold text-2xl">이사/방위 길흉</h1>
         <p className="text-white/50 text-sm mt-2">풍수·사주 기반 이사 방향 AI 분석</p>
       </div>
@@ -240,7 +239,7 @@ export default function MovingFortunePage() {
         >
           {fortuneStatus?.exhausted
             ? "오늘 이사/방위 분석을 이미 이용했어요"
-            : `🏡 ${direction || "방향 선택 후"} 이사 운 분석하기`}
+            : `${direction || "방향 선택 후"} 이사 운 분석하기`}
         </button>
       </form>
 

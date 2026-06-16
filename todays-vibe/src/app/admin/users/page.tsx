@@ -463,7 +463,8 @@ export default function AdminUsersPage() {
 
       {/* 테이블 */}
       <div className="rounded-xl border border-white/10 overflow-hidden">
-        <table className="w-full text-sm">
+        <div className="overflow-x-auto">
+        <table className="w-full text-sm min-w-[640px]">
           <thead>
             <tr className="bg-white/5 border-b border-white/10">
               {SORT_COLS.map((col) => (
@@ -564,6 +565,7 @@ export default function AdminUsersPage() {
             )}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   );

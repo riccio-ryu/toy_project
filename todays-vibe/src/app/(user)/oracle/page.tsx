@@ -26,7 +26,6 @@ export default function OraclePage() {
   return (
     <div className="max-w-lg mx-auto px-4 py-10">
       <div className="text-center mb-10">
-        <span className="text-5xl block mb-3">🌈</span>
         <h1 className="text-white font-bold text-2xl">오라클 카드</h1>
         <p className="text-white/50 text-sm mt-2">오늘 나에게 필요한 메시지를 받아보세요</p>
       </div>
@@ -54,8 +53,7 @@ export default function OraclePage() {
                   <div className="absolute top-1 left-1 w-[160px] h-[220px] rounded-2xl bg-white/5 border border-white/10" />
                   <div className="w-[160px] h-[220px] rounded-2xl bg-gradient-to-br from-violet-700 to-purple-900 border border-purple-500/30 flex items-center justify-center shadow-xl relative group-hover:scale-105 transition-transform duration-300">
                     <div className="text-center">
-                      <span className="text-4xl block mb-2">✨</span>
-                      <p className="text-purple-300 text-xs">카드 뽑기</p>
+                      <p className="text-purple-300 text-sm font-medium">카드 뽑기</p>
                     </div>
                   </div>
                 </div>

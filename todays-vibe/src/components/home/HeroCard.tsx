@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, BookOpen, Layers, Star } from "lucide-react";
 
 // ─── 달 위상 ──────────────────────────────────────────────────────────────────
 
@@ -182,8 +182,8 @@ export default function HeroCard({ today }: { today: string }) {
     return (
       <div className={cardClass}>
         <BgDecorations />
-        <div className="relative px-4 py-10 sm:px-5 text-center">
-          <div className="text-5xl mb-4 animate-pulse">{moon.emoji}</div>
+        <div className="relative px-4 py-6 sm:px-5 sm:py-10 text-center">
+          <div className="text-4xl sm:text-5xl mb-3 sm:mb-4 animate-pulse">{moon.emoji}</div>
           <div className="animate-pulse space-y-2 max-w-xs mx-auto">
             <div className="h-5 bg-white/10 rounded w-48 mx-auto" />
             <div className="h-3 bg-white/6 rounded w-36 mx-auto" />
@@ -198,15 +198,15 @@ export default function HeroCard({ today }: { today: string }) {
     return (
       <div className={cardClass}>
         <BgDecorations />
-        <div className="relative px-4 py-10 sm:px-6 text-center">
-          <div className="text-5xl mb-4">{moon.emoji}</div>
+        <div className="relative px-4 py-6 sm:px-6 sm:py-10 text-center">
+          <div className="text-4xl sm:text-5xl mb-3 sm:mb-4">{moon.emoji}</div>
           <h3 className="text-white font-bold text-xl mb-1">오늘의 기운이 도착했어요</h3>
-          <p className="text-white/40 text-sm mb-7">아직 받지 않았어요 · 하루 한 번 무료</p>
+          <p className="text-white/40 text-sm mb-5 sm:mb-7">아직 받지 않았어요 · 하루 한 번 무료</p>
           <button
             onClick={handleReceive}
             className="inline-flex items-center gap-2 px-7 py-3 rounded-full bg-purple-600/50 border border-purple-500/50 text-purple-100 text-sm font-semibold hover:bg-purple-600/70 transition-all active:scale-95"
           >
-            ✨ 오늘의 기운 받기
+            오늘의 기운 받기
           </button>
         </div>
       </div>
@@ -218,8 +218,8 @@ export default function HeroCard({ today }: { today: string }) {
     return (
       <div className={cardClass}>
         <BgDecorations />
-        <div className="relative px-4 py-10 text-center">
-          <div className="text-5xl mb-4 animate-pulse">{moon.emoji}</div>
+        <div className="relative px-4 py-6 sm:py-10 text-center">
+          <div className="text-4xl sm:text-5xl mb-3 sm:mb-4 animate-pulse">{moon.emoji}</div>
           <p className="text-white/50 text-sm">기운을 받는 중...</p>
         </div>
       </div>
@@ -292,13 +292,13 @@ export default function HeroCard({ today }: { today: string }) {
             <p className="text-white/30 text-xs text-center mb-3">이 기운을 더 깊이 읽어볼까요?</p>
             <div className="grid grid-cols-3 gap-2">
               {[
-                { href: "/saju",        label: "사주",   emoji: "📜" },
-                { href: "/tarot-3cards",label: "타로",   emoji: "🃏" },
-                { href: "/zodiac",      label: "별자리", emoji: "✨" },
+                { href: "/saju",         label: "사주",   icon: <BookOpen className="w-4 h-4" /> },
+                { href: "/tarot-3cards", label: "타로",   icon: <Layers   className="w-4 h-4" /> },
+                { href: "/zodiac",       label: "별자리", icon: <Star     className="w-4 h-4" /> },
               ].map((item) => (
                 <Link key={item.href} href={item.href}
-                  className="flex flex-col items-center gap-1 py-2.5 rounded-xl bg-white/5 border border-white/8 hover:bg-white/10 transition-colors">
-                  <span className="text-lg">{item.emoji}</span>
+                  className="flex flex-col items-center gap-1 py-2.5 rounded-xl bg-white/5 border border-white/8 hover:bg-white/10 transition-colors text-white/40 hover:text-white/60">
+                  {item.icon}
                   <span className="text-white/55 text-xs">{item.label}</span>
                 </Link>
               ))}

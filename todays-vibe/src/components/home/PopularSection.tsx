@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, TrendingUp } from "lucide-react";
 import type { MenuItem } from "@/types/menu";
 
 export default function PopularSection({ items }: { items: MenuItem[] }) {
@@ -7,8 +7,8 @@ export default function PopularSection({ items }: { items: MenuItem[] }) {
 
   return (
     <div className="mb-8">
-      <p className="text-white/35 text-xs font-semibold uppercase tracking-widest mb-3">
-        🔥 많이 보는 운세
+      <p className="flex items-center gap-1.5 text-white/35 text-xs font-semibold uppercase tracking-widest mb-3">
+        <TrendingUp className="w-3 h-3" /> 많이 보는 운세
       </p>
       <div className="grid grid-cols-2 gap-3">
         {items.map((item) => (

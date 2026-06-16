@@ -126,7 +126,7 @@ export default function NumerologyPage() {
           isLoading={isLoading}
           onReset={handleReset}
           title="생일 숫자 운세 결과"
-          icon="🔢"
+          icon=""
         />
       </div>
     );
@@ -139,7 +139,6 @@ export default function NumerologyPage() {
     <div className="max-w-xl mx-auto px-4 py-10">
       {/* 헤더 */}
       <div className="text-center mb-8">
-        <span className="text-5xl block mb-3">🔢</span>
         <h1 className="text-white font-bold text-2xl">생일 숫자 운세</h1>
         <p className="text-white/50 text-sm mt-2">생년월일 숫자로 풀어보는 나의 인생 에너지</p>
       </div>
@@ -245,7 +244,7 @@ export default function NumerologyPage() {
         >
           {fortuneStatus?.exhausted
             ? "오늘 생일 숫자 운세를 이미 이용했어요"
-            : "🔢 내 생명수 알아보기"}
+            : "내 생명수 알아보기"}
         </button>
       </form>
 
