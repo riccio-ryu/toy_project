@@ -8,7 +8,7 @@ interface FortuneResultProps {
   isLoading: boolean;
   onReset: () => void;
   title: string;
-  icon: string;
+  icon?: string;
   fortuneType?: "tarot" | "saju" | "dream" | "default";
 }
 
@@ -91,7 +91,7 @@ export default function FortuneResult({
     <div ref={topRef} className="max-w-xl mx-auto px-4 py-8">
       {/* 헤더 */}
       <div className="text-center mb-6">
-        <div className="text-5xl mb-2">{icon}</div>
+        {icon && <div className="text-5xl mb-2">{icon}</div>}
         <h1 className="text-2xl font-bold text-white">{title}</h1>
       </div>
 

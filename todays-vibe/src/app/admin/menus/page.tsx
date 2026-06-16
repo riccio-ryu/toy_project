@@ -4,6 +4,9 @@ import { useState, useMemo, useEffect, useTransition } from "react";
 import fortunesData from "@/data/fortunes.json";
 import type { MenuItem, AccessLevel, Category, UsageLimits } from "@/types/menu";
 import {
+  Eye, EyeOff, Zap, Sparkles, FolderOpen, Settings, Loader2, Plus, ArrowUpDown,
+} from "lucide-react";
+import {
   getMenus,
   saveMenu,
   deleteMenusByIds,
@@ -88,7 +91,7 @@ function CategoryModal({
   onClose: () => void;
 }) {
   // 추가 폼
-  const [newIcon, setNewIcon] = useState("🌟");
+  const [newIcon, setNewIcon] = useState("");
   const [newName, setNewName] = useState("");
   const [newId, setNewId]     = useState("");
 
@@ -103,7 +106,7 @@ function CategoryModal({
   function handleAdd() {
     if (!canAdd) return;
     onAdd({ id: newId.trim(), name: newName.trim(), icon: newIcon, order: categories.length });
-    setNewIcon("🌟"); setNewName(""); setNewId("");
+    setNewIcon(""); setNewName(""); setNewId("");
   }
 
   function startEdit(cat: Category) {
@@ -351,7 +354,7 @@ function FortuneModal({
       ? { usageLimits: DEFAULT_LIMITS, ...initial }
       : {
           id: "",
-          icon: "✨",
+          icon: "",
           nameKo: "",
           description: "",
           category: categories[0]?.id ?? "",
@@ -524,7 +527,7 @@ function FortuneModal({
                           }
                         />
                         <span className="text-white/20 text-xs">
-                          {val === -1 ? "∞ 무제한" : val === 0 ? "🚫 차단" : `하루 ${val}회`}
+                          {val === -1 ? "∞ 무제한" : val === 0 ? "차단" : `하루 ${val}회`}
                         </span>
                       </>
                     )}
@@ -641,7 +644,7 @@ function QuickMenuModal({
         {/* Header */}
         <div className="px-6 pt-6 pb-4 border-b border-white/10 flex items-center justify-between shrink-0">
           <div>
-            <h3 className="text-white font-semibold">⚡ Quick Menu 설정</h3>
+            <h3 className="text-white font-semibold flex items-center gap-1.5"><Zap className="w-4 h-4" /> Quick Menu 설정</h3>
             <p className="text-white/40 text-xs mt-0.5">
               홈 상단에 노출할 메뉴를 선택하고 순서를 정하세요 (최대 {QUICK_MAX}개)
             </p>
@@ -759,7 +762,7 @@ function HeroCardModal({
         {/* Header */}
         <div className="px-6 pt-6 pb-4 border-b border-white/10 flex items-center justify-between shrink-0">
           <div>
-            <h3 className="text-white font-semibold">✨ 오늘의 운세 Hero 설정</h3>
+            <h3 className="text-white font-semibold flex items-center gap-1.5"><Sparkles className="w-4 h-4" /> 오늘의 운세 Hero 설정</h3>
             <p className="text-white/40 text-xs mt-0.5">홈 상단 운세 카드의 안내 문구를 수정합니다</p>
           </div>
           <button onClick={onClose} className="text-white/40 hover:text-white text-xl">✕</button>
@@ -940,7 +943,7 @@ function ReorderModal({
   }
 
   const tabs = [
-    { id: CAT_TAB, label: "카테고리 순서", icon: "📁" },
+    { id: CAT_TAB, label: "카테고리 순서", icon: "" },
     ...draftCats.map((c) => ({ id: c.id, label: c.name, icon: c.icon })),
   ];
 
@@ -968,7 +971,9 @@ function ReorderModal({
                   : "text-white/40 hover:text-white/70 hover:bg-white/5"
               }`}
             >
-              <span>{t.icon}</span>
+              {t.id === CAT_TAB
+                ? <FolderOpen className="w-3.5 h-3.5" />
+                : t.icon && <span>{t.icon}</span>}
               <span>{t.label}</span>
               {/* 변경된 탭 표시 */}
               {((t.id === CAT_TAB && catChanged) || (t.id !== CAT_TAB && changedMenuCats.has(t.id))) && (
@@ -1285,7 +1290,7 @@ export default function AdminMenusPage() {
   if (loading) {
     return (
       <div className="p-4 md:p-8 flex items-center gap-3 text-white/40">
-        <span className="animate-spin">⏳</span> 메뉴를 불러오는 중...
+        <Loader2 className="w-4 h-4 animate-spin" /> 메뉴를 불러오는 중...
       </div>
     );
   }
@@ -1319,13 +1324,13 @@ export default function AdminMenusPage() {
           onClick={() => patch(null, { ready: true })}
           className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs text-emerald-300 border border-emerald-800/60 hover:bg-emerald-900/20 transition-colors"
         >
-          👁 전체 노출
+          <Eye className="w-3 h-3" /> 전체 노출
         </button>
         <button
           onClick={() => patch(null, { ready: false })}
           className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs text-white/50 border border-white/10 hover:bg-white/5 transition-colors"
         >
-          🚫 전체 미노출
+          <EyeOff className="w-3 h-3" /> 전체 미노출
         </button>
 
         <div className="w-px h-5 bg-white/10 mx-0.5" />
@@ -1334,14 +1339,14 @@ export default function AdminMenusPage() {
           onClick={() => setEditRow("new")}
           className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs text-purple-300 border border-purple-800/60 hover:bg-purple-900/20 transition-colors"
         >
-          ＋ 메뉴 추가
+          <Plus className="w-3 h-3" /> 메뉴 추가
         </button>
 
         <button
           onClick={() => setShowQuickMenuModal(true)}
           className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs text-yellow-300 border border-yellow-800/60 hover:bg-yellow-900/20 transition-colors"
         >
-          ⚡ Quick Menu
+          <Zap className="w-3 h-3" /> Quick Menu
           {quickMenuIds.length > 0 && (
             <span className="bg-yellow-700/50 text-yellow-200 rounded-full px-1.5 text-[10px]">
               {quickMenuIds.length}
@@ -1353,7 +1358,7 @@ export default function AdminMenusPage() {
           onClick={() => setShowHeroCardModal(true)}
           className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs text-purple-300 border border-purple-800/60 hover:bg-purple-900/20 transition-colors"
         >
-          ✨ Hero 설정
+          <Sparkles className="w-3 h-3" /> Hero 설정
         </button>
 
         {hasSelection && (
@@ -1416,19 +1421,19 @@ export default function AdminMenusPage() {
           onClick={() => setShowReorderModal(true)}
           className="px-2.5 py-1.5 rounded-lg text-xs text-white/40 border border-white/10 hover:bg-white/5 transition-colors"
         >
-          ↕ 순서 변경
+          <ArrowUpDown className="w-3 h-3" /> 순서 변경
         </button>
         <button
           onClick={() => setShowCategoryModal(true)}
           className="px-2.5 py-1.5 rounded-lg text-xs text-white/40 border border-white/10 hover:bg-white/5 transition-colors"
         >
-          📁 카테고리
+          <FolderOpen className="w-3 h-3" /> 카테고리
         </button>
         <button
           onClick={() => setShowColModal(true)}
           className="px-2.5 py-1.5 rounded-lg text-xs text-white/40 border border-white/10 hover:bg-white/5 transition-colors"
         >
-          ⚙ 옵션
+          <Settings className="w-3 h-3" /> 옵션
         </button>
       </div>
 

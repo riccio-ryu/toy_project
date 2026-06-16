@@ -27,7 +27,7 @@ export default function NameCompatibilityPage() {
         isLoading={isLoading}
         onReset={reset}
         title="이름 궁합 결과"
-        icon="📝"
+        icon=""
       />
     );
   }
@@ -35,7 +35,6 @@ export default function NameCompatibilityPage() {
   return (
     <div className="max-w-xl mx-auto px-4 py-10">
       <div className="text-center mb-8">
-        <span className="text-5xl block mb-3">📝</span>
         <h1 className="text-white font-bold text-2xl">이름 궁합</h1>
         <p className="text-white/50 text-sm mt-2">두 사람의 이름으로 풀어보는 궁합</p>
       </div>
@@ -57,7 +56,7 @@ export default function NameCompatibilityPage() {
 
           <div className="flex items-center gap-2">
             <div className="flex-1 h-px bg-white/10" />
-            <span className="text-xl">📝</span>
+            <span className="text-white/20 text-xs">vs</span>
             <div className="flex-1 h-px bg-white/10" />
           </div>
 
@@ -79,7 +78,7 @@ export default function NameCompatibilityPage() {
         {name1 && name2 && (
           <div className="text-center py-3">
             <span className="text-white font-bold text-lg">{name1}</span>
-            <span className="text-white/40 mx-3">💕</span>
+            <span className="text-white/30 mx-3">×</span>
             <span className="text-white font-bold text-lg">{name2}</span>
           </div>
         )}
@@ -97,7 +96,7 @@ export default function NameCompatibilityPage() {
         >
           {fortuneStatus?.exhausted
             ? "오늘 이름 궁합을 이미 이용했어요"
-            : "📝 이름 궁합 보기"}
+            : "이름 궁합 보기"}
         </button>
       </form>
 

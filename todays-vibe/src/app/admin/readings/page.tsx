@@ -94,7 +94,7 @@ export default function AdminReadingsPage() {
       ]} />
 
       {/* 필터 바 */}
-      <div className="flex gap-3 mb-5">
+      <div className="flex flex-wrap gap-2 mb-5">
         <select
           value={typeFilter}
           onChange={(e) => setTypeFilter(e.target.value)}
@@ -132,7 +132,8 @@ export default function AdminReadingsPage() {
 
       {/* 테이블 */}
       <div className="rounded-xl border border-white/10 overflow-hidden">
-        <table className="w-full text-sm">
+        <div className="overflow-x-auto">
+        <table className="w-full text-sm min-w-[600px]">
           <thead>
             <tr className="bg-white/5 border-b border-white/10">
               {["타입", "userId", "일시", "결과 미리보기"].map((h) => (
@@ -220,6 +221,7 @@ export default function AdminReadingsPage() {
             )}
           </tbody>
         </table>
+        </div>
       </div>
 
       {!loading && !error && readings.length > 0 && (

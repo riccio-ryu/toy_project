@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Heart, Briefcase, DollarSign } from "lucide-react";
 import TarotCard from "@/components/tarot/TarotCard";
 import { drawCards, getCardMeaning, getSuitLabel, type DrawnCard } from "@/lib/tarot/utils";
 
@@ -148,21 +148,21 @@ export default function TarotDailyPage() {
                 <div className="grid grid-cols-3 gap-2">
                   {meaning.love && (
                     <div className="rounded-xl bg-white/5 border border-white/10 p-3 text-center">
-                      <p className="text-rose-300 text-lg mb-1">❤️</p>
+                      <Heart className="w-4 h-4 text-rose-300 mx-auto mb-1" />
                       <p className="text-white/40 text-[10px] mb-1">연애</p>
                       <p className="text-white/80 text-[11px] leading-relaxed">{meaning.love}</p>
                     </div>
                   )}
                   {meaning.career && (
                     <div className="rounded-xl bg-white/5 border border-white/10 p-3 text-center">
-                      <p className="text-blue-300 text-lg mb-1">💼</p>
+                      <Briefcase className="w-4 h-4 text-blue-300 mx-auto mb-1" />
                       <p className="text-white/40 text-[10px] mb-1">직장</p>
                       <p className="text-white/80 text-[11px] leading-relaxed">{meaning.career}</p>
                     </div>
                   )}
                   {meaning.finance && (
                     <div className="rounded-xl bg-white/5 border border-white/10 p-3 text-center">
-                      <p className="text-yellow-300 text-lg mb-1">💰</p>
+                      <DollarSign className="w-4 h-4 text-yellow-300 mx-auto mb-1" />
                       <p className="text-white/40 text-[10px] mb-1">재물</p>
                       <p className="text-white/80 text-[11px] leading-relaxed">{meaning.finance}</p>
                     </div>

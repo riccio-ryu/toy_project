@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useAuth } from "@/contexts/AuthContext";
 import { signOut } from "@/lib/firebase/auth";
+import { User, Settings } from "lucide-react";
 
 export default function Header() {
   const { user, loading, isAdmin } = useAuth();
@@ -29,15 +30,15 @@ export default function Header() {
   }
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-3 backdrop-blur-md bg-black/30 border-b border-white/10">
+    <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-[10px] backdrop-blur-md bg-black/30 border-b border-white/10">
       {/* Logo */}
       <Link href="/">
         <Image
           src="/brand/logo.svg"
           alt="오늘운"
-          width={108}
-          height={36}
-          style={{ width: "108px", height: "auto" }}
+          width={820}
+          height={400}
+          style={{ width: "80px", height: "auto" }}
           priority
         />
       </Link>
@@ -83,7 +84,7 @@ export default function Header() {
                     onClick={() => setOpen(false)}
                     className="flex items-center gap-2 px-4 py-2 text-sm text-white/80 hover:bg-white/5 transition-colors"
                   >
-                    <span>👤</span> 마이페이지
+                    <User className="w-3.5 h-3.5" /> 마이페이지
                   </Link>
                   {isAdmin && (
                     <>
@@ -93,7 +94,7 @@ export default function Header() {
                         onClick={() => setOpen(false)}
                         className="flex items-center gap-2 px-4 py-2 text-sm text-amber-400 hover:bg-white/5 transition-colors"
                       >
-                        <span>⚙️</span> 관리자 페이지
+                        <Settings className="w-3.5 h-3.5" /> 관리자 페이지
                       </Link>
                     </>
                   )}

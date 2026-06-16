@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Heart } from "lucide-react";
 import { useFortuneStream } from "@/lib/hooks/useFortuneStream";
 import { useFortuneStatus } from "@/lib/hooks/useFortuneStatus";
 import { type ZodiacCompatibilityInput } from "@/types/fortune";
@@ -56,7 +57,7 @@ export default function ZodiacCompatibilityPage() {
               <p className="text-white/60 text-xs mt-2">{year1}년생</p>
               <p className="text-white font-semibold text-sm">{zodiac1.ko}띠</p>
             </div>
-            <div className="text-white/30 text-3xl">💕</div>
+            <Heart className="w-5 h-5 text-white/25" />
             <div className="text-center">
               <span className="text-5xl block">{zodiac2.emoji}</span>
               <p className="text-white/60 text-xs mt-2">{year2}년생</p>
@@ -69,7 +70,7 @@ export default function ZodiacCompatibilityPage() {
           isLoading={isLoading}
           onReset={reset}
           title="띠 궁합 결과"
-          icon="🐲"
+          icon=""
         />
       </div>
     );
@@ -78,7 +79,6 @@ export default function ZodiacCompatibilityPage() {
   return (
     <div className="max-w-xl mx-auto px-4 py-10">
       <div className="text-center mb-8">
-        <span className="text-5xl block mb-3">🐲</span>
         <h1 className="text-white font-bold text-2xl">띠 궁합</h1>
         <p className="text-white/50 text-sm mt-2">12간지로 풀어보는 두 사람의 궁합</p>
       </div>
@@ -111,7 +111,7 @@ export default function ZodiacCompatibilityPage() {
 
           <div className="flex items-center gap-2">
             <div className="flex-1 h-px bg-white/10" />
-            <span className="text-xl">🐲</span>
+            <span className="text-white/20 text-xs">vs</span>
             <div className="flex-1 h-px bg-white/10" />
           </div>
 
@@ -152,7 +152,7 @@ export default function ZodiacCompatibilityPage() {
         >
           {fortuneStatus?.exhausted
             ? "오늘 띠 궁합을 이미 이용했어요"
-            : "🐲 띠 궁합 보기"}
+            : "띠 궁합 보기"}
         </button>
       </form>
 

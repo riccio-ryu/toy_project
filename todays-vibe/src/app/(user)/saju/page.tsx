@@ -204,7 +204,6 @@ export default function SajuPage() {
     <div className="max-w-xl mx-auto px-4 py-10">
       {/* 헤더 */}
       <div className="text-center mb-8">
-        <span className="text-5xl block mb-3">📜</span>
         <h1 className="text-white font-bold text-2xl">사주팔자</h1>
         <p className="text-white/50 text-sm mt-2">생년월일시로 풀어보는 나의 운명</p>
       </div>

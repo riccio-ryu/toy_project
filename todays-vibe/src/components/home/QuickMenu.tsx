@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Zap } from "lucide-react";
 import type { MenuItem } from "@/types/menu";
 
 export default function QuickMenu({ items }: { items: MenuItem[] }) {
@@ -6,8 +7,8 @@ export default function QuickMenu({ items }: { items: MenuItem[] }) {
 
   return (
     <div className="mb-8">
-      <p className="text-white/35 text-xs font-semibold uppercase tracking-widest mb-3">
-        ⚡ 빠른 메뉴
+      <p className="flex items-center gap-1.5 text-white/35 text-xs font-semibold uppercase tracking-widest mb-3">
+        <Zap className="w-3 h-3" /> 빠른 메뉴
       </p>
       <div
         className="grid gap-2"
