@@ -11,7 +11,7 @@ export default function ZodiacPage() {
         {/* 헤더 */}
         <div className="text-center mb-10">
           <p className="text-white/40 text-sm mb-2">별자리 운세</p>
-          <h1 className="text-3xl font-bold text-white mb-3">✨ 오늘의 별자리</h1>
+          <h1 className="text-3xl font-bold text-white mb-3">오늘의 별자리</h1>
           <p className="text-white/50 text-sm">나의 별자리를 선택하세요</p>
         </div>
 

@@ -17,18 +17,16 @@ export function isLastDayOfYear(date: Date): boolean {
   return date.getMonth() === 11 && date.getDate() === 31;
 }
 
-/** ISO 주차 키 (e.g. "2026-W22") */
+/** ISO 주차 키 (e.g. "2026-W25") */
 export function getWeekKey(date: Date): string {
   const d = new Date(date);
   d.setHours(0, 0, 0, 0);
-  d.setDate(d.getDate() + 3 - ((d.getDay() + 6) % 7));
-  const yearStart = new Date(d.getFullYear(), 0, 4);
-  const week = Math.round(
-    ((d.getTime() - yearStart.getTime()) / 86400000 +
-      ((yearStart.getDay() + 6) % 7)) /
-      7
-  );
-  return `${d.getFullYear()}-W${String(week).padStart(2, "0")}`;
+  // 해당 날짜가 속한 주의 목요일로 이동 (ISO 8601: 목요일 기준으로 연도 결정)
+  d.setDate(d.getDate() + 4 - (d.getDay() || 7));
+  const year = d.getFullYear();
+  const yearStart = new Date(year, 0, 1);
+  const week = Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
+  return `${year}-W${String(week).padStart(2, "0")}`;
 }
 
 /**
@@ -141,4 +139,19 @@ export function toDateString(date: Date): string {
   const m = String(date.getMonth() + 1).padStart(2, "0");
   const d = String(date.getDate()).padStart(2, "0");
   return `${y}-${m}-${d}`;
+}
+
+/**
+ * "2026-W22" 형식의 weekKey → 해당 주의 월요일 Date 반환
+ * (HTML input[type=week] 값과 동일한 포맷)
+ */
+export function getDateFromWeekKey(weekKey: string): Date {
+  const [yearStr, weekPart] = weekKey.split("-W");
+  const year = parseInt(yearStr!);
+  const week = parseInt(weekPart!);
+  const jan4 = new Date(year, 0, 4);
+  const dayOfWeek = jan4.getDay() || 7;
+  const monday = new Date(jan4);
+  monday.setDate(jan4.getDate() - (dayOfWeek - 1) + (week - 1) * 7);
+  return monday;
 }

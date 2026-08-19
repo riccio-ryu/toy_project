@@ -135,7 +135,7 @@ export default function TojeongPage() {
           isLoading={isLoading}
           onReset={() => { setStreamResult(""); setError(null); }}
           title="토정비결 풀이"
-          icon="📿"
+          icon=""
         />
       </div>
     );
@@ -146,13 +146,12 @@ export default function TojeongPage() {
     return (
       <div className="max-w-xl mx-auto px-4 py-10">
         <div className="text-center mb-8">
-          <span className="text-5xl block mb-3">📿</span>
           <h1 className="text-white font-bold text-2xl">토정비결</h1>
           <p className="text-white/50 text-sm mt-2">{currentYear}년 한 해 운세</p>
         </div>
 
         <div className="rounded-2xl bg-amber-950/20 border border-amber-800/30 px-4 py-3 mb-5 flex items-center gap-2">
-          <span className="text-amber-400 text-sm">📿</span>
+          <span className="text-amber-400 text-sm">·</span>
           <p className="text-amber-300/80 text-xs">
             {currentYear}년 토정비결을 이미 열람하셨습니다.
             {annualReading.createdAt && (
@@ -179,7 +178,6 @@ export default function TojeongPage() {
   return (
     <div className="max-w-xl mx-auto px-4 py-10">
       <div className="text-center mb-8">
-        <span className="text-5xl block mb-3">📿</span>
         <h1 className="text-white font-bold text-2xl">토정비결</h1>
         <p className="text-white/50 text-sm mt-2">음력 생년월일로 풀어보는 {currentYear}년 한 해 운세</p>
       </div>
@@ -267,7 +265,7 @@ export default function TojeongPage() {
               : "bg-gradient-to-r from-amber-700 to-yellow-700 text-white hover:opacity-90"
           }`}
         >
-          📿 {currentYear}년 토정비결 보기
+          {currentYear}년 토정비결 보기
         </button>
 
         <p className="text-white/25 text-xs text-center">

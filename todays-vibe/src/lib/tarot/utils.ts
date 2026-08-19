@@ -139,3 +139,27 @@ export function getSuitLabel(suit: string): string {
   };
   return map[suit] ?? suit;
 }
+
+/**
+ * buildPrompt용 카드 목록 포매터.
+ * extra: 포지션 부연설명 (desc / meaning 등). 없으면 괄호 생략.
+ * numbered: true면 "• N번 position" 형식, false면 "• position" 형식.
+ */
+export function formatCardLines(
+  cards: Array<{ id: string; reversed: boolean; position: string; extra?: string }>,
+  { numbered = true }: { numbered?: boolean } = {}
+): string {
+  return cards
+    .map(({ id, reversed, position, extra }, idx) => {
+      const card = getCardById(id);
+      if (!card) return "";
+      const interp = reversed ? card.reversed : card.upright;
+      const prefix = numbered ? `• ${idx + 1}번 ${position}` : `• ${position}`;
+      const label = extra ? `${prefix} (${extra})` : prefix;
+      return `${label}: ${card.nameKo} (${card.name}) — ${reversed ? "역방향" : "정방향"}
+  키워드: ${card.keywords.join(", ")}
+  의미: ${interp.meaning}`;
+    })
+    .filter(Boolean)
+    .join("\n\n");
+}

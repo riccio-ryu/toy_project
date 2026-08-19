@@ -219,7 +219,7 @@ export default function SangajiPage() {
   if (phase === "ai") {
     return (
       <div className="min-h-screen bg-gradient-to-b from-amber-950 via-stone-900 to-gray-900">
-        <FortuneResult result={result} isLoading={isLoading} onReset={handleReset} title="산가지 점 풀이" icon="🎋" />
+        <FortuneResult result={result} isLoading={isLoading} onReset={handleReset} title="산가지 점 풀이" />
         {error && <p className="text-center text-red-400 text-sm mt-2 px-4">{error}</p>}
       </div>
     );
@@ -230,7 +230,6 @@ export default function SangajiPage() {
       <div className="max-w-sm mx-auto">
         {/* 헤더 */}
         <div className="text-center mb-6">
-          <div className="text-5xl mb-3">🥢</div>
           <h1 className="text-2xl font-bold text-amber-200">산가지 점</h1>
           <p className="text-amber-400/60 text-sm mt-1">마음속 질문을 품고 막대를 흔드세요</p>
         </div>
@@ -389,8 +388,8 @@ export default function SangajiPage() {
                 {phase === "shaking"
                   ? "흔드는 중..."
                   : phase === "ready"
-                  ? "🎋 한 번 더 흔들기"
-                  : "🎋 산가지 흔들기"}
+                  ? "한 번 더 흔들기"
+                  : "산가지 흔들기"}
               </motion.button>
 
               {/* 뽑기 버튼 — 항상 공간 예약, opacity만 전환 */}
@@ -408,7 +407,7 @@ export default function SangajiPage() {
                   className="w-full py-3 rounded-full font-bold text-base text-yellow-100 border border-yellow-600/40"
                   style={{ background: "linear-gradient(to right, #b45309, #d97706)" }}
                 >
-                  ✨ 산가지 뽑기
+                  산가지 뽑기
                 </motion.button>
                 <p className="text-center text-amber-700/55 text-xs">
                   또는 위 막대를 직접 터치해서 뽑으세요
@@ -468,7 +467,7 @@ export default function SangajiPage() {
                   className="w-full py-3 rounded-xl text-amber-100 font-semibold text-sm shadow-lg"
                   style={{ background: "linear-gradient(to right, #7c2d0a, #c05008)" }}
                 >
-                  ✨ AI 심층 풀이 보기
+                  AI 심층 풀이 보기
                   {fortuneStatus && fortuneStatus.limit !== null && fortuneStatus.limit !== -1 && (
                     <span className="ml-2 text-amber-300/60 text-xs">
                       ({fortuneStatus.used}/{fortuneStatus.limit})

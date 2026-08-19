@@ -209,7 +209,7 @@ export default function IChingPage() {
             <p className="text-white/30 text-xs mt-1">{hexagram.upper}위 {hexagram.lower}아래</p>
           </div>
         )}
-        <FortuneResult result={result} isLoading={isLoading} onReset={handleReset} title="주역 괘 풀이" icon="☯️" />
+        <FortuneResult result={result} isLoading={isLoading} onReset={handleReset} title="주역 괘 풀이" />
       </div>
     );
   }
@@ -217,7 +217,6 @@ export default function IChingPage() {
   return (
     <div className="max-w-xl mx-auto px-4 py-10">
       <div className="text-center mb-8">
-        <span className="text-5xl block mb-3">☯️</span>
         <h1 className="text-white font-bold text-2xl">주역 괘</h1>
         <p className="text-white/50 text-sm mt-2">동전을 6번 던져 64괘 중 하나를 뽑습니다</p>
       </div>
@@ -369,7 +368,7 @@ export default function IChingPage() {
             >
               {fortuneStatus?.exhausted
                 ? "오늘 AI 심층해석을 이미 이용했어요"
-                : `☯️ ${hexagram.nameKo}괘 AI 심층해석 보기`}
+                : `${hexagram.nameKo}괘 AI 심층해석 보기`}
             </button>
 
             <button
@@ -507,7 +506,7 @@ export default function IChingPage() {
                   type="button" onClick={() => setShowModal(false)}
                   className="w-full py-3 rounded-xl text-sm font-semibold bg-amber-700/40 border border-amber-600/30 text-amber-200 hover:bg-amber-700/60 transition-all"
                 >
-                  ☯️ 돌아가서 AI 해석 보기
+                  돌아가서 AI 해석 보기
                 </button>
               )}
 

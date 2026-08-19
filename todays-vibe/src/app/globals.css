@@ -40,3 +40,12 @@ body {
   0%, 100% { opacity: 1;    }
   50%       { opacity: 0.45; }
 }
+
+@keyframes oracleBreathe {
+  0%, 100% { opacity: 0.3; }
+  50%       { opacity: 1;   }
+}
+
+.oracle-breathe {
+  animation: oracleBreathe 6s ease-in-out infinite;
+}

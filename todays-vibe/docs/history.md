@@ -2,6 +2,24 @@
 
 ---
 
+## 2026-06-14
+
+- 전체 코드 리팩토링 — 타로 5개 페이지 공통 UI 컴포넌트 추출 (`src/components/tarot/`)
+  - `TarotInputPhase.tsx` 신규 생성 — 질문 입력 + 카드 섞기 버튼 (subtitle·placeholder props로 주입)
+  - `TarotSpreadHeader.tsx` 신규 생성 — "카드 N장 선택" 헤더 + 다시 섞기 버튼 + 카운터
+  - `TarotCardSlot.tsx` 신규 생성 — 빈/채워진 카드 슬롯 (AnimatePresence 포함, label 선택)
+  - `TarotConfirmButton.tsx` 신규 생성 — "선택 완료" 애니메이션 버튼
+  - `TarotActionButtons.tsx` 신규 생성 — "✨ AI 해석 받기" + "다시" 버튼 쌍
+  - 타로 5개 페이지(`tarot-3cards`, `tarot-celtic`, `tarot-full-moon`, `tarot-horseshoe`, `tarot-tree-of-life`) 전면 교체 적용, 약 300줄 중복 제거
+- Admin 페이지 공통 UI 컴포넌트 추출 (`src/components/admin/`)
+  - `AdminStatCards.tsx` 신규 생성 — `{ label, value }` 배열 주입형 통계 카드 그리드
+  - `AdminTableSkeleton.tsx` 신규 생성 — rows·cols 파라미터화된 테이블 로딩 스켈레톤
+  - `admin/readings/page.tsx`, `admin/users/page.tsx` 두 페이지에 적용
+- `TodayFortuneCard` 컴포넌트 추출 (`src/components/common/TodayFortuneCard.tsx`) — 사용량 소진 시 "오늘의 결과" 섹션을 `label`·`highlightColor` props로 파라미터화, `GeneralFortuneForm`·`numerology`·`moving-fortune`·`name-fortune` 4곳 통합
+- `boldHighlight()` 유틸 함수 추가 (`src/lib/utils/format.ts`) — `**text**` → `<strong class="{color}">` 변환 regex를 함수로 추출, 5개 파일의 인라인 regex 제거 (`saju`, `numerology`, `moving-fortune`, `name-fortune`, `GeneralFortuneForm`)
+
+---
+
 ## 2026-06-12
 
 - Hero 운세 seed 버그 2종 수정 (`src/app/api/user/daily-hero/route.ts`) — ① `uidDateSeed` djb2 해시의 연속 날짜 seed+1 문제 → splitmix32 finalizer 추가로 avalanche 효과 적용, ② `lcg(seed+k)` 방식 별점 계산 시 k=1,2,3이 LCG step 0.0004 차이로 동일값 출력 → `subRand(seed, slot)` 독립 해시 함수로 교체

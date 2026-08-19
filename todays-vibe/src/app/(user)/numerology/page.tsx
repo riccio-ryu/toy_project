@@ -6,6 +6,7 @@ import { useFortuneStream } from "@/lib/hooks/useFortuneStream";
 import { useFortuneStatus } from "@/lib/hooks/useFortuneStatus";
 import { type NumerologyInput } from "@/types/fortune";
 import FortuneResult from "@/components/fortune/FortuneResult";
+import TodayFortuneCard from "@/components/common/TodayFortuneCard";
 
 // ─── 수비학 계산 ──────────────────────────────────────────────────────────────
 
@@ -125,7 +126,7 @@ export default function NumerologyPage() {
           isLoading={isLoading}
           onReset={handleReset}
           title="생일 숫자 운세 결과"
-          icon="🔢"
+          icon=""
         />
       </div>
     );
@@ -138,7 +139,6 @@ export default function NumerologyPage() {
     <div className="max-w-xl mx-auto px-4 py-10">
       {/* 헤더 */}
       <div className="text-center mb-8">
-        <span className="text-5xl block mb-3">🔢</span>
         <h1 className="text-white font-bold text-2xl">생일 숫자 운세</h1>
         <p className="text-white/50 text-sm mt-2">생년월일 숫자로 풀어보는 나의 인생 에너지</p>
       </div>
@@ -244,32 +244,16 @@ export default function NumerologyPage() {
         >
           {fortuneStatus?.exhausted
             ? "오늘 생일 숫자 운세를 이미 이용했어요"
-            : "🔢 내 생명수 알아보기"}
+            : "내 생명수 알아보기"}
         </button>
       </form>
 
-      {/* 오늘 결과 (소진 시) */}
       {fortuneStatus?.exhausted && fortuneStatus.todayReading && (
-        <div className="mt-6 space-y-4">
-          <div className="flex items-center gap-2">
-            <div className="flex-1 h-px bg-white/10" />
-            <span className="text-white/30 text-xs">오늘의 생일 숫자 운세 결과</span>
-            <div className="flex-1 h-px bg-white/10" />
-          </div>
-          <div className="rounded-2xl bg-white/5 border border-white/10 p-5">
-            {fortuneStatus.todayReading.createdAt && (
-              <p className="text-white/30 text-xs mb-3 text-right">
-                {new Date(fortuneStatus.todayReading.createdAt).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" })} 열람
-              </p>
-            )}
-            <div
-              className="text-white/80 text-sm leading-relaxed whitespace-pre-wrap"
-              dangerouslySetInnerHTML={{
-                __html: fortuneStatus.todayReading.result.replace(/\*\*(.*?)\*\*/g, '<strong class="text-blue-300">$1</strong>'),
-              }}
-            />
-          </div>
-        </div>
+        <TodayFortuneCard
+          label="오늘의 생일 숫자 운세 결과"
+          todayReading={fortuneStatus.todayReading}
+          highlightColor="text-blue-300"
+        />
       )}
     </div>
   );

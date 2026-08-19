@@ -47,9 +47,9 @@ const PLAN_LABEL: Record<string, { label: string; color: string; bg: string }> =
 
 // 로그인 수단 표시 정보
 const PROVIDER_INFO: Record<string, { label: string; icon: string; color: string; bg: string }> = {
-  "password":   { label: "이메일",  icon: "✉️",  color: "text-blue-300",   bg: "bg-blue-400/10 border border-blue-400/20" },
+  "password":   { label: "이메일",  icon: "@",   color: "text-blue-300",   bg: "bg-blue-400/10 border border-blue-400/20" },
   "google.com": { label: "Google",  icon: "G",   color: "text-red-300",    bg: "bg-red-400/10 border border-red-400/20" },
-  "github.com": { label: "GitHub",  icon: "⌥",   color: "text-white/70",   bg: "bg-white/10 border border-white/20" },
+  "github.com": { label: "GitHub",  icon: "G",   color: "text-white/70",   bg: "bg-white/10 border border-white/20" },
   "naver.com":  { label: "네이버",  icon: "N",   color: "text-green-300",  bg: "bg-green-400/10 border border-green-400/20" },
   "kakao.com":  { label: "카카오",  icon: "K",   color: "text-yellow-300", bg: "bg-yellow-400/10 border border-yellow-400/20" },
 };
@@ -218,7 +218,7 @@ function MyPageInner() {
     });
     setBirthInfo(birthDraft);
     setEditingBirth(false);
-    showToast("출생 정보가 저장되었어요 ✨");
+    showToast("출생 정보가 저장되었어요");
   }
 
   async function handleBirthDelete() {
@@ -244,7 +244,7 @@ function MyPageInner() {
       const auth = getAuth(getFirebaseApp());
       const url = await uploadProfilePhoto(user.uid, file);
       await updateProfile(auth.currentUser!, { photoURL: url });
-      showToast("프로필 사진이 변경되었어요 ✨");
+      showToast("프로필 사진이 변경되었어요");
     } catch (err) {
       console.error(err);
       setPhotoPreview(user.photoURL ?? null); // 실패 시 되돌리기
@@ -272,7 +272,7 @@ function MyPageInner() {
       await updateProfile(auth.currentUser!, { displayName: nickname.trim() });
       setEditingNick(false);
       setNickError(null);
-      showToast("닉네임이 변경되었어요 ✨");
+      showToast("닉네임이 변경되었어요");
     } catch (err) {
       console.error(err);
       showToast("닉네임 변경에 실패했어요");
@@ -413,7 +413,7 @@ function MyPageInner() {
                     : ["password"];
                   return providerIds.map((pid) => {
                     const info = PROVIDER_INFO[pid] ?? {
-                      label: pid, icon: "🔗",
+                      label: pid, icon: "?",
                       color: "text-white/50", bg: "bg-white/10 border border-white/20",
                     };
                     return (

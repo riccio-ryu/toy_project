@@ -1,3 +1,5 @@
+[git-hub 주소 변경 :](https://github.com/riccio-ryu/todays-vibe)
+
 # 🔮 todays-vibe
 
 **당신만을 위한 오늘의 운세**

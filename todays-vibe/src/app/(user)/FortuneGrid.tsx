@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { ChevronDown, ArrowRight } from "lucide-react";
+import { ChevronDown, ArrowRight, Eye, EyeOff } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import LoginRequiredModal from "@/components/common/LoginRequiredModal";
 import type { MenuItem } from "@/types/menu";
@@ -24,7 +24,7 @@ interface Props {
 export default function FortuneGrid({ categories, fortunes }: Props) {
   const { user, loading } = useAuth();
   const [modalPath, setModalPath] = useState<string | null>(null);
-  const [showComingSoon, setShowComingSoon] = useState(true);
+  const [showComingSoon, setShowComingSoon] = useState(false);
   const [openCategories, setOpenCategories] = useState<Set<string>>(new Set());
 
   // localStorage에서 열린 카테고리 복원
@@ -50,6 +50,17 @@ export default function FortuneGrid({ categories, fortunes }: Props) {
     });
   }
 
+  function expandAll() {
+    const all = new Set(categories.map((c) => c.id));
+    setOpenCategories(all);
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify([...all])); } catch { /* ignore */ }
+  }
+
+  function collapseAll() {
+    setOpenCategories(new Set());
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify([])); } catch { /* ignore */ }
+  }
+
   function handleClick(fortune: MenuItem, e: React.MouseEvent) {
     if (!loading && !user && fortune.accessLevel !== "public") {
       e.preventDefault();
@@ -66,17 +77,33 @@ export default function FortuneGrid({ categories, fortunes }: Props) {
       />
 
       {/* 툴바 */}
-      <div className="flex items-center justify-between mb-4">
-        <p className="text-white/30 text-xs">카테고리를 눌러 펼쳐보세요</p>
+      <div className="flex items-center justify-between mb-4 gap-2">
+        {/* 모두 펼치기 / 접기 */}
+        <div className="flex items-center gap-0.5">
+          <button
+            onClick={expandAll}
+            className="px-2.5 py-1.5 rounded-l-full text-xs text-white/50 border border-white/12 bg-white/6 hover:bg-white/12 hover:text-white/70 transition-colors"
+          >
+            모두펼치기
+          </button>
+          <button
+            onClick={collapseAll}
+            className="px-2.5 py-1.5 rounded-r-full text-xs text-white/50 border border-white/12 border-l-0 bg-white/6 hover:bg-white/12 hover:text-white/70 transition-colors"
+          >
+            모두접기
+          </button>
+        </div>
+
+        {/* 준비중 토글 */}
         <button
           onClick={() => setShowComingSoon((v) => !v)}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-colors whitespace-nowrap ${
             showComingSoon
               ? "bg-white/10 border-white/15 text-white/50 hover:bg-white/15 hover:text-white/70"
-              : "bg-purple-900/40 border-purple-500/30 text-purple-300 hover:bg-purple-900/60"
+              : "bg-white/6 border-white/12 text-white/35 hover:bg-white/10 hover:text-white/55"
           }`}
         >
-          <span>{showComingSoon ? "🙈" : "👀"}</span>
+          {showComingSoon ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
           <span>{showComingSoon ? "준비중 숨기기" : "준비중 보기"}</span>
         </button>
       </div>
@@ -149,7 +176,7 @@ export default function FortuneGrid({ categories, fortunes }: Props) {
                                     color: "#fef3c7",
                                   }}
                                 >
-                                  ✨ Premium
+                                  Premium
                                 </span>
                               )}
                               {!isReady && (

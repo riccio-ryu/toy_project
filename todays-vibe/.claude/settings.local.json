@@ -12,7 +12,8 @@
       "Bash(npx tsc *)",
       "Bash(curl -sv http://localhost:3000/)",
       "Bash(curl *)",
-      "Bash(node *)"
+      "Bash(node *)",
+      "Bash(awk -F: '{print $1}')"
     ]
   }
 }

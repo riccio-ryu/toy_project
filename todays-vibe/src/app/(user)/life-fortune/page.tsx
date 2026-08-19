@@ -114,7 +114,7 @@ export default function LifeFortunePage() {
           isLoading={isLoading}
           onReset={() => { setStreamResult(""); setError(null); }}
           title="평생운세"
-          icon="🌠"
+          icon=""
         />
       </div>
     );
@@ -125,7 +125,6 @@ export default function LifeFortunePage() {
     return (
       <div className="max-w-xl mx-auto px-4 py-10">
         <div className="text-center mb-8">
-          <span className="text-5xl block mb-3">🌠</span>
           <h1 className="text-white font-bold text-2xl">평생운세</h1>
           <p className="text-white/50 text-sm mt-2">
             {y}년 {m}월 {d}일생의 운명 풀이
@@ -133,7 +132,7 @@ export default function LifeFortunePage() {
         </div>
 
         <div className="rounded-2xl bg-purple-950/20 border border-purple-800/30 px-4 py-3 mb-5 flex items-center gap-2">
-          <span className="text-purple-400 text-sm">🌠</span>
+          <span className="text-purple-400 text-sm">·</span>
           <p className="text-purple-300/80 text-xs">
             이 생년월일의 평생운세가 저장되어 있습니다.
             {cachedReading.createdAt && (
@@ -167,7 +166,6 @@ export default function LifeFortunePage() {
   return (
     <div className="max-w-xl mx-auto px-4 py-10">
       <div className="text-center mb-8">
-        <span className="text-5xl block mb-3">🌠</span>
         <h1 className="text-white font-bold text-2xl">평생운세</h1>
         <p className="text-white/50 text-sm mt-2">타고난 운명과 인생의 흐름을 AI로 풀어드립니다</p>
       </div>
@@ -230,7 +228,7 @@ export default function LifeFortunePage() {
 
           {/* 안내 */}
           <div className="rounded-xl bg-white/5 border border-white/5 px-4 py-3 space-y-1">
-            <p className="text-white/40 text-xs">📌 평생운세 이용 안내</p>
+            <p className="text-white/40 text-xs">평생운세 이용 안내</p>
             <p className="text-white/25 text-xs">• 같은 생년월일+성별은 즉시 저장된 결과를 불러옵니다</p>
             <p className="text-white/25 text-xs">• 새 생년월일은 하루 1회 생성할 수 있습니다</p>
           </div>
@@ -245,7 +243,7 @@ export default function LifeFortunePage() {
               : "bg-gradient-to-r from-purple-700 to-indigo-700 text-white hover:opacity-90"
           }`}
         >
-          🌠 내 평생운세 보기
+          내 평생운세 보기
         </button>
       </form>
     </div>

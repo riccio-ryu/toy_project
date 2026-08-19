@@ -1,13 +1,17 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import Link from "next/link";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import PageHeader from "@/components/common/PageHeader";
 import TarotCard from "@/components/tarot/TarotCard";
 import TarotFanSpread from "@/components/tarot/TarotFanSpread";
 import TarotShufflingAnimation from "@/components/tarot/TarotShufflingAnimation";
 import TarotReadingResult from "@/components/tarot/TarotReadingResult";
 import TarotTodayResult from "@/components/tarot/TarotTodayResult";
+import TarotInputPhase from "@/components/tarot/TarotInputPhase";
+import TarotSpreadHeader from "@/components/tarot/TarotSpreadHeader";
+import TarotCardSlot from "@/components/tarot/TarotCardSlot";
+import TarotConfirmButton from "@/components/tarot/TarotConfirmButton";
+import TarotActionButtons from "@/components/tarot/TarotActionButtons";
 import { useTarotSpread } from "@/lib/hooks/useTarotSpread";
 
 const POSITION_NAMES = [
@@ -47,43 +51,19 @@ export default function TarotCelticPage() {
 
   return (
     <div className="max-w-lg mx-auto px-4 py-10">
-      <div className="flex items-center gap-3 mb-8">
-        <Link href="/" className="text-white/40 hover:text-white/70 text-sm transition-colors"><ArrowLeft className="w-4 h-4" /> 홈</Link>
-        <span className="text-white/20">|</span>
-        <h1 className="text-white font-semibold text-lg">켈틱 크로스 타로</h1>
-        <span className="ml-auto text-[10px] text-purple-300 bg-purple-900/40 px-2 py-0.5 rounded-full border border-purple-500/20">AI</span>
-      </div>
+      <PageHeader title="켈틱 크로스 타로" />
 
       <AnimatePresence mode="wait">
 
         {phase === "input" && (
-          <motion.div key="input"
-            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
-            className="flex flex-col items-center gap-6"
-          >
-            <p className="text-white/50 text-sm text-center">마음속으로 질문을 생각하며 카드 10장을 뽑아보세요</p>
-            <div className="w-full">
-              <label className="block text-white/40 text-xs mb-2">질문 (선택)</label>
-              <input
-                value={question}
-                onChange={(e) => setQuestion(e.target.value)}
-                onKeyDown={(e) => !fortuneStatus?.exhausted && e.key === "Enter" && handleStartShuffle()}
-                placeholder="예: 올해 나의 방향은 어떤가요?"
-                className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/20 text-sm focus:outline-none focus:border-purple-400/50 focus:bg-white/10 transition-colors"
-              />
-            </div>
-            <button
-              onClick={!fortuneStatus?.exhausted ? handleStartShuffle : undefined}
-              disabled={fortuneStatus?.exhausted === true}
-              className={`px-8 py-3 rounded-full font-semibold text-sm transition-colors shadow-lg ${
-                fortuneStatus?.exhausted
-                  ? "bg-white/10 text-white/30 cursor-not-allowed shadow-none"
-                  : "bg-purple-600 hover:bg-purple-500 text-white shadow-purple-900/40"
-              }`}
-            >
-              {fortuneStatus?.exhausted ? "오늘 타로를 이미 이용했어요" : "🃏 카드 섞기"}
-            </button>
-          </motion.div>
+          <TarotInputPhase
+            subtitle="마음속으로 질문을 생각하며 카드 10장을 뽑아보세요"
+            placeholder="예: 올해 나의 방향은 어떤가요?"
+            question={question}
+            setQuestion={setQuestion}
+            fortuneStatus={fortuneStatus}
+            handleStartShuffle={handleStartShuffle}
+          />
         )}
 
         {phase === "shuffling" && <TarotShufflingAnimation />}
@@ -93,17 +73,11 @@ export default function TarotCelticPage() {
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="flex flex-col gap-5"
           >
-            <div className="flex items-center justify-between">
-              <p className="text-white/60 text-sm">카드 10장을 선택하세요</p>
-              <div className="flex items-center gap-3">
-                <button onClick={handleStartShuffle} className="text-white/30 hover:text-white/60 text-xs transition-colors">
-                  🔀 다시 섞기
-                </button>
-                <span className="text-purple-300 font-semibold tabular-nums">
-                  {selectedIndices.length}<span className="text-white/30 font-normal"> / 10</span>
-                </span>
-              </div>
-            </div>
+            <TarotSpreadHeader
+              cardCount={10}
+              selectedCount={selectedIndices.length}
+              onReshuffle={handleStartShuffle}
+            />
 
             <TarotFanSpread
               spreadCards={spreadCards}
@@ -121,25 +95,13 @@ export default function TarotCelticPage() {
                     const fanIdx  = selectedIndices[slotIdx];
                     const card    = fanIdx !== undefined ? spreadCards[fanIdx] : null;
                     return (
-                      <div key={slotIdx} className="flex flex-col items-center gap-1">
-                        <AnimatePresence mode="wait">
-                          {card ? (
-                            <motion.div key={`s${fanIdx}`}
-                              initial={{ opacity: 0, scale: 0.7, y: -20 }} animate={{ opacity: 1, scale: 1, y: 0 }}
-                              exit={{ opacity: 0, scale: 0.7, y: 10 }}
-                              transition={{ type: "spring", stiffness: 400, damping: 26 }}
-                              className="cursor-pointer hover:opacity-75 transition-opacity"
-                              onClick={() => handleSelectCard(fanIdx)}
-                            >
-                              <TarotCard cardId={card.card.id} isRevealed={false} size="xs" />
-                            </motion.div>
-                          ) : (
-                            <div key="empty" className="w-[54px] h-[92px] rounded-xl border-2 border-dashed border-white/15 flex items-center justify-center">
-                              <span className="text-white/20 text-xs font-medium">{slotIdx + 1}</span>
-                            </div>
-                          )}
-                        </AnimatePresence>
-                      </div>
+                      <TarotCardSlot
+                        key={slotIdx}
+                        slotIdx={slotIdx}
+                        fanIdx={fanIdx}
+                        card={card}
+                        onSelect={handleSelectCard}
+                      />
                     );
                   })}
                 </div>
@@ -148,13 +110,7 @@ export default function TarotCelticPage() {
 
             <AnimatePresence>
               {selectedIndices.length === 10 && (
-                <motion.button
-                  initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-                  onClick={handleConfirmSelection}
-                  className="w-full py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-semibold text-sm transition-colors shadow-lg shadow-purple-900/40"
-                >
-                  선택 완료 <ArrowRight className="w-4 h-4" />
-                </motion.button>
+                <TarotConfirmButton onClick={handleConfirmSelection} />
               )}
             </AnimatePresence>
           </motion.div>
@@ -217,21 +173,7 @@ export default function TarotCelticPage() {
             </div>
 
             {phase === "drawn" && revealed.every(Boolean) && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
-                className="flex gap-3 w-full"
-              >
-                <button onClick={handleInterpret}
-                  className="flex-1 py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-semibold text-sm transition-colors shadow-lg shadow-purple-900/40"
-                >
-                  ✨ AI 해석 받기
-                </button>
-                <button onClick={handleReset}
-                  className="px-4 py-3 rounded-xl border border-white/10 text-white/40 hover:text-white/60 text-sm transition-colors"
-                >
-                  다시
-                </button>
-              </motion.div>
+              <TarotActionButtons onInterpret={handleInterpret} onReset={handleReset} />
             )}
 
             {phase === "reading" && (

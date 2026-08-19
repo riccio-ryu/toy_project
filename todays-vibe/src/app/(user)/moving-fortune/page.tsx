@@ -6,6 +6,7 @@ import { useFortuneStream } from "@/lib/hooks/useFortuneStream";
 import { useFortuneStatus } from "@/lib/hooks/useFortuneStatus";
 import { type MovingFortuneInput, type Direction } from "@/types/fortune";
 import FortuneResult from "@/components/fortune/FortuneResult";
+import TodayFortuneCard from "@/components/common/TodayFortuneCard";
 
 const DIRECTIONS: { label: Direction; desc: string }[] = [
   { label: "북서", desc: "건(乾)" },
@@ -80,7 +81,7 @@ export default function MovingFortunePage() {
           isLoading={isLoading}
           onReset={() => { reset(); setDirection(""); setQuestion(""); }}
           title="이사/방위 길흉"
-          icon="🏡"
+          icon=""
         />
       </div>
     );
@@ -92,7 +93,6 @@ export default function MovingFortunePage() {
   return (
     <div className="max-w-xl mx-auto px-4 py-10">
       <div className="text-center mb-8">
-        <span className="text-5xl block mb-3">🏡</span>
         <h1 className="text-white font-bold text-2xl">이사/방위 길흉</h1>
         <p className="text-white/50 text-sm mt-2">풍수·사주 기반 이사 방향 AI 분석</p>
       </div>
@@ -239,31 +239,16 @@ export default function MovingFortunePage() {
         >
           {fortuneStatus?.exhausted
             ? "오늘 이사/방위 분석을 이미 이용했어요"
-            : `🏡 ${direction || "방향 선택 후"} 이사 운 분석하기`}
+            : `${direction || "방향 선택 후"} 이사 운 분석하기`}
         </button>
       </form>
 
       {fortuneStatus?.exhausted && fortuneStatus.todayReading && (
-        <div className="mt-6 space-y-4">
-          <div className="flex items-center gap-2">
-            <div className="flex-1 h-px bg-white/10" />
-            <span className="text-white/30 text-xs">오늘의 분석 결과</span>
-            <div className="flex-1 h-px bg-white/10" />
-          </div>
-          <div className="rounded-2xl bg-white/5 border border-white/10 p-5">
-            {fortuneStatus.todayReading.createdAt && (
-              <p className="text-white/30 text-xs mb-3 text-right">
-                {new Date(fortuneStatus.todayReading.createdAt).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" })} 열람
-              </p>
-            )}
-            <div
-              className="text-white/80 text-sm leading-relaxed whitespace-pre-wrap"
-              dangerouslySetInnerHTML={{
-                __html: fortuneStatus.todayReading.result.replace(/\*\*(.*?)\*\*/g, '<strong class="text-teal-300">$1</strong>'),
-              }}
-            />
-          </div>
-        </div>
+        <TodayFortuneCard
+          label="오늘의 분석 결과"
+          todayReading={fortuneStatus.todayReading}
+          highlightColor="text-teal-300"
+        />
       )}
     </div>
   );
