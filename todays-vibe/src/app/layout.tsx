@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Noto_Sans_KR, Roboto } from "next/font/google";
 import Script from "next/script";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 
 const notoSansKR = Noto_Sans_KR({
@@ -23,6 +24,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: "오늘운 | 당신만을 위한 오늘의 운세",
   description:
     "사주, 타로, 꿈해몽 등 33가지 운세로 당신의 오늘을 가장 깊이 읽어드립니다.",
